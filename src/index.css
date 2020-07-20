@@ -1,11 +1,17 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
+  height: 100vh;
+  overflow-x: hidden;
   font-family: -apple-system, BlinkMacSystemFont, "Montserrat", "Segoe UI",
     "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
     "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: rgb(7, 11, 52);
+  background: #141852;
   background: linear-gradient(
     0deg,
     #855988,

@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import Starmap from "./Starmap";
 
 function App() {
+  let [portfolioView, setPortfolioView] = useState(false);
   return (
     <>
-      <Starmap />
+      <Starmap portfolioView={portfolioView} />
       {/* add floaty button to switch context between portfolio/starmap */}
     </>
   );
