@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Starmap from "./Starmap";
 
 function App() {
-  let [portfolioView, setPortfolioView] = useState(false);
+  let [portfolioView, setPortfolioView] = useState(true);
   return (
     <>
       <Starmap portfolioView={portfolioView} />
