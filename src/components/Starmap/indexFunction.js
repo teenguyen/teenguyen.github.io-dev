@@ -13,7 +13,7 @@ export default function Starmap({ portfolioView }) {
 
   let svg = d3.select("#starmap");
   let projection = d3
-    .geoMercator()
+  .geoMercator()
     .translate([w / 2, h / 2])
     .scale(200);
   // .scale(1000)
@@ -32,7 +32,7 @@ export default function Starmap({ portfolioView }) {
   let sensitivity = 75;
 
   useEffect(() => {
-    async function fetchData() {
+    (async () => {
       let dataFolder = process.env.PUBLIC_URL + "/data";
       Promise.all([
         d3.json(`${dataFolder}/stars.json`),
@@ -131,9 +131,7 @@ export default function Starmap({ portfolioView }) {
           }
         )
         .catch(err => console.log(`Error loading or parsing data. ${err}`));
-    }
-
-    fetchData();
+    })();
   }, []);
 
   // svg

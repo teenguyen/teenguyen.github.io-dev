@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
-import css from "./index.module.css";
+// import css from "./index.module.css";
 
 let w = 1920;
 let h = 1080;
@@ -8,35 +8,20 @@ export default class Starmap extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      starData: null,
-      milkywayData: null,
-      constellationData: null,
-      constellationNameData: null,
-      stars: <></>,
-      milkyway: <></>,
-      constellations: <></>,
-      constellationNames: <></>,
+      data: null,
     };
   }
 
   async componentDidMount() {
-    let svg = d3.select("#starmap");
+    let canvas = d3.select("#starmap");
+    let ctx = canvas.node().getContext("2d");
     let projection = d3
       .geoMercator()
       .translate([w / 2, h / 2])
-      .scale(300);
-    // .scale(1000)
-    // .angle(15);
-    let path = d3.geoPath(projection);
-    let graticuleData = d3.geoGraticule10();
-
-    svg
-      .append("path")
-      .datum(graticuleData)
-      .attr("d", path)
-      .attr("stroke", "black")
-      .attr("stroke-width", "1px")
-      .attr("stroke-opacity", "0.1");
+      // .scale(200);
+      .scale(1000)
+      .angle(15);
+    let path = d3.geoPath(projection, ctx);
 
     let data;
     try {
@@ -53,52 +38,59 @@ export default class Starmap extends Component {
             milkywayData,
             constellationData,
             constellationNameData,
-          ]) => ({
-            starData,
-            milkywayData,
-            constellationData,
-            constellationNameData,
-          })
+          ]) =>
+            this.setState({
+              data: {
+                starData,
+                milkywayData,
+                constellationData,
+                constellationNameData,
+              },
+              ctx,
+              path,
+              projection,
+            })
         )
         .catch(err => console.log(`Error loading or parsing data. ${err}`));
-      this.drawData(svg, data, path, projection);
+      this.drawData();
     } catch (e) {
       console.error(`Something somewhere went wrong :( ${e}`);
     }
 
-    // let drag = d3.drag().on("drag", () => {
-    //   const rotate = projection.rotate();
-    //   const k = 25 / projection.scale();
-    //   projection.rotate([
-    //     rotate[0] + d3.event.dx * k,
-    //     rotate[1] - d3.event.dy * k,
-    //   ]);
-    //   path = d3.geoPath(projection);
-    //   svg.selectAll("path").attr("d", path);
-    // });
-    // let zoom = d3.zoom().on("zoom", () => {
-    //   if (d3.event.transform.k > 0.3) {
-    //     projection.scale(projection.scale() * d3.event.transform.k);
-    //     path = d3.geoPath(projection);
-    //     svg.selectAll("path").attr("d", path);
-    //   } else {
-    //     d3.event.transform.k = 0.3;
-    //   }
-    // });
+    let drag = d3.drag().on("drag", () => {
+      const rotate = projection.rotate();
+      const k = 25 / projection.scale();
+      projection.rotate([
+        rotate[0] + d3.event.dx * k,
+        rotate[1] - d3.event.dy * k,
+      ]);
+      path = d3.geoPath(projection);
+      this.drawData();
+    });
+    let zoom = d3.zoom().on("zoom", () => {
+      if (d3.event.transform.k > 0.3) {
+        projection.scale(projection.scale() * d3.event.transform.k);
+        path = d3.geoPath(projection);
+        this.drawData();
+      } else {
+        d3.event.transform.k = 0.3;
+      }
+    });
 
-    // svg.call(drag).call(zoom);
+    canvas.call(drag).call(zoom);
 
-    // d3.timer(elapsed => {
-    //   const rotate = projection.rotate();
-    //   const k = 25 / projection.scale();
-    //   projection.rotate([rotate[0] - 1 * k, rotate[1]]);
-    //   path = d3.geoPath(projection);
-    //   svg.selectAll("path").attr("d", path);
-    // }, 200);
+    d3.timer(elapsed => {
+      const rotate = projection.rotate();
+      const k = 25 / projection.scale();
+      projection.rotate([rotate[0] - 1 * k, rotate[1]]);
+      path = d3.geoPath(projection);
+      this.drawData();
+    }, 200);
   }
 
-  drawData(svg, data, path, projection) {
+  drawData() {
     let { portfolioView } = this.props;
+    let { data, ctx, path, projection } = this.state;
     let {
       starData,
       milkywayData,
@@ -106,95 +98,83 @@ export default class Starmap extends Component {
       constellationNameData,
     } = data;
 
-    svg
-      .append("g")
-      .attr("id", "stars")
-      .selectAll("path")
-      .data(starData.features)
-      .enter()
-      .append("path")
-      .attr("d", path)
-      .attr("class", css.stars)
-      .attr(
-        "fill-opacity",
-        star =>
-          (portfolioView ? 0.25 : 1) *
-          (star.properties.bv > 0 ? star.properties.bv : -star.properties.bv)
-      )
-      .attr("transform", star => `scale(${0.1 * star.properties.mag})`);
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-    svg
-      .append("g")
-      .attr("id", "milkyway")
-      .selectAll("path")
-      .data(milkywayData.features)
-      .enter()
-      .append("path")
-      .attr("d", path)
-      .attr("class", css.milkyway);
+    let graticuleData = d3.geoGraticule10();
+    ctx.beginPath();
+    ctx.lineWidth = "1";
+    ctx.strokeStyle = "rgba(0, 0, 0, 0.1)";
+    path(graticuleData);
+    ctx.stroke();
 
-    svg
-      .append("g")
-      .attr("id", "constellations")
-      .selectAll("path")
-      .data(constellationData.features)
-      .enter()
-      .append("path")
-      .attr("d", path)
-      .attr("class", css.constellationLines)
-      .attr("stroke-opacity", portfolioView ? 0.1 : 0.2)
-      .attr("stroke-width", portfolioView ? 1 : 2);
+    let magnitudeScale = d3
+      .scaleLinear()
+      .domain(d3.extent(starData.features, star => star.properties.mag))
+      .range([5, 1]);
+    let starPath = d3
+      .geoPath(projection, ctx)
+      .pointRadius(d => magnitudeScale(d.properties.mag));
 
-    // if (!portfolioView) {
-    svg
-      .append("g")
-      .attr("id", "constellation-names")
-      .selectAll("path")
-      .data(constellationNameData.features)
-      .enter()
-      .append("foreignObject")
-      .attr("class", css.labelContainer)
-      .attr("x", name => projection(name.geometry.coordinates)[0])
-      .attr("y", name => projection(name.geometry.coordinates)[1])
-      .append("xhtml:div")
-      .attr("xmlns", "http://www.w3.org/1999/xhtml")
-      .attr("class", css.label)
-      .html(name => name.properties.name);
-    // .text(name => name.properties.name);
-    // }
+    starData.features.forEach(star => {
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(255, 255, 255, ${
+        (portfolioView ? 0.25 : 1) * Math.abs(star.properties.bv)
+      })`;
+      starPath(star);
+      ctx.fill();
+    });
+
+    milkywayData.features.forEach(milkyway => {
+      ctx.beginPath();
+      ctx.fillStyle = "rgba(255,255,255, 0.03)";
+      path(milkyway);
+      ctx.fill();
+    });
+
+    constellationData.features.forEach(constellation => {
+      ctx.beginPath();
+      ctx.lineWidth = portfolioView ? 1 : 2;
+      ctx.strokeStyle = `rgba(255, 255, 255, ${portfolioView ? 0.1 : 0.2})`;
+      path(constellation);
+      ctx.stroke();
+    });
+
+    if (!portfolioView) {
+      constellationNameData.features.forEach(name => {
+        let [x, y] = projection(name.geometry.coordinates);
+        x = x.toFixed(3);
+        y = y.toFixed(3);
+        let width = ctx.measureText(name.properties.name).width + 8;
+        let height = 22;
+        let cornerRadius = 8;
+
+        ctx.beginPath();
+        ctx.strokeStyle = "rgba(20, 24, 82, 0.9)";
+        ctx.lineJoin = "round";
+        ctx.lineWidth = 16;
+        ctx.strokeRect(
+          x + cornerRadius / 2,
+          y + cornerRadius / 2,
+          width - cornerRadius,
+          height - cornerRadius
+        );
+
+        ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+        ctx.font = "16px Montserrat";
+        ctx.textBaseline = "top";
+        ctx.fillText(name.properties.name, x, y);
+        ctx.stroke();
+      });
+    }
   }
-
-  //     constellationNames = constellationNameData.features.map(name => {
-  //       let [x, y] = projection(name.geometry.coordinates);
-  //       return (
-  //         <foreignObject
-  //           className={css.labelContainer}
-  //           key={`name-${name.id}`}
-  //           x={x}
-  //           y={y}
-  //         >
-  //           <div xmlns="http://www.w3.org/1999/xhtml" className={css.label}>
-  //             {name.properties.name}
-  //           </div>
-  //         </foreignObject>
-  //       );
-  //     });
 
   render() {
-    return (
-      <svg
-        id="starmap"
-        height="100vh"
-        width="100vw"
-        viewBox="0 0 1920 1080"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <filter id="milkyway-glow">
-            <feDropShadow dx="0" dy="0" stdDeviation="1" floodColor="white" />
-          </filter>
-        </defs>
-      </svg>
-    );
+    return <canvas id="starmap" height="2160" width="3840" />;
   }
+
+  /* <defs>
+  <filter id="milkyway-glow">
+    <feDropShadow dx="0" dy="0" stdDeviation="1" floodColor="white" />
+  </filter>
+  </defs> */
 }
