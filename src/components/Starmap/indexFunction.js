@@ -13,7 +13,7 @@ export default function Starmap({ portfolioView }) {
 
   let svg = d3.select("#starmap");
   let projection = d3
-  .geoMercator()
+    .geoEquirectangular()
     .translate([w / 2, h / 2])
     .scale(200);
   // .scale(1000)
