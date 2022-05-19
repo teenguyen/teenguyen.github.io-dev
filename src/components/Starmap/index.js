@@ -1,14 +1,12 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
-// import css from "./index.module.css";
 
 let w = 1920;
 let h = 1080;
 export default class Starmap extends Component {
-  constructor(props) {
-    super(props);
+  constructor() {
     this.state = {
-      data: null,
+      data: null
     };
   }
 
@@ -30,25 +28,25 @@ export default class Starmap extends Component {
         d3.json(`${dataFolder}/stars.json`),
         d3.json(`${dataFolder}/milkyway.json`),
         d3.json(`${dataFolder}/constellations.lines.json`),
-        d3.json(`${dataFolder}/constellations.names.json`),
+        d3.json(`${dataFolder}/constellations.names.json`)
       ])
         .then(
           ([
             starData,
             milkywayData,
             constellationData,
-            constellationNameData,
+            constellationNameData
           ]) =>
             this.setState({
               data: {
                 starData,
                 milkywayData,
                 constellationData,
-                constellationNameData,
+                constellationNameData
               },
               ctx,
               path,
-              projection,
+              projection
             })
         )
         .catch(err => console.log(`Error loading or parsing data. ${err}`));
@@ -57,27 +55,27 @@ export default class Starmap extends Component {
       console.error(`Something somewhere went wrong :( ${e}`);
     }
 
-    let drag = d3.drag().on("drag", () => {
-      const rotate = projection.rotate();
-      const k = 25 / projection.scale();
-      projection.rotate([
-        rotate[0] + d3.event.dx * k,
-        rotate[1] - d3.event.dy * k,
-      ]);
-      path = d3.geoPath(projection);
-      this.drawData();
-    });
-    let zoom = d3.zoom().on("zoom", () => {
-      if (d3.event.transform.k > 0.3) {
-        projection.scale(projection.scale() * d3.event.transform.k);
-        path = d3.geoPath(projection);
-        this.drawData();
-      } else {
-        d3.event.transform.k = 0.3;
-      }
-    });
-
-    canvas.call(drag).call(zoom);
+    // let drag = d3.drag().on("drag", () => {
+    //   const rotate = projection.rotate();
+    //   const k = 25 / projection.scale();
+    //   projection.rotate([
+    //     rotate[0] + d3.event.dx * k,
+    //     rotate[1] - d3.event.dy * k,
+    //   ]);
+    //   path = d3.geoPath(projection);
+    //   this.drawData();
+    // });
+    // let zoom = d3.zoom().on("zoom", () => {
+    //   if (d3.event.transform.k > 0.3) {
+    //     projection.scale(projection.scale() * d3.event.transform.k);
+    //     path = d3.geoPath(projection);
+    //     this.drawData();
+    //   } else {
+    //     d3.event.transform.k = 0.3;
+    //   }
+    // });
+    //
+    // canvas.call(drag).call(zoom);
 
     d3.timer(elapsed => {
       const rotate = projection.rotate();
@@ -89,14 +87,9 @@ export default class Starmap extends Component {
   }
 
   drawData() {
-    let { portfolioView } = this.props;
     let { data, ctx, path, projection } = this.state;
-    let {
-      starData,
-      milkywayData,
-      constellationData,
-      constellationNameData,
-    } = data;
+    let { starData, milkywayData, constellationData, constellationNameData } =
+      data;
 
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
@@ -118,7 +111,7 @@ export default class Starmap extends Component {
     starData.features.forEach(star => {
       ctx.beginPath();
       ctx.fillStyle = `rgba(255, 255, 255, ${
-        (portfolioView ? 0.25 : 1) * Math.abs(star.properties.bv)
+        (this.props.portfolioView ? 0.25 : 1) * Math.abs(star.properties.bv)
       })`;
       starPath(star);
       ctx.fill();
@@ -133,13 +126,15 @@ export default class Starmap extends Component {
 
     constellationData.features.forEach(constellation => {
       ctx.beginPath();
-      ctx.lineWidth = portfolioView ? 1 : 2;
-      ctx.strokeStyle = `rgba(255, 255, 255, ${portfolioView ? 0.1 : 0.2})`;
+      ctx.lineWidth = this.props.portfolioView ? 1 : 2;
+      ctx.strokeStyle = `rgba(255, 255, 255, ${
+        this.props.portfolioView ? 0.1 : 0.2
+      })`;
       path(constellation);
       ctx.stroke();
     });
 
-    if (!portfolioView) {
+    if (!this.props.portfolioView) {
       constellationNameData.features.forEach(name => {
         let [x, y] = projection(name.geometry.coordinates);
         x = x.toFixed(3);
@@ -171,10 +166,4 @@ export default class Starmap extends Component {
   render() {
     return <canvas id="starmap" height="2160" width="3840" />;
   }
-
-  /* <defs>
-  <filter id="milkyway-glow">
-    <feDropShadow dx="0" dy="0" stdDeviation="1" floodColor="white" />
-  </filter>
-  </defs> */
 }
