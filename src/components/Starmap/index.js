@@ -5,6 +5,8 @@ let w = 1920;
 let h = 1080;
 export default class Starmap extends Component {
   constructor() {
+    super();
+
     this.state = {
       data: null
     };
@@ -16,7 +18,6 @@ export default class Starmap extends Component {
     let projection = d3
       .geoMercator()
       .translate([w / 2, h / 2])
-      // .scale(200);
       .scale(1000)
       .angle(15);
     let path = d3.geoPath(projection, ctx);
@@ -144,7 +145,7 @@ export default class Starmap extends Component {
         let cornerRadius = 8;
 
         ctx.beginPath();
-        ctx.strokeStyle = "rgba(20, 24, 82, 0.9)";
+        ctx.strokeStyle = "rgba(20, 24, 82, 0.65)";
         ctx.lineJoin = "round";
         ctx.lineWidth = 16;
         ctx.strokeRect(

@@ -1,5 +1,31 @@
+:root {
+  --panel-color: rgba(255, 255, 255, 0.1);
+}
+
+.contact {
+  display: flex;
+  gap: 2em;
+}
+
+.banner {
+  display: grid;
+  background-color: var(--panel-color);
+  padding: 32px 18vw;
+}
+
+.panel {
+  display: grid;
+  background-color: var(--panel-color);
+  margin: 32px 18vw;
+  padding: 32px;
+}
+
+#starmap {
+  position: fixed;
+}
+
 header {
-  height: calc(100vh + 150px);
+  height: 100vh;
   width: 100vw;
   margin: 0 10vw;
   display: flex;
@@ -7,27 +33,16 @@ header {
   justify-content: center;
 }
 
-/* bump it over to make it look nice with the h2 */
-header h1 {
-  margin-left: -36px;
-}
-
-header .contact {
-  margin: 2em 0;
-  display: flex;
-  gap: 2em;
-}
-
-header a,
 header svg {
   height: 2.5em;
   width: 2.5em;
   stroke-width: 0.75;
   stroke: white;
+  transition: 150ms ease-in-out;
 }
 
-#starmap {
-  position: fixed;
+header a:hover svg {
+  transform: translateY(-8px);
 }
 
 main {
@@ -36,43 +51,182 @@ main {
   gap: 150px;
 }
 
-@media screen and (min-width: 1281px) {
-  #info {
-    display: grid;
-    grid-template-columns: minmax(100px, 300px) 1fr;
-    align-items: center;
-    padding: 16px 18vw;
-    background-color: rgba(255, 255, 255, 0.15);
-    margin-bottom: 100px; /* extra padding for welcome img */
-  }
-
-  #info img {
-    height: 100px;
-    transform: scale(5);
-  }
-}
-
-@media screen and (max-width: 1280px) {
-  #info {
-    display: grid;
-    grid-auto-flow: row;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    background-color: rgba(255, 255, 255, 0.15);
-    position: relative;
-    padding: 200px 100px 10px;
-  }
-
-  #info img {
-    height: 80px;
-    transform: scale(4);
-    text-align: center;
-    position: absolute;
-    top: -10px;
-  }
-}
-
 #info p {
-  font-size: 2em;
+  line-height: 1.15;
+  font-weight: 100;
 }
+
+#exp {
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+  justify-content: center;
+  text-align: center;
+}
+
+#exp .panel {
+  padding: 32px;
+  row-gap: 4rem;
+}
+
+#exp .current img {
+  height: 150px;
+}
+
+#exp-previous {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  justify-content: center;
+  gap: 2rem;
+}
+
+#exp-previous img {
+  height: 100px;
+}
+
+#exp-previous p {
+  font-size: 1rem;
+}
+
+footer {
+  gap: 2rem;
+  margin-top: 150px;
+}
+
+footer.panel {
+  padding: 64px 18vw 100px;
+}
+
+footer .contact {
+  display: grid;
+  justify-content: flex-start;
+}
+
+footer p,
+footer a {
+  color: white;
+  font-size: 2rem;
+  font-weight: 400;
+}
+
+footer p {
+  font-weight: bold;
+}
+
+#footerImgSpan {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* large screens */
+@media screen and (min-width: 1281px) {
+  /* bump it over to make it look nice with the h2 */
+  header h1 {
+    margin-left: -36px;
+  }
+
+  header .contact {
+    margin: 2em 0;
+  }
+
+  #info p {
+    font-size: 2rem;
+  }
+
+  footer {
+    grid-auto-flow: column;
+  }
+
+  footer .contact {
+    grid-auto-flow: column;
+  }
+
+  footer #footerContactSpan {
+    margin-bottom: 4rem;
+  }
+
+  footer #footerImg {
+    height: 100px;
+    transform: scale(4) translateY(-32px);
+  }
+}
+
+/* small screens */
+@media screen and (max-width: 1280px) {
+  /* bump it over to make it look nice with the h2 */
+  header h1 {
+    margin-left: -9px;
+  }
+
+  header > div {
+    display: grid;
+    padding-top: 0.25rem;
+    gap: 1em;
+  }
+
+  #info p {
+    font-size: 1.75rem;
+  }
+
+  footer {
+    grid-auto-flow: row;
+  }
+
+  footer .contact {
+    grid-auto-flow: row;
+    gap: 1rem;
+    padding-left: 2rem;
+  }
+
+  footer #footerContactSpan {
+    display: grid;
+    gap: 1rem;
+  }
+
+  footer #footerImg {
+    height: 400px;
+  }
+}
+
+/* tech panel responsiveness start */
+@media screen and (min-width: 1751px) {
+  #tech {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media screen and (min-width: 1601px) and (max-width: 1750px) {
+  #tech {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media screen and (min-width: 1401px) and (max-width: 1600px) {
+  #tech {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media screen and (min-width: 961px) and (max-width: 1400px) {
+  #tech {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (min-width: 801px) and (max-width: 960px) {
+  #tech {
+    padding-left: 100px;
+    padding-right: 100px;
+    row-gap: 1rem;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  #tech {
+    padding-left: 64px;
+    padding-right: 64px;
+    row-gap: 1rem;
+  }
+}
+/* tech panel responsiveness end */

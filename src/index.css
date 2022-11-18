@@ -1,15 +1,32 @@
+/* colour palette https://coolors.co/28166b-5b2c83-9d4685-ca819b-f7bbb0 */
+
 * {
   box-sizing: border-box;
 }
 
-body {
-  margin: 0;
+*:not(canvas) {
+  z-index: 1;
+}
+
+html {
   overflow-x: hidden;
   color: white;
   font-family: "Open Sans", "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
     "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: rgb(40, 22, 107);
+  background: linear-gradient(
+    125deg,
+    rgb(40, 22, 107) 0%,
+    rgb(91, 44, 131) 15%,
+    rgb(247, 187, 176) 100%
+  );
+  background-attachment: fixed;
+}
+
+body {
+  margin: 0;
 }
 
 code {
@@ -23,30 +40,58 @@ h3,
 h4,
 h5,
 h6,
-p {
+p,
+a,
+li,
+button {
   font-family: "Work Sans", sans-serif;
-  font-weight: 100;
   margin: 0;
 }
 
+/* large screens */
+@media screen and (min-width: 1281px) {
+  h1 {
+    font-size: 10em;
+  }
+}
+
+/* small screens */
+@media screen and (max-width: 1280px) {
+  h1 {
+    font-size: 8em;
+  }
+}
+
 h1 {
-  font-size: 10em;
+  font-weight: 100;
 }
 
 h2 {
   font-size: 2em;
+  font-weight: 100;
 }
 
 h3 {
   font-size: 1.5em;
+  font-weight: 300;
+}
+
+sub {
+  font-size: 0.8rem;
+  vertical-align: super;
 }
 
 p {
-  font-size: 1.5em;
-  font-weight: 100;
-  line-height: 2;
+  font-size: 1.25em;
+  line-height: 1.15;
+  font-weight: 300;
 }
 
-svg {
-  z-index: 1;
+li {
+  font-size: 1.15rem;
+  font-weight: 300;
+}
+
+button {
+  font-size: 1.25rem;
 }

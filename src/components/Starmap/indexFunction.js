@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import * as d3 from "d3";
-import css from "./index.module.css";
+import css from "./index.css";
 
 let w = 1920;
 let h = 1080;
@@ -38,14 +38,14 @@ export default function Starmap({ portfolioView }) {
         d3.json(`${dataFolder}/stars.json`),
         d3.json(`${dataFolder}/milkyway.json`),
         d3.json(`${dataFolder}/constellations.lines.json`),
-        d3.json(`${dataFolder}/constellations.names.json`),
+        d3.json(`${dataFolder}/constellations.names.json`)
       ])
         .then(
           ([
             starData,
             milkywayData,
             constellationLineData,
-            constellationNameData,
+            constellationNameData
           ]) => {
             // geometry: {type: "Point", coordinates: Array(2)}
             // id: 88
