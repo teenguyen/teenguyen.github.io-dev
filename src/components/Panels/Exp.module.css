@@ -1,0 +1,31 @@
+#exp {
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+  justify-content: center;
+  text-align: center;
+}
+
+#exp .panel {
+  padding: 32px;
+  row-gap: 4rem;
+}
+
+#exp .current img {
+  height: 150px;
+}
+
+#expPrevious {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  justify-content: center;
+  gap: 2rem;
+}
+
+#expPrevious img {
+  height: 100px;
+}
+
+#expPrevious p {
+  font-size: 1rem;
+}

@@ -16,7 +16,7 @@
 .panel {
   display: grid;
   background-color: var(--panel-color);
-  margin: 32px 18vw;
+  margin: 0 18vw;
   padding: 32px;
 }
 
@@ -56,38 +56,6 @@ main {
   font-weight: 100;
 }
 
-#exp {
-  display: flex;
-  flex-direction: column;
-  gap: 5rem;
-  justify-content: center;
-  text-align: center;
-}
-
-#exp .panel {
-  padding: 32px;
-  row-gap: 4rem;
-}
-
-#exp .current img {
-  height: 150px;
-}
-
-#exp-previous {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  justify-content: center;
-  gap: 2rem;
-}
-
-#exp-previous img {
-  height: 100px;
-}
-
-#exp-previous p {
-  font-size: 1rem;
-}
-
 footer {
   gap: 2rem;
   margin-top: 150px;
@@ -102,18 +70,13 @@ footer .contact {
   justify-content: flex-start;
 }
 
-footer p,
 footer a {
   color: white;
   font-size: 2rem;
   font-weight: 400;
 }
 
-footer p {
-  font-weight: bold;
-}
-
-#footerImgSpan {
+#footerImgDiv {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -142,8 +105,8 @@ footer p {
     grid-auto-flow: column;
   }
 
-  footer #footerContactSpan {
-    margin-bottom: 4rem;
+  footer #footerContactDiv {
+    padding-bottom: 5rem;
   }
 
   footer #footerImg {
@@ -179,7 +142,7 @@ footer p {
     padding-left: 2rem;
   }
 
-  footer #footerContactSpan {
+  footer #footerContactDiv {
     display: grid;
     gap: 1rem;
   }
@@ -188,45 +151,3 @@ footer p {
     height: 400px;
   }
 }
-
-/* tech panel responsiveness start */
-@media screen and (min-width: 1751px) {
-  #tech {
-    grid-template-columns: repeat(5, 1fr);
-  }
-}
-
-@media screen and (min-width: 1601px) and (max-width: 1750px) {
-  #tech {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-@media screen and (min-width: 1401px) and (max-width: 1600px) {
-  #tech {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media screen and (min-width: 961px) and (max-width: 1400px) {
-  #tech {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media screen and (min-width: 801px) and (max-width: 960px) {
-  #tech {
-    padding-left: 100px;
-    padding-right: 100px;
-    row-gap: 1rem;
-  }
-}
-
-@media screen and (max-width: 800px) {
-  #tech {
-    padding-left: 64px;
-    padding-right: 64px;
-    row-gap: 1rem;
-  }
-}
-/* tech panel responsiveness end */
