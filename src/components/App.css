@@ -1,22 +1,47 @@
+:root {
+  --panel-color: rgba(255, 255, 255, 0.1);
+  --theme-color: rgb(40, 22, 107);
+  --height: 1.25rem;
+  /* --height: 47%; */
+}
+
+#portfolio {
+  transition: 500ms ease-in-out;
+}
+
+#starmap {
+  cursor: grab;
+}
+
+#starmap:active {
+  cursor: grabbing;
+}
+
 .textLink {
+  color: white;
   font-weight: 400;
   text-decoration: none;
   background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)),
     linear-gradient(to right, rgb(40, 22, 107), rgb(91, 44, 131) 75%);
-  background-size: 100% 1.25rem, 0 1.25rem;
+  background-size: 100% var(--height), 0 var(--height);
   background-position: 100% 80%, 0 80%;
   background-repeat: no-repeat;
   transition: background-size 250ms;
+  border: none;
   padding: 2px;
   cursor: pointer;
 }
 
+.textLink:visited {
+  color: white;
+}
+
 .textLink:hover {
-  background-size: 0 1.25rem, 100% 1.25rem;
+  background-size: 0 var(--height), 100% var(--height);
 }
 
 #starmapButton {
-  color: rgb(40, 22, 107);
+  color: var(--theme-color);
   font-weight: 700;
   font-size: 1.25rem;
   position: fixed;

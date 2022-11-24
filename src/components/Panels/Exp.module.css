@@ -11,21 +11,28 @@
   row-gap: 4rem;
 }
 
-#exp .current img {
+#exp #current img {
   height: 150px;
 }
 
-#expPrevious {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+.previousJobs {
+  display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 2rem;
 }
 
-#expPrevious img {
+.previousJobs img {
   height: 100px;
 }
 
-#expPrevious p {
+.previousJobs p {
   font-size: 1rem;
+}
+
+.previousJob {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 0 250px;
 }

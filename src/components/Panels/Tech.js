@@ -63,6 +63,7 @@ export default function Tech() {
         <h3>css preprocessors</h3>
         <ul>
           <li>css modules</li>
+          <li>jss</li>
           <li>styled components</li>
           <li>sass</li>
         </ul>
@@ -71,7 +72,16 @@ export default function Tech() {
         <h3>other libraries</h3>
         <ul>
           <li>d3.js</li>
-          <li>gsap</li>
+          <li>greensock gsap</li>
+        </ul>
+      </span>
+      <span>
+        <h3>other skills</h3>
+        <ul>
+          <li>agile</li>
+          <li>object oriented programming</li>
+          <li>atomic design</li>
+          <li>component library</li>
         </ul>
       </span>
     </div>

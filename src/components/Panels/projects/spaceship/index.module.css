@@ -1,0 +1,13 @@
+.codepen {
+  height: 200px;
+  width: 300px;
+  overflow: hidden;
+  background-color: #252330;
+}
+
+.codepen svg {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}

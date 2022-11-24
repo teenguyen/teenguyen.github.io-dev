@@ -1,5 +1,5 @@
 #tech {
-  row-gap: 2rem;
+  gap: 2rem;
 }
 
 @media screen and (min-width: 1751px) {
@@ -28,16 +28,14 @@
 
 @media screen and (min-width: 801px) and (max-width: 960px) {
   #tech {
-    padding-left: 100px;
-    padding-right: 100px;
+    padding: 0 100px;
     row-gap: 1rem;
   }
 }
 
 @media screen and (max-width: 800px) {
   #tech {
-    padding-left: 64px;
-    padding-right: 64px;
+    padding: 0 64px;
     row-gap: 1rem;
   }
 }

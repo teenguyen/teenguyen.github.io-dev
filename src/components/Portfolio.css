@@ -1,10 +1,6 @@
-:root {
-  --panel-color: rgba(255, 255, 255, 0.1);
-}
-
 .contact {
   display: flex;
-  gap: 2em;
+  gap: 2rem;
 }
 
 .banner {
@@ -33,9 +29,9 @@ header {
   justify-content: center;
 }
 
-header svg {
-  height: 2.5em;
-  width: 2.5em;
+header .contact svg {
+  height: 2.5rem;
+  width: 2.5rem;
   stroke-width: 0.75;
   stroke: white;
   transition: 150ms ease-in-out;
@@ -66,7 +62,7 @@ footer.panel {
 }
 
 footer .contact {
-  display: grid;
+  display: flex;
   justify-content: flex-start;
 }
 
@@ -102,7 +98,7 @@ footer a {
   }
 
   footer .contact {
-    grid-auto-flow: column;
+    flex-direction: row;
   }
 
   footer #footerContactDiv {
@@ -125,7 +121,7 @@ footer a {
   header > div {
     display: grid;
     padding-top: 0.25rem;
-    gap: 1em;
+    gap: 1rem;
   }
 
   #info p {
@@ -137,7 +133,7 @@ footer a {
   }
 
   footer .contact {
-    grid-auto-flow: row;
+    flex-direction: column;
     gap: 1rem;
     padding-left: 2rem;
   }

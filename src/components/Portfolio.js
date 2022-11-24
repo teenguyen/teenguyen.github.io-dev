@@ -1,14 +1,14 @@
 import React from "react";
 import { Codepen, GitHub, Linkedin, Send } from "react-feather";
 import welcomeImg from "./images/welcome.png";
-import Tech from "./Panels/Tech";
-import Exp from "./Panels/Exp";
-import MiniProjects from "./Panels/MiniProjects";
+import Tech from "./panels/Tech";
+import Exp from "./panels/Exp";
+import Projects from "./panels/Projects";
 import "./Portfolio.css";
 
-export default function Portfolio(props) {
+export default function Portfolio({ setPortfolioView, ...props }) {
   return (
-    <div id="portfolio" {...props}>
+    <div {...props}>
       <header>
         <h1>Theresa Nguyen</h1>
         <div>
@@ -17,7 +17,7 @@ export default function Portfolio(props) {
             <a title="Github" href="https://github.com/teenguyen">
               <GitHub />
             </a>
-            <a title="Codepen" href="https://codepen.io/ryuuseiistar">
+            <a title="Codepen" href="https://codepen.io/teenguyen">
               <Codepen />
             </a>
             <a title="LinkedIn" href="https://linkedin.com/in/theresaanguyen">
@@ -44,45 +44,57 @@ export default function Portfolio(props) {
         </div>
         <Tech />
         <Exp />
-        <MiniProjects />
+        <Projects setPortfolioView={setPortfolioView} />
       </main>
 
       <footer className="banner">
         <div id="footerContactDiv">
           <h2>keep in touch with me via:</h2>
           <span className="contact">
-            <a
-              className="textLink"
-              title="Email"
-              href="mailto:tee.nguyen+githubpage@live.com.au"
-            >
-              email
-            </a>
-            <a
-              className="textLink"
-              title="LinkedIn"
-              href="https://linkedin.com/in/theresaanguyen"
-            >
-              linkedin
-            </a>
-            <a
-              className="textLink"
-              title="Github"
-              href="https://github.com/teenguyen"
-            >
-              github
-            </a>
-            <a
-              className="textLink"
-              title="Codepen"
-              href="https://codepen.io/ryuuseiistar"
-            >
-              codepen
-            </a>
+            <span>
+              <a
+                className="textLink"
+                title="Email"
+                href="mailto:tee.nguyen+githubpage@live.com.au"
+              >
+                email
+              </a>
+            </span>
+            <span>
+              <a
+                className="textLink"
+                title="LinkedIn"
+                href="https://linkedin.com/in/theresaanguyen"
+              >
+                linkedin
+              </a>
+            </span>
+            <span>
+              <a
+                className="textLink"
+                title="Github"
+                href="https://github.com/teenguyen"
+              >
+                github
+              </a>
+            </span>
+            <span>
+              <a
+                className="textLink"
+                title="Codepen"
+                href="https://codepen.io/teenguyen"
+              >
+                codepen
+              </a>
+            </span>
           </span>
         </div>
         <div id="footerImgDiv">
-          <img id="footerImg" src={welcomeImg} alt="girl with two cats" />
+          <img
+            id="footerImg"
+            src={welcomeImg}
+            alt="cartoon girl with two cats"
+          />
         </div>
       </footer>
     </div>
