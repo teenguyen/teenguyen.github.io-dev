@@ -8,13 +8,14 @@
   z-index: 1;
 }
 
-html {
+body {
   overflow-x: hidden;
   color: white;
   font-family: "Open Sans", "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
     "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  margin: 0;
   background: rgb(40, 22, 107);
   background: linear-gradient(
     125deg,
@@ -23,13 +24,8 @@ html {
     rgb(247, 187, 176) 100%
   );
   background-attachment: fixed;
-
   /* prevent switching between portfolioView shifting contents */
   overflow-y: scroll;
-}
-
-body {
-  margin: 0;
 }
 
 code {
