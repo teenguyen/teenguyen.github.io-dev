@@ -1,8 +1,6 @@
 :root {
   --panel-color: rgba(255, 255, 255, 0.1);
   --theme-color: rgb(40, 22, 107);
-  --height: 1.25rem;
-  /* --height: 47%; */
 }
 
 #portfolio {
@@ -23,7 +21,7 @@
   text-decoration: none;
   background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)),
     linear-gradient(to right, rgb(40, 22, 107), rgb(91, 44, 131) 75%);
-  background-size: 100% var(--height), 0 var(--height);
+  background-size: 100% 1.25rem, 0 1.25rem;
   background-position: 100% 80%, 0 80%;
   background-repeat: no-repeat;
   transition: background-size 250ms;
@@ -37,7 +35,7 @@
 }
 
 .textLink:hover {
-  background-size: 0 var(--height), 100% var(--height);
+  background-size: 0 1.25rem, 100% 1.25rem;
 }
 
 #starmapButton {

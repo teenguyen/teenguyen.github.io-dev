@@ -50,7 +50,7 @@ function App() {
         id="starmapButton"
         className="textLink"
         onClick={() => setPortfolioView(!portfolioView)}
-        style={{ visibility: showButton ? "visible" : "hidden" }}
+        style={{ display: showButton ? "block" : "none" }}
       >
         {portfolioView
           ? "Show me the starmap!"
