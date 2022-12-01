@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import /* ChevronsLeft, ChevronsRight */ "react-feather";
 import Chip from "./components/Chip";
-import SpaceshipPen from "./projects/spaceship";
-import RobotPen from "./projects/robot";
+import SpaceshipPen from "./codepens/spaceship";
+import RobotPen from "./codepens/robot";
 import motifImg from "../images/proj/motif.png";
 import produce48Img from "../images/proj/produce48.png";
 import starmapImg from "../images/proj/starmap.png";
@@ -90,6 +90,13 @@ export default function Projects({ setPortfolioView }) {
           <Chip label="ES6+" />
           <Chip label="Sorting Algorithms" />
         </div>
+        <br />
+        <a
+          className="textLink"
+          href="https://theresa-nguyen.com/projects/produce48-sorter/index.html"
+        >
+          https://theresa-nguyen.com/projects/produce48-sorter
+        </a>
       </>
     ),
     darkText: true
