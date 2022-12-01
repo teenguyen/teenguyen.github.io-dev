@@ -5,7 +5,7 @@ const WIDTH = 1920;
 const HEIGHT = 1080;
 const SCALE = 1000;
 
-// WIP
+// WIP trying to convert this to a React function
 export default function Starmap({ portfolioView }) {
   let [data, setData] = useState(null);
   let [canvas, setCanvas] = useState(null);

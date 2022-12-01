@@ -8,11 +8,25 @@
 }
 
 #starmap {
+  position: fixed;
   cursor: grab;
 }
 
 #starmap:active {
   cursor: grabbing;
+}
+
+#starmapButton {
+  color: var(--theme-color);
+  font-weight: 700;
+  font-size: 1.25rem;
+  position: fixed;
+  bottom: 50px;
+  right: 50px;
+}
+
+#starmapButton:hover {
+  color: white;
 }
 
 .textLink {
@@ -36,17 +50,4 @@
 
 .textLink:hover {
   background-size: 0 1.25rem, 100% 1.25rem;
-}
-
-#starmapButton {
-  color: var(--theme-color);
-  font-weight: 700;
-  font-size: 1.25rem;
-  position: fixed;
-  bottom: 50px;
-  right: 50px;
-}
-
-#starmapButton:hover {
-  color: white;
 }

@@ -9,18 +9,22 @@ export default class Starmap extends Component {
     super();
 
     this.state = {
-      data: null
+      data: null,
+      height: HEIGHT,
+      width: WIDTH
     };
+
+    this.updateHeightWidth = this.updateHeightWidth.bind(this);
   }
 
   async componentDidMount() {
     let canvas = d3.select("#starmap");
     let ctx = canvas.node().getContext("2d");
-    let projection = d3
-      .geoMercator()
-      .translate([WIDTH / 2, HEIGHT / 2])
-      .scale(SCALE)
-      .angle(15);
+    let projection = d3.geoMercator().scale(SCALE).angle(15);
+
+    let height = window.innerHeight;
+    let width = window.innerWidth;
+    window.addEventListener("resize", this.updateHeightWidth);
 
     let dataFolder = process.env.PUBLIC_URL + "/data";
     await Promise.all([
@@ -50,6 +54,8 @@ export default class Starmap extends Component {
                 constellationData,
                 constellationNameData
               },
+              height,
+              width,
               canvas,
               ctx,
               projection
@@ -60,6 +66,7 @@ export default class Starmap extends Component {
         }
       )
       .catch(err => console.log(`Error loading or parsing data. ${err}`));
+    this.drawData();
     this.drawData();
 
     // disabling until performance is improved :(
@@ -106,9 +113,17 @@ export default class Starmap extends Component {
     }
   }
 
+  updateHeightWidth() {
+    let height = window.innerHeight;
+    let width = window.innerWidth;
+
+    this.setState({ height, width });
+    this.drawData();
+  }
+
   drawData() {
     let { portfolioView } = this.props;
-    let { data, ctx, projection } = this.state;
+    let { data, height, width, ctx, projection } = this.state;
     let {
       miniStarData,
       starData,
@@ -117,7 +132,7 @@ export default class Starmap extends Component {
       constellationNameData
     } = data;
 
-    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+    ctx.clearRect(0, 0, width, height);
 
     let graticuleData = d3.geoGraticule10();
     let graticulePath = d3.geoPath(projection, ctx);
@@ -172,8 +187,9 @@ export default class Starmap extends Component {
         let [x, y] = projection(name.geometry.coordinates);
         x = x.toFixed(3);
         y = y.toFixed(3);
-        let width = ctx.measureText(name.properties.name).width + 8;
-        let height = 22;
+        let constellationWidth =
+          ctx.measureText(name.properties.name).width + 8;
+        let constellationHeight = 22;
         let cornerRadius = 8;
 
         ctx.beginPath();
@@ -183,8 +199,8 @@ export default class Starmap extends Component {
         ctx.strokeRect(
           x + cornerRadius / 2,
           y + cornerRadius / 2,
-          width - cornerRadius,
-          height - cornerRadius
+          constellationWidth - cornerRadius,
+          constellationHeight - cornerRadius
         );
 
         ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
@@ -196,7 +212,17 @@ export default class Starmap extends Component {
     }
   }
 
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateHeightWidth);
+  }
+
   render() {
-    return <canvas id="starmap" height="2160" width="3840" />;
+    return (
+      <canvas
+        id="starmap"
+        height={this.state.height}
+        width={this.state.width}
+      />
+    );
   }
 }
