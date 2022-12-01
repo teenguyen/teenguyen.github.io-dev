@@ -9,10 +9,13 @@
 
 #starmap {
   position: fixed;
+}
+
+#starmap.main {
   cursor: grab;
 }
 
-#starmap:active {
+#starmap.main:active {
   cursor: grabbing;
 }
 
