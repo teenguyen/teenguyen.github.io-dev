@@ -2,13 +2,14 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install dependencies with npm only (no yarn)
-COPY package.json package-lock.json ./
-RUN npm ci
+# Ship pnpm via Corepack (not in PATH on the base image until enabled).
+RUN corepack enable && corepack prepare pnpm@9 --activate
 
-# Copy source after deps to keep layer caching efficient
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+
 COPY . .
 
 EXPOSE 3000
 
-CMD ["npm", "run", "dev", "--", "--hostname", "0.0.0.0"]
+CMD ["pnpm", "run", "dev", "--", ".", "--webpack", "--hostname", "0.0.0.0"]
