@@ -4,10 +4,10 @@ import { useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Starmap from "../demos/starmap/Starmap";
-import HeroScreenOne from "./HeroScreenOne";
-import HeroScreenTwo from "./HeroScreenTwo";
-import styles from "./Hero.module.css";
+import Starmap from "../../demos/starmap/Starmap";
+import ScreenOne from "./ScreenOne";
+import ScreenTwo from "./ScreenTwo";
+import styles from "./index.module.css";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -284,13 +284,13 @@ export default function Hero() {
           />
           <div className={styles.starmapFade} aria-hidden />
         </div>
-        <HeroScreenOne
+        <ScreenOne
           screenOneRef={screenOneRef}
           logoWrapRef={logoWrapRef}
           logoRef={logoRef}
           socialsRef={socialsRef}
         />
-        <HeroScreenTwo
+        <ScreenTwo
           screenTwoRef={screenTwoRef}
           lineOneRef={lineOneRef}
           lineTwoRef={lineTwoRef}

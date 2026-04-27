@@ -1,17 +1,17 @@
 import { RefObject } from "react";
-import styles from "./Hero.module.css";
+import styles from "./index.module.css";
 
-type HeroScreenTwoProps = {
+type ScreenTwoProps = {
   screenTwoRef: RefObject<HTMLDivElement | null>;
   lineOneRef: RefObject<HTMLParagraphElement | null>;
   lineTwoRef: RefObject<HTMLParagraphElement | null>;
 };
 
-export default function HeroScreenTwo({
+export default function ScreenTwo({
   screenTwoRef,
   lineOneRef,
   lineTwoRef,
-}: HeroScreenTwoProps) {
+}: ScreenTwoProps) {
   return (
     <div ref={screenTwoRef} className={styles.heroScreenTwo}>
       <div className={styles.tagText}>
@@ -28,4 +28,3 @@ export default function HeroScreenTwo({
     </div>
   );
 }
-

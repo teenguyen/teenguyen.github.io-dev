@@ -1,7 +1,7 @@
 import { RefObject } from "react";
 import { Codepen, GitHub, Linkedin, Mail } from "react-feather";
-import HeroLogo from "./HeroLogo";
-import styles from "./Hero.module.css";
+import HeroLogo from "./Logo";
+import styles from "./index.module.css";
 
 const SOCIAL_ICON_PROPS = {
   size: "2.5rem",
@@ -24,19 +24,19 @@ const SOCIAL_LINKS = [
   },
 ] as const;
 
-type HeroScreenOneProps = {
+type ScreenOneProps = {
   screenOneRef: RefObject<HTMLDivElement | null>;
   logoWrapRef: RefObject<HTMLDivElement | null>;
   logoRef: RefObject<SVGSVGElement | null>;
   socialsRef: RefObject<HTMLDivElement | null>;
 };
 
-export default function HeroScreenOne({
+export default function ScreenOne({
   screenOneRef,
   logoWrapRef,
   logoRef,
   socialsRef,
-}: HeroScreenOneProps) {
+}: ScreenOneProps) {
   return (
     <>
       <div ref={screenOneRef} className={styles.heroScreenOne}>
@@ -67,4 +67,3 @@ export default function HeroScreenOne({
     </>
   );
 }
-

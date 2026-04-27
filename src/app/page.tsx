@@ -1,5 +1,5 @@
-import Hero from "./sections/Hero";
-import Featured from "./sections/Featured";
+import Hero from "./sections/hero";
+import Featured from "./sections/featured";
 import SectionFlow from "./sections/SectionFlow";
 
 export default function Home() {
