@@ -1,11 +1,12 @@
 import Hero from "./sections/Hero";
+import Featured from "./sections/Featured";
+import SectionFlow from "./sections/SectionFlow";
 
 export default function Home() {
   return (
-    <>
-      <main>
-        <Hero />
-      </main>
-    </>
+    <SectionFlow>
+      <Hero />
+      <Featured />
+    </SectionFlow>
   );
 }

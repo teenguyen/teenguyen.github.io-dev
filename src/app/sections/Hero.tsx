@@ -4,9 +4,9 @@ import { useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Codepen, GitHub, Linkedin, Mail } from "react-feather";
-import HeroLogo from "./HeroLogo";
 import Starmap from "../demos/starmap/Starmap";
+import HeroScreenOne from "./HeroScreenOne";
+import HeroScreenTwo from "./HeroScreenTwo";
 import styles from "./Hero.module.css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -35,31 +35,15 @@ const TAGLINE_LINE_TWO_START = 1.24;
 const TIMELINE_START = 0;
 const SCROLL_PROGRESS_MIN = 0.01;
 const SCROLL_PROGRESS_MAX = 0.99;
-const SCROLL_TRIGGER_END = "+=10%";
-const SOCIAL_ICON_PROPS = {
-  size: "2.5rem",
-  strokeWidth: LOGO_STROKE_WIDTH,
-  color: "var(--theme-color)",
-} as const;
-
-const SOCIAL_LINKS = [
-  { href: "https://codepen.io/teenguyen", Icon: Codepen, label: "Codepen" },
-  { href: "https://github.com/teenguyen", Icon: GitHub, label: "GitHub" },
-  {
-    href: "https://www.linkedin.com/in/theresaanguyen/",
-    Icon: Linkedin,
-    label: "LinkedIn",
-  },
-  {
-    href: "mailto:tee.nguyen+portfolio@live.com.au",
-    Icon: Mail,
-    label: "Email",
-  },
-] as const;
-
+const SCROLL_TRIGGER_END = "bottom bottom";
+const SCREEN_TWO_INITIAL_Y = 24;
+const SCREEN_TWO_REVEAL_DURATION = 0.45;
 export default function Hero() {
   const [beginCelestialReveal, setBeginCelestialReveal] = useState(false);
   const rootRef = useRef<HTMLElement | null>(null);
+  const stageRef = useRef<HTMLDivElement | null>(null);
+  const screenOneRef = useRef<HTMLDivElement | null>(null);
+  const screenTwoRef = useRef<HTMLDivElement | null>(null);
   const starmapWrapRef = useRef<HTMLDivElement | null>(null);
   const logoWrapRef = useRef<HTMLDivElement | null>(null);
   const logoRef = useRef<SVGSVGElement | null>(null);
@@ -71,6 +55,9 @@ export default function Hero() {
     () => {
       if (
         !rootRef.current ||
+        !stageRef.current ||
+        !screenOneRef.current ||
+        !screenTwoRef.current ||
         !starmapWrapRef.current ||
         !logoWrapRef.current ||
         !socialsRef.current ||
@@ -88,6 +75,11 @@ export default function Hero() {
       gsap.set(logoWrapRef.current, { opacity: 1 });
       gsap.set(socialsRef.current, { y: 0 });
       gsap.set(starmapWrapRef.current, { y: 0 });
+      gsap.set(screenOneRef.current, { autoAlpha: 1 });
+      gsap.set(screenTwoRef.current, {
+        autoAlpha: 0,
+        y: SCREEN_TWO_INITIAL_Y,
+      });
 
       const logoPaths = Array.from(
         logoRef.current?.querySelectorAll("path") ?? [],
@@ -212,6 +204,23 @@ export default function Hero() {
           },
           TIMELINE_START,
         )
+        .to(
+          screenOneRef.current,
+          {
+            autoAlpha: 0,
+            duration: HERO_FADE_DURATION,
+          },
+          0.22,
+        )
+        .to(
+          screenTwoRef.current,
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: SCREEN_TWO_REVEAL_DURATION,
+          },
+          0.48,
+        )
         .to(lineOneRef.current, revealTagLine, TAGLINE_LINE_ONE_START)
         .to(lineTwoRef.current, revealTagLine, TAGLINE_LINE_TWO_START);
 
@@ -230,9 +239,10 @@ export default function Hero() {
 
       ScrollTrigger.create({
         trigger: rootRef.current,
-        pin: rootRef.current,
+        pin: stageRef.current,
         start: "top top",
         end: SCROLL_TRIGGER_END,
+        pinSpacing: false,
         anticipatePin: 1,
         invalidateOnRefresh: true,
         onRefresh: (self) => {
@@ -266,45 +276,25 @@ export default function Hero() {
 
   return (
     <section ref={rootRef} className={styles.hero}>
-      <div ref={starmapWrapRef} className={styles.starmapBackground}>
-        <Starmap
-          className={styles.starmapFill}
-          beginCelestialReveal={beginCelestialReveal}
+      <div ref={stageRef} className={styles.stage}>
+        <div ref={starmapWrapRef} className={styles.starmapBackground}>
+          <Starmap
+            className={styles.starmapFill}
+            beginCelestialReveal={beginCelestialReveal}
+          />
+          <div className={styles.starmapFade} aria-hidden />
+        </div>
+        <HeroScreenOne
+          screenOneRef={screenOneRef}
+          logoWrapRef={logoWrapRef}
+          logoRef={logoRef}
+          socialsRef={socialsRef}
         />
-        <div className={styles.starmapFade} aria-hidden />
-      </div>
-      <header className={styles.header}>
-        <div ref={logoWrapRef} className={styles.logoWrap}>
-          <HeroLogo ref={logoRef} className={styles.logo} />
-        </div>
-        <div ref={socialsRef} className={styles.socials}>
-          {SOCIAL_LINKS.map(({ href, Icon, label }) => {
-            const isExternal = href.startsWith("http");
-            return (
-              <a
-                key={href}
-                href={href}
-                target={isExternal ? "_blank" : undefined}
-                rel={isExternal ? "noopener noreferrer" : undefined}
-                aria-label={label}
-              >
-                <Icon {...SOCIAL_ICON_PROPS} />
-              </a>
-            );
-          })}
-        </div>
-      </header>
-
-      <div className={styles.tagText}>
-        <p ref={lineOneRef} className={styles.tagTextTop}>
-          I build the parts of products people{" "}
-          <span className={styles.tagTextItalics}>actually</span>{" "}
-          <span className={styles.tagTextTheme}>touch–</span>
-        </p>
-        <p ref={lineTwoRef} className={styles.tagTextBottom}>
-          motion, rhythm, and the details most never notice, but always{" "}
-          <span className={styles.tagTextThemeLight}>feel</span>
-        </p>
+        <HeroScreenTwo
+          screenTwoRef={screenTwoRef}
+          lineOneRef={lineOneRef}
+          lineTwoRef={lineTwoRef}
+        />
       </div>
     </section>
   );

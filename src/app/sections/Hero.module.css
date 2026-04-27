@@ -1,8 +1,29 @@
 .hero {
-  --hero-starmap-overscroll: 55vh;
+  --hero-starmap-overscroll: 50vh;
 
   position: relative;
+  min-height: 120vh;
+  padding: 0;
+}
+
+.stage {
+  position: sticky;
+  top: 0;
   height: 100vh;
+  overflow: hidden;
+}
+
+.heroScreenOne,
+.heroScreenTwo {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.heroScreenTwo {
+  display: flex;
+  align-items: flex-end;
+  padding: 4rem;
 }
 
 .starmapBackground {
@@ -45,12 +66,10 @@
 
 .header {
   position: relative;
-  z-index: 2;
+  z-index: 1;
   height: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
   padding: 4rem;
 }
 
@@ -66,10 +85,16 @@
 
 .socials {
   display: flex;
-  justify-content: space-between;
   gap: 1.8rem;
-  align-self: center;
   will-change: transform;
+}
+
+.socialsLayer {
+  position: absolute;
+  top: 50%;
+  right: 4rem;
+  z-index: 3;
+  transform: translateY(-50%);
 }
 
 .socials > * {
@@ -90,10 +115,8 @@
 }
 
 .tagText {
-  position: absolute;
-  left: 4rem;
-  bottom: 4rem;
-  max-width: min(52rem, calc(100% - 8rem));
+  position: relative;
+  max-width: min(52rem, 100%);
   z-index: 3;
   pointer-events: none;
 }
@@ -136,11 +159,8 @@
   color: var(--theme-color-72);
 }
 
-@media (max-width: calc(4rem + 31rem + 2rem + 17.5rem + 4rem)) {
+@media (max-width: var(--max-width)) {
   .header {
-    flex-direction: column;
-    justify-content: center;
-    gap: 2.5rem;
     padding: 2rem;
   }
 
@@ -154,11 +174,16 @@
     gap: clamp(1.3rem, calc(10vw - 0.7rem), 6.3rem);
   }
 
-  .tagText {
-    left: 2rem;
+  .socialsLayer {
     right: 2rem;
-    bottom: 2rem;
+  }
+
+  .tagText {
     max-width: none;
+  }
+
+  .heroScreenTwo {
+    padding: 2rem;
   }
 
   .starmapFade {
