@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -15,9 +15,30 @@ const SMALL_VIEWPORT_MAX_WIDTH = 768;
 const SHORT_VIEWPORT_MAX_HEIGHT = 720;
 const SOCIALS_TOP_INSET_SMALL = 32;
 const SOCIALS_TOP_INSET_LARGE = 64;
+const INITIAL_Y = 16;
+const SOCIAL_ICONS_PEAK_Y = -4;
+const LOGO_PATH_DELAY_STEP = 0.1;
+const LOGO_DRAW_DURATION = 0.5;
+const LOGO_FILL = 0.3;
+const LOGO_STROKE_WIDTH = 1;
+const LOGO_STROKE_DASH_OFFSET_EPSILON = 0.5;
+const SOCIALS_REVEAL_DURATION = 0.4;
+const SOCIALS_SETTLE_DURATION = 0.25;
+const SOCIALS_STAGGER = 0.08;
+const SOCIALS_REVEAL_OVERLAP = "-=0.5";
+const SOCIALS_SETTLE_OFFSET = ">-0.1";
+const TAGLINE_REVEAL_DURATION = 0.8;
+const HERO_FADE_DURATION = 0.35;
+const SOCIALS_AND_STARMAP_SCROLL_DURATION = 1;
+const TAGLINE_LINE_ONE_START = 1;
+const TAGLINE_LINE_TWO_START = 1.24;
+const TIMELINE_START = 0;
+const SCROLL_PROGRESS_MIN = 0.01;
+const SCROLL_PROGRESS_MAX = 0.99;
+const SCROLL_TRIGGER_END = "+=10%";
 const SOCIAL_ICON_PROPS = {
   size: "2.5rem",
-  strokeWidth: 1,
+  strokeWidth: LOGO_STROKE_WIDTH,
   color: "var(--theme-color)",
 } as const;
 
@@ -37,6 +58,7 @@ const SOCIAL_LINKS = [
 ] as const;
 
 export default function Hero() {
+  const [beginCelestialReveal, setBeginCelestialReveal] = useState(false);
   const rootRef = useRef<HTMLElement | null>(null);
   const starmapWrapRef = useRef<HTMLDivElement | null>(null);
   const logoWrapRef = useRef<HTMLDivElement | null>(null);
@@ -60,7 +82,7 @@ export default function Hero() {
 
       gsap.set([lineOneRef.current, lineTwoRef.current], {
         opacity: 0,
-        y: 16,
+        y: INITIAL_Y,
       });
 
       gsap.set(logoWrapRef.current, { opacity: 1 });
@@ -77,16 +99,16 @@ export default function Hero() {
 
       logoPaths.forEach((path, i) => {
         const length = path.getTotalLength();
-        const pathDelay = i * 0.14;
-        const drawDuration = 0.8;
-        const fillStart = 0.3;
-        const fillDuration = 0.4;
+        const pathDelay = i * LOGO_PATH_DELAY_STEP;
+        const drawDuration = LOGO_DRAW_DURATION;
+        const fillStart = LOGO_FILL;
+        const fillDuration = LOGO_FILL;
 
         gsap.set(path, {
           stroke: "var(--theme-color)",
-          strokeWidth: 1,
+          strokeWidth: LOGO_STROKE_WIDTH,
           strokeDasharray: length,
-          strokeDashoffset: length + 0.5,
+          strokeDashoffset: length + LOGO_STROKE_DASH_OFFSET_EPSILON,
           fillOpacity: 0,
           strokeOpacity: 1,
         });
@@ -113,30 +135,33 @@ export default function Hero() {
           );
       });
 
-      gsap.set(socialIcons, { opacity: 0, y: 16 });
+      gsap.set(socialIcons, { opacity: 0, y: INITIAL_Y });
 
       introTimeline
         .to(
           socialIcons,
           {
             opacity: 1,
-            y: -4,
-            duration: 0.4,
+            y: SOCIAL_ICONS_PEAK_Y,
+            duration: SOCIALS_REVEAL_DURATION,
             ease: "none",
-            stagger: 0.08,
+            stagger: SOCIALS_STAGGER,
           },
-          "-=0.5",
+          SOCIALS_REVEAL_OVERLAP,
         )
         .to(
           socialIcons,
           {
             y: 0,
-            duration: 0.26,
+            duration: SOCIALS_SETTLE_DURATION,
             ease: "power2.inOut",
-            stagger: 0.08,
+            stagger: SOCIALS_STAGGER,
           },
-          ">-0.1",
+          SOCIALS_SETTLE_OFFSET,
         );
+      introTimeline.eventCallback("onComplete", () => {
+        setBeginCelestialReveal(true);
+      });
 
       const timeline = gsap.timeline({
         paused: true,
@@ -147,16 +172,17 @@ export default function Hero() {
       const revealTagLine = {
         opacity: 1,
         y: 0,
-        duration: 0.35,
+        duration: TAGLINE_REVEAL_DURATION,
         ease: "power2.out",
       } as const;
 
-      /** 4rem from viewport top on roomy layouts; 2rem when short or narrow (matches Hero CSS). */
       const socialsTargetTopPx = () => {
         const shortViewport =
           window.innerHeight <= SHORT_VIEWPORT_MAX_HEIGHT ||
           window.innerWidth <= SMALL_VIEWPORT_MAX_WIDTH;
-        return shortViewport ? SOCIALS_TOP_INSET_SMALL : SOCIALS_TOP_INSET_LARGE;
+        return shortViewport
+          ? SOCIALS_TOP_INSET_SMALL
+          : SOCIALS_TOP_INSET_LARGE;
       };
 
       const socialsScrollY = () => {
@@ -174,36 +200,28 @@ export default function Hero() {
           logoWrapRef.current,
           {
             opacity: 0,
-            duration: 0.35,
+            duration: HERO_FADE_DURATION,
           },
-          0,
+          TIMELINE_START,
         )
         .to(
           [socialsRef.current, starmapWrapRef.current],
           {
             y: socialsScrollY,
-            duration: 0.95,
+            duration: SOCIALS_AND_STARMAP_SCROLL_DURATION,
           },
-          0,
+          TIMELINE_START,
         )
-        .to(
-          lineOneRef.current,
-          revealTagLine,
-          0.42,
-        )
-        .to(
-          lineTwoRef.current,
-          revealTagLine,
-          0.72,
-        );
+        .to(lineOneRef.current, revealTagLine, TAGLINE_LINE_ONE_START)
+        .to(lineTwoRef.current, revealTagLine, TAGLINE_LINE_TWO_START);
 
       const syncTimelineToScroll = (progress: number) => {
         // Keep visual state deterministic after ScrollTrigger refresh/resize.
-        if (progress <= 0.01) {
+        if (progress <= SCROLL_PROGRESS_MIN) {
           timeline.pause(0);
           return;
         }
-        if (progress >= 0.99) {
+        if (progress >= SCROLL_PROGRESS_MAX) {
           timeline.pause(1);
           return;
         }
@@ -214,7 +232,7 @@ export default function Hero() {
         trigger: rootRef.current,
         pin: rootRef.current,
         start: "top top",
-        end: "+=10%",
+        end: SCROLL_TRIGGER_END,
         anticipatePin: 1,
         invalidateOnRefresh: true,
         onRefresh: (self) => {
@@ -224,16 +242,16 @@ export default function Hero() {
         onUpdate: (self) => {
           if (
             self.direction === 1 &&
-            self.progress > 0.01 &&
-            timeline.progress() < 0.99
+            self.progress > SCROLL_PROGRESS_MIN &&
+            timeline.progress() < SCROLL_PROGRESS_MAX
           ) {
             timeline.play();
           }
 
           if (
             self.direction === -1 &&
-            self.progress < 0.99 &&
-            timeline.progress() > 0.01
+            self.progress < SCROLL_PROGRESS_MAX &&
+            timeline.progress() > SCROLL_PROGRESS_MIN
           ) {
             timeline.reverse();
           }
@@ -249,7 +267,10 @@ export default function Hero() {
   return (
     <section ref={rootRef} className={styles.hero}>
       <div ref={starmapWrapRef} className={styles.starmapBackground}>
-        <Starmap className={styles.starmapFill} />
+        <Starmap
+          className={styles.starmapFill}
+          beginCelestialReveal={beginCelestialReveal}
+        />
         <div className={styles.starmapFade} aria-hidden />
       </div>
       <header className={styles.header}>

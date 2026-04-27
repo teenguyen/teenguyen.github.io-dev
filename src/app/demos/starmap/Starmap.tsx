@@ -23,6 +23,10 @@ type PreparedStar = {
   variant: number;
 };
 
+type ProjectedConstellation = {
+  lines: [number, number][][];
+};
+
 type SkyData = {
   stars: PreparedStar[];
   constellations: LineCollection;
@@ -38,8 +42,12 @@ const STAR_VARIANT_COUNT = 4;
 const STAR_RADIUS_MAX = 15;
 const STAR_RADIUS_MIN = 1.1;
 const MIN_DRAWABLE_STAR_RADIUS = 1.2;
-const THEME_COLOR_48_FALLBACK = "rgba(122, 28, 28, 0.48)";
+// static fallback for solid theme color on the cream background so star transparency doesn't ovelap
+const THEME_COLOR_48_SOLID_FALLBACK = "rgba(186, 139, 137, 1)";
 const THEME_COLOR_25_FALLBACK = "rgba(122, 28, 28, 0.25)";
+const ROTATION_DEGREES_PER_SECOND = 1;
+const STAR_REVEAL_DURATION_MS = 700;
+const CONSTELLATION_DRAW_SPEED_PX_PER_SECOND = 250;
 
 function seededVariant(seed: number) {
   const value = Math.abs(
@@ -127,6 +135,7 @@ function drawCrossGlyph(
 
 type StarmapProps = {
   className?: string;
+  beginCelestialReveal?: boolean;
 };
 
 type CanvasLayout = {
@@ -135,24 +144,87 @@ type CanvasLayout = {
   dpr: number;
 };
 
-export default function Starmap({ className }: StarmapProps) {
+function clamp01(value: number) {
+  return Math.min(1, Math.max(0, value));
+}
+
+function toLinePoint(value: unknown): [number, number] | null {
+  if (!Array.isArray(value) || value.length < 2) return null;
+  const x = value[0];
+  const y = value[1];
+  if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+  return [x, y];
+}
+
+function getLineLength(points: [number, number][]) {
+  if (points.length < 2) return 0;
+  let length = 0;
+  for (let i = 0; i < points.length - 1; i += 1) {
+    const [fromX, fromY] = points[i];
+    const [toX, toY] = points[i + 1];
+    length += Math.hypot(toX - fromX, toY - fromY);
+  }
+  return length;
+}
+
+function drawLineByDistance(
+  ctx: CanvasRenderingContext2D,
+  points: [number, number][],
+  distance: number,
+) {
+  if (points.length < 2 || distance <= 0) return;
+  const [startX, startY] = points[0];
+  ctx.moveTo(startX, startY);
+
+  let remainingDistance = distance;
+  for (let i = 0; i < points.length - 1; i += 1) {
+    const [fromX, fromY] = points[i];
+    const [toX, toY] = points[i + 1];
+    const segmentLength = Math.hypot(toX - fromX, toY - fromY);
+    if (segmentLength <= 0) continue;
+
+    if (remainingDistance >= segmentLength) {
+      ctx.lineTo(toX, toY);
+      remainingDistance -= segmentLength;
+      continue;
+    }
+
+    if (remainingDistance > 0) {
+      const ratio = remainingDistance / segmentLength;
+      const x = fromX + (toX - fromX) * ratio;
+      const y = fromY + (toY - fromY) * ratio;
+      ctx.lineTo(x, y);
+    }
+    break;
+  }
+}
+
+export default function Starmap({
+  className,
+  beginCelestialReveal = false,
+}: StarmapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const dataRef = useRef<SkyData | null>(null);
   const rafRef = useRef<number | null>(null);
   const canvasLayoutRef = useRef<CanvasLayout | null>(null);
-  const themeColor48Ref = useRef<string>(THEME_COLOR_48_FALLBACK);
+  const themeColor48Ref = useRef<string>(THEME_COLOR_48_SOLID_FALLBACK);
   const themeColor25Ref = useRef<string>(THEME_COLOR_25_FALLBACK);
+  const animationStartRef = useRef<number | null>(null);
+  const revealStartRef = useRef<number | null>(null);
+  const beginCelestialRevealRef = useRef(beginCelestialReveal);
 
   const readThemeColors = useCallback(() => {
     const rootStyles = getComputedStyle(document.documentElement);
-    const themeColor = rootStyles.getPropertyValue("--theme-color-48").trim();
+    const themeColor48 = rootStyles
+      .getPropertyValue("--theme-color-48-solid")
+      .trim();
     const themeColor25 = rootStyles.getPropertyValue("--theme-color-25").trim();
-    themeColor48Ref.current = themeColor || THEME_COLOR_48_FALLBACK;
+    themeColor48Ref.current = themeColor48 || THEME_COLOR_48_SOLID_FALLBACK;
     themeColor25Ref.current = themeColor25 || THEME_COLOR_25_FALLBACK;
   }, []);
 
-  const draw = useCallback(() => {
+  const draw = useCallback((timeMs: number) => {
     const container = containerRef.current;
     const canvas = canvasRef.current;
     const data = dataRef.current;
@@ -160,13 +232,30 @@ export default function Starmap({ className }: StarmapProps) {
 
     const rect = container.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
-    const viewport = window.visualViewport;
-    const vw = Math.floor(viewport?.width ?? window.innerWidth);
-    const vh = Math.floor(viewport?.height ?? window.innerHeight);
-    // Prefer actual container size to avoid drawing a larger-than-needed bitmap.
-    // Fall back to viewport only if layout is temporarily reporting zero.
-    const width = Math.max(1, Math.floor(rect.width > 0 ? rect.width : vw));
-    const height = Math.max(1, Math.floor(rect.height > 0 ? rect.height : vh));
+    const rootEl = document.documentElement;
+    const vw = Math.floor(rootEl.clientWidth || window.innerWidth);
+    const vh = Math.floor(rootEl.clientHeight || window.innerHeight);
+
+    const width = Math.max(
+      1,
+      Math.floor(
+        container.clientWidth > 0
+          ? container.clientWidth
+          : rect.width > 0
+            ? rect.width
+            : vw,
+      ),
+    );
+    const height = Math.max(
+      1,
+      Math.floor(
+        container.clientHeight > 0
+          ? container.clientHeight
+          : rect.height > 0
+            ? rect.height
+            : vh,
+      ),
+    );
 
     const lastLayout = canvasLayoutRef.current;
     const layoutChanged =
@@ -190,12 +279,33 @@ export default function Starmap({ className }: StarmapProps) {
 
     const themeColor = themeColor48Ref.current;
     const themeColor25 = themeColor25Ref.current;
+    let revealElapsedMs = 0;
+    let starOpacity = 0;
+    let constellationDrawDistance = 0;
+
+    if (beginCelestialRevealRef.current) {
+      if (revealStartRef.current === null) {
+        revealStartRef.current = timeMs;
+      }
+      revealElapsedMs = timeMs - revealStartRef.current;
+      starOpacity = clamp01(revealElapsedMs / STAR_REVEAL_DURATION_MS);
+      constellationDrawDistance =
+        (Math.max(0, revealElapsedMs - STAR_REVEAL_DURATION_MS) / 1000) *
+        CONSTELLATION_DRAW_SPEED_PX_PER_SECOND;
+    }
 
     const projection = d3
       .geoMercator()
       .translate([width / 2, height / 2])
       // Keep perspective stable across narrow viewports (avoid min(width,height) compression).
       .scale(Math.max(MIN_SCALE_FACTOR, height / BASE_HEIGHT) * BASE_SCALE)
+      .rotate([
+        -(
+          ((timeMs - (animationStartRef.current ?? timeMs)) / 1000) *
+          ROTATION_DEGREES_PER_SECOND
+        ),
+        0,
+      ])
       .angle(15);
 
     const graticulePath = d3.geoPath(projection, ctx);
@@ -205,60 +315,126 @@ export default function Starmap({ className }: StarmapProps) {
     graticulePath(d3.geoGraticule10());
     ctx.stroke();
 
-    const linePath = d3.geoPath(projection, ctx);
-    ctx.strokeStyle = themeColor25;
-    data.constellations.features.forEach((line) => {
-      ctx.beginPath();
-      ctx.lineWidth = 0.8;
-      linePath(line as d3.GeoPermissibleObjects);
-      ctx.stroke();
-    });
+    if (
+      constellationDrawDistance > 0 &&
+      revealElapsedMs > STAR_REVEAL_DURATION_MS
+    ) {
+      ctx.strokeStyle = themeColor25;
+
+      const projectedConstellations: ProjectedConstellation[] = [];
+      for (const line of data.constellations.features) {
+        const rawCoordinates = line.geometry?.coordinates;
+        if (!Array.isArray(rawCoordinates)) continue;
+
+        const projectedLines: [number, number][][] = [];
+        for (const rawLine of rawCoordinates) {
+          if (!Array.isArray(rawLine)) continue;
+          const points: [number, number][] = [];
+          for (const rawPoint of rawLine) {
+            const linePoint = toLinePoint(rawPoint);
+            if (!linePoint) continue;
+            const projected = projection(linePoint);
+            if (!projected) continue;
+            const [x, y] = projected;
+            if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+            points.push([x, y]);
+          }
+          if (points.length >= 2) {
+            projectedLines.push(points);
+          }
+        }
+
+        if (projectedLines.length === 0) continue;
+        projectedConstellations.push({ lines: projectedLines });
+      }
+
+      projectedConstellations.forEach((constellation) => {
+        let remainingDistance = constellationDrawDistance;
+        ctx.beginPath();
+        ctx.lineWidth = 0.8;
+
+        for (const linePoints of constellation.lines) {
+          const lineLength = getLineLength(linePoints);
+          if (lineLength <= 0) continue;
+
+          if (remainingDistance >= lineLength) {
+            drawLineByDistance(ctx, linePoints, lineLength);
+            remainingDistance -= lineLength;
+            continue;
+          }
+
+          if (remainingDistance > 0) {
+            drawLineByDistance(ctx, linePoints, remainingDistance);
+          }
+          break;
+        }
+
+        ctx.stroke();
+      });
+    }
 
     const magnitudeScale = d3
       .scaleLinear()
       .domain(data.magnitudeExtent)
       .range([STAR_RADIUS_MAX, STAR_RADIUS_MIN]);
 
-    ctx.fillStyle = themeColor;
-    ctx.strokeStyle = themeColor;
-    ctx.lineWidth = 0.7;
-    for (const star of data.stars) {
-      const projected = projection(star.coordinates);
-      if (!projected) continue;
-      const [x, y] = projected;
-      if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+    if (starOpacity > 0) {
+      ctx.save();
+      ctx.globalAlpha = starOpacity;
+      ctx.fillStyle = themeColor;
+      ctx.strokeStyle = themeColor;
+      ctx.lineWidth = 0.7;
+      for (const star of data.stars) {
+        const projected = projection(star.coordinates);
+        if (!projected) continue;
+        const [x, y] = projected;
+        if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
 
-      const radius = magnitudeScale(star.mag);
-      if (radius <= 1.6) {
-        drawCrossGlyph(ctx, x, y, Math.max(1.4, radius * 1.8));
-        continue;
+        const radius = magnitudeScale(star.mag);
+        if (radius <= 1.6) {
+          drawCrossGlyph(ctx, x, y, Math.max(1.4, radius * 1.8));
+          continue;
+        }
+
+        if (star.variant === 1) {
+          drawRectangularFourPointGlyph(ctx, x, y, radius);
+          continue;
+        }
+
+        if (star.variant === 0) {
+          drawStarGlyph(ctx, x, y, 4, radius);
+          continue;
+        }
+
+        if (star.variant === 2) {
+          drawStarGlyph(ctx, x, y, 5, radius);
+          continue;
+        }
+
+        drawStarGlyph(ctx, x, y, 6, radius);
       }
-
-      if (star.variant === 1) {
-        drawRectangularFourPointGlyph(ctx, x, y, radius);
-        continue;
-      }
-
-      if (star.variant === 0) {
-        drawStarGlyph(ctx, x, y, 4, radius);
-        continue;
-      }
-
-      if (star.variant === 2) {
-        drawStarGlyph(ctx, x, y, 5, radius);
-        continue;
-      }
-
-      drawStarGlyph(ctx, x, y, 6, radius);
+      ctx.restore();
     }
   }, []);
 
   const requestDraw = useCallback(() => {
     if (rafRef.current !== null) return;
-    rafRef.current = requestAnimationFrame(() => {
+    rafRef.current = requestAnimationFrame((timeMs) => {
       rafRef.current = null;
-      draw();
+      draw(timeMs);
     });
+  }, [draw]);
+
+  const startAnimation = useCallback(() => {
+    if (rafRef.current !== null) return;
+    const tick = (timeMs: number) => {
+      if (animationStartRef.current === null) {
+        animationStartRef.current = timeMs;
+      }
+      draw(timeMs);
+      rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
   }, [draw]);
 
   useEffect(() => {
@@ -308,7 +484,8 @@ export default function Starmap({ className }: StarmapProps) {
 
         const rawMagnitudeExtent = d3.extent(preparedStars, (star) => star.mag);
         const magnitudeExtentBeforeFilter: [number, number] =
-          rawMagnitudeExtent[0] !== undefined && rawMagnitudeExtent[1] !== undefined
+          rawMagnitudeExtent[0] !== undefined &&
+          rawMagnitudeExtent[1] !== undefined
             ? [rawMagnitudeExtent[0], rawMagnitudeExtent[1]]
             : [0, 1];
 
@@ -333,7 +510,7 @@ export default function Starmap({ className }: StarmapProps) {
           constellations,
           magnitudeExtent,
         };
-        requestDraw();
+        startAnimation();
       } catch (error) {
         console.error("Failed to load starmap data:", error);
       }
@@ -344,7 +521,7 @@ export default function Starmap({ className }: StarmapProps) {
     return () => {
       cancelled = true;
     };
-  }, [readThemeColors, requestDraw]);
+  }, [readThemeColors, startAnimation]);
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(() => requestDraw());
@@ -361,8 +538,16 @@ export default function Starmap({ className }: StarmapProps) {
       if (rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current);
       }
+      animationStartRef.current = null;
     };
   }, [readThemeColors, requestDraw]);
+
+  useEffect(() => {
+    beginCelestialRevealRef.current = beginCelestialReveal;
+    if (!beginCelestialReveal) {
+      revealStartRef.current = null;
+    }
+  }, [beginCelestialReveal]);
 
   return (
     <div ref={containerRef} className={clsx(styles.root, className)}>
