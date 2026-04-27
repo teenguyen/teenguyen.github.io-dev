@@ -2,6 +2,7 @@
   --background: rgba(245, 242, 237, 1);
 
   --theme-color: rgba(122, 28, 28, 1);
+  --theme-color-25: rgba(122, 28, 28, 0.25);
   --theme-color-48: rgba(122, 28, 28, 0.48);
   --theme-color-72: rgba(122, 28, 28, 0.72);
   --text-color: rgba(58, 47, 42, 1);
