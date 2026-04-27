@@ -1,12 +1,51 @@
 .hero {
+  --hero-starmap-overscroll: 55vh;
+
   position: relative;
-  min-height: 100vh;
   height: 100vh;
+}
+
+.starmapBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* Extra length below hero so parallax translateY does not uncover the viewport bottom */
+  bottom: calc(-1 * var(--hero-starmap-overscroll));
+  z-index: 0;
+  will-change: transform;
+  min-height: 100dvh;
+  isolation: isolate;
+}
+
+.starmapFade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  pointer-events: none;
+  height: clamp(15rem, min(52vh, 40dvw), 32rem);
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgb(245 242 237 / 0%) 0%,
+    rgb(245 242 237 / 58%) 38%,
+    rgb(245 242 237 / 94%) 72%,
+    var(--background) 88%,
+    var(--background) 100%
+  );
+}
+
+.starmapFill {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .header {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   height: 100%;
   display: flex;
   align-items: center;
@@ -55,7 +94,7 @@
   left: 4rem;
   bottom: 4rem;
   max-width: min(52rem, calc(100% - 8rem));
-  z-index: 2;
+  z-index: 3;
   pointer-events: none;
 }
 

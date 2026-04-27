@@ -6,12 +6,39 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Codepen, GitHub, Linkedin, Mail } from "react-feather";
 import HeroLogo from "./HeroLogo";
+import Starmap from "../demos/starmap/Starmap";
 import styles from "./Hero.module.css";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const SMALL_VIEWPORT_MAX_WIDTH = 768;
+const SHORT_VIEWPORT_MAX_HEIGHT = 720;
+const SOCIALS_TOP_INSET_SMALL = 32;
+const SOCIALS_TOP_INSET_LARGE = 64;
+const SOCIAL_ICON_PROPS = {
+  size: "2.5rem",
+  strokeWidth: 1,
+  color: "var(--theme-color)",
+} as const;
+
+const SOCIAL_LINKS = [
+  { href: "https://codepen.io/teenguyen", Icon: Codepen, label: "Codepen" },
+  { href: "https://github.com/teenguyen", Icon: GitHub, label: "GitHub" },
+  {
+    href: "https://www.linkedin.com/in/theresaanguyen/",
+    Icon: Linkedin,
+    label: "LinkedIn",
+  },
+  {
+    href: "mailto:tee.nguyen+portfolio@live.com.au",
+    Icon: Mail,
+    label: "Email",
+  },
+] as const;
+
 export default function Hero() {
   const rootRef = useRef<HTMLElement | null>(null);
+  const starmapWrapRef = useRef<HTMLDivElement | null>(null);
   const logoWrapRef = useRef<HTMLDivElement | null>(null);
   const logoRef = useRef<SVGSVGElement | null>(null);
   const socialsRef = useRef<HTMLDivElement | null>(null);
@@ -22,6 +49,7 @@ export default function Hero() {
     () => {
       if (
         !rootRef.current ||
+        !starmapWrapRef.current ||
         !logoWrapRef.current ||
         !socialsRef.current ||
         !lineOneRef.current ||
@@ -37,6 +65,7 @@ export default function Hero() {
 
       gsap.set(logoWrapRef.current, { opacity: 1 });
       gsap.set(socialsRef.current, { y: 0 });
+      gsap.set(starmapWrapRef.current, { y: 0 });
 
       const logoPaths = Array.from(
         logoRef.current?.querySelectorAll("path") ?? [],
@@ -115,6 +144,30 @@ export default function Hero() {
           ease: "power2.inOut",
         },
       });
+      const revealTagLine = {
+        opacity: 1,
+        y: 0,
+        duration: 0.35,
+        ease: "power2.out",
+      } as const;
+
+      /** 4rem from viewport top on roomy layouts; 2rem when short or narrow (matches Hero CSS). */
+      const socialsTargetTopPx = () => {
+        const shortViewport =
+          window.innerHeight <= SHORT_VIEWPORT_MAX_HEIGHT ||
+          window.innerWidth <= SMALL_VIEWPORT_MAX_WIDTH;
+        return shortViewport ? SOCIALS_TOP_INSET_SMALL : SOCIALS_TOP_INSET_LARGE;
+      };
+
+      const socialsScrollY = () => {
+        const socialsEl = socialsRef.current!;
+        const socialsRect = socialsEl.getBoundingClientRect();
+        const currentY = Number(gsap.getProperty(socialsEl, "y")) || 0;
+        // getBoundingClientRect() includes transforms; remove current translateY
+        // so we always compute from the element's base layout position.
+        const baseTop = socialsRect.top - currentY;
+        return socialsTargetTopPx() - baseTop;
+      };
 
       timeline
         .to(
@@ -126,37 +179,36 @@ export default function Hero() {
           0,
         )
         .to(
-          socialsRef.current,
+          [socialsRef.current, starmapWrapRef.current],
           {
-            y: () => {
-              const socialsRect = socialsRef.current!.getBoundingClientRect();
-              const targetTop = window.innerWidth <= 1024 ? 32 : 64;
-              return targetTop - socialsRect.top;
-            },
+            y: socialsScrollY,
             duration: 0.95,
           },
           0,
         )
         .to(
           lineOneRef.current,
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.35,
-            ease: "power2.out",
-          },
+          revealTagLine,
           0.42,
         )
         .to(
           lineTwoRef.current,
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.35,
-            ease: "power2.out",
-          },
+          revealTagLine,
           0.72,
         );
+
+      const syncTimelineToScroll = (progress: number) => {
+        // Keep visual state deterministic after ScrollTrigger refresh/resize.
+        if (progress <= 0.01) {
+          timeline.pause(0);
+          return;
+        }
+        if (progress >= 0.99) {
+          timeline.pause(1);
+          return;
+        }
+        timeline.pause(progress);
+      };
 
       ScrollTrigger.create({
         trigger: rootRef.current,
@@ -164,6 +216,11 @@ export default function Hero() {
         start: "top top",
         end: "+=10%",
         anticipatePin: 1,
+        invalidateOnRefresh: true,
+        onRefresh: (self) => {
+          timeline.invalidate();
+          syncTimelineToScroll(self.progress);
+        },
         onUpdate: (self) => {
           if (
             self.direction === 1 &&
@@ -191,39 +248,29 @@ export default function Hero() {
 
   return (
     <section ref={rootRef} className={styles.hero}>
+      <div ref={starmapWrapRef} className={styles.starmapBackground}>
+        <Starmap className={styles.starmapFill} />
+        <div className={styles.starmapFade} aria-hidden />
+      </div>
       <header className={styles.header}>
         <div ref={logoWrapRef} className={styles.logoWrap}>
           <HeroLogo ref={logoRef} className={styles.logo} />
         </div>
         <div ref={socialsRef} className={styles.socials}>
-          <a
-            href="https://codepen.io/teenguyen"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Codepen size="2.5rem" strokeWidth={1} color="var(--theme-color)" />
-          </a>
-          <a
-            href="https://github.com/teenguyen"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <GitHub size="2.5rem" strokeWidth={1} color="var(--theme-color)" />
-          </a>
-          <a
-            href="https://www.linkedin.com/in/theresaanguyen/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Linkedin
-              size="2.5rem"
-              strokeWidth={1}
-              color="var(--theme-color)"
-            />
-          </a>
-          <a href="mailto:tee.nguyen+portfolio@live.com.au">
-            <Mail size="2.5rem" strokeWidth={1} color="var(--theme-color)" />
-          </a>
+          {SOCIAL_LINKS.map(({ href, Icon, label }) => {
+            const isExternal = href.startsWith("http");
+            return (
+              <a
+                key={href}
+                href={href}
+                target={isExternal ? "_blank" : undefined}
+                rel={isExternal ? "noopener noreferrer" : undefined}
+                aria-label={label}
+              >
+                <Icon {...SOCIAL_ICON_PROPS} />
+              </a>
+            );
+          })}
         </div>
       </header>
 
