@@ -48,6 +48,7 @@ const THEME_COLOR_25_FALLBACK = "rgba(122, 28, 28, 0.25)";
 const ROTATION_DEGREES_PER_SECOND = 1;
 const STAR_REVEAL_DURATION_MS = 700;
 const CONSTELLATION_DRAW_SPEED_PX_PER_SECOND = 250;
+const MAX_CONSTELLATION_SEGMENT_GAP_FACTOR = 0.2;
 
 function seededVariant(seed: number) {
   const value = Math.abs(
@@ -165,6 +166,42 @@ function getLineLength(points: [number, number][]) {
     length += Math.hypot(toX - fromX, toY - fromY);
   }
   return length;
+}
+
+function splitLineOnProjectionGaps(
+  points: [number, number][],
+  maxGapPx: number,
+): [number, number][][] {
+  if (points.length < 2) return [];
+  if (!Number.isFinite(maxGapPx) || maxGapPx <= 0) return [points];
+
+  const segments: [number, number][][] = [];
+  let currentSegment: [number, number][] = [points[0]];
+
+  for (let i = 1; i < points.length; i += 1) {
+    const previousPoint = points[i - 1];
+    const currentPoint = points[i];
+    const gap = Math.hypot(
+      currentPoint[0] - previousPoint[0],
+      currentPoint[1] - previousPoint[1],
+    );
+
+    if (gap > maxGapPx) {
+      if (currentSegment.length >= 2) {
+        segments.push(currentSegment);
+      }
+      currentSegment = [currentPoint];
+      continue;
+    }
+
+    currentSegment.push(currentPoint);
+  }
+
+  if (currentSegment.length >= 2) {
+    segments.push(currentSegment);
+  }
+
+  return segments;
 }
 
 function drawLineByDistance(
@@ -322,6 +359,8 @@ export default function Starmap({
       ctx.strokeStyle = themeColor25;
 
       const projectedConstellations: ProjectedConstellation[] = [];
+      const maxSegmentGapPx =
+        Math.max(width, height) * MAX_CONSTELLATION_SEGMENT_GAP_FACTOR;
       for (const line of data.constellations.features) {
         const rawCoordinates = line.geometry?.coordinates;
         if (!Array.isArray(rawCoordinates)) continue;
@@ -340,7 +379,10 @@ export default function Starmap({
             points.push([x, y]);
           }
           if (points.length >= 2) {
-            projectedLines.push(points);
+            const splitLines = splitLineOnProjectionGaps(points, maxSegmentGapPx);
+            if (splitLines.length > 0) {
+              projectedLines.push(...splitLines);
+            }
           }
         }
 
