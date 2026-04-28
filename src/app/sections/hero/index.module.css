@@ -167,7 +167,7 @@
   color: var(--theme-color-72);
 }
 
-@media (max-width: var(--max-width)) {
+@media (max-width: 58.5rem) {
   .hero {
     --hero-inline-padding: 2rem;
   }

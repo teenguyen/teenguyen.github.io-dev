@@ -1,17 +1,18 @@
 .liveramp {
   display: grid;
-  grid-template-columns: 49% 6% 45%;
+  grid-template-columns: 27% 23% 6% 2% 42%;
   grid-template-areas:
-    "thumbs header header"
-    "main main desc";
+    "thumb1 thumb2 header header header"
+    "main main main desc desc";
   row-gap: 2rem;
 }
 
 .header {
   justify-content: flex-end;
+  padding-left: 2rem;
 }
 
-.rightAlign {
+.styleAlign {
   text-align: right;
 }
 
@@ -26,23 +27,76 @@
   height: auto;
 }
 
-.thumbs {
-  display: grid;
-  grid-template-columns: 54% 46%;
-  align-items: flex-start;
-  gap: 1rem;
-  grid-area: thumbs;
-  padding-right: 2rem;
+.thumb1,
+.thumb2 {
+  display: flex;
+  align-items: flex-end;
+  object-fit: contain;
+  width: 100%;
+  height: auto;
 }
 
 .thumb1 {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
+  grid-area: thumb1;
 }
 
 .thumb2 {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
+  grid-area: thumb2;
+}
+
+@media (max-width: 1345px) {
+  .liveramp {
+    grid-template-columns: 27% 23% 50%;
+    grid-template-rows: auto auto 1fr;
+    grid-template-areas:
+      "main main header"
+      "main main desc"
+      "thumb1 thumb2 desc";
+    row-gap: 1rem;
+  }
+
+  .header {
+    padding-bottom: 1rem;
+  }
+
+  .thumb1,
+  .thumb2 {
+    align-self: flex-start;
+  }
+}
+
+@media (max-width: 1168px) {
+  .liveramp {
+    grid-template-areas:
+      "header header header"
+      "main main desc"
+      "thumb1 thumb2 desc";
+  }
+}
+
+@media (max-width: 58.5rem) {
+  .liveramp {
+    grid-template-columns: 100%;
+    grid-template-areas:
+      "header"
+      "main"
+      "desc";
+    gap: 2rem;
+  }
+
+  .header {
+    padding: 0;
+  }
+
+  .styleAlign {
+    text-align: left;
+  }
+
+  .desc {
+    padding: 0;
+  }
+
+  .mainImg {
+    max-width: 100%;
+  }
 }

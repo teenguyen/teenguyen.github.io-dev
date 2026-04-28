@@ -7,10 +7,10 @@ export default function LiveRamp() {
   return (
     <article className={styles.liveramp}>
       <header className={clsx(shared.header, styles.header)}>
-        <p className={clsx("subtitle", styles.rightAlign)}>
+        <p className={clsx("subtitle", styles.styleAlign)}>
           LIVERAMP · SAN FRANCISCO · 2018–2023
         </p>
-        <h2 className={clsx(shared.heading, styles.rightAlign)}>
+        <h2 className={clsx(shared.heading, styles.styleAlign)}>
           component libraries
           <br />& design systems
         </h2>
@@ -54,22 +54,20 @@ export default function LiveRamp() {
         height={1240}
         className={styles.mainImg}
       />
-      <span className={styles.thumbs}>
-        <Image
-          src="/lr-thumb1.png"
-          alt="Liveramp Motif's FormControlLabel component"
-          width={274}
-          height={116}
-          className={styles.thumb1}
-        />
-        <Image
-          src="/lr-thumb2.png"
-          alt="Liveramp Motif's ContainedButton component"
-          width={235}
-          height={116}
-          className={styles.thumb2}
-        />
-      </span>
+      <Image
+        src="/lr-thumb1.png"
+        alt="Liveramp Motif's FormControlLabel component"
+        className={styles.thumb1}
+        width={274}
+        height={116}
+      />
+      <Image
+        src="/lr-thumb2.png"
+        alt="Liveramp Motif's ContainedButton component"
+        className={styles.thumb2}
+        width={235}
+        height={116}
+      />
     </article>
   );
 }

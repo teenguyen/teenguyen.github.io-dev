@@ -63,3 +63,25 @@
   text-align: right;
   margin-bottom: 0.5rem;
 }
+
+@media (max-width: 58.5rem) {
+  .desc ul {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .desc li {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-left: 1px solid var(--theme-color-25);
+  }
+
+  .desc li:last-child {
+    border-bottom: none;
+  }
+
+  .desc li p:first-child {
+    text-align: left;
+  }
+}

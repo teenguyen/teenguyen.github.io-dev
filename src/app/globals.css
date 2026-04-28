@@ -9,8 +9,13 @@
   --text-color: rgba(58, 47, 42, 1);
   --text-color-60: rgba(58, 47, 42, 0.6);
 
-  /* padding + logo + gap + socials + padding */
-  --max-width: calc((4rem + 31rem + 2rem + 17.5rem + 4rem) - 1px);
+  /* 
+    padding + logo + gap + socials + padding = porfolio width
+    (4rem + 31rem + 2rem + 17.5rem + 4rem) = 936px = 58.5rem
+
+    this is only here as a reference since variables in @media queries can be unreliable
+  */
+  --max-width: 58.5rem;
   --max-width-desktop: 90rem; /* 1440px */
 }
 
@@ -91,9 +96,14 @@ section:not(:first-child) {
   width: 100%;
 }
 
-@media (max-width: var(--max-width)) {
-  section {
+@media (max-width: 58.5rem) {
+  section:not(:first-child) {
     gap: 1rem;
     padding: 2rem;
+  }
+
+  h2 {
+    font-size: 2.5rem;
+    line-height: 2rem;
   }
 }

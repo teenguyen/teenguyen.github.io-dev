@@ -250,6 +250,7 @@ export default function Starmap({
   const animationStartRef = useRef<number | null>(null);
   const revealStartRef = useRef<number | null>(null);
   const beginCelestialRevealRef = useRef(beginCelestialReveal);
+  const hasScrolledPastRef = useRef(false);
 
   const readThemeColors = useCallback(() => {
     const rootStyles = getComputedStyle(document.documentElement);
@@ -468,8 +469,21 @@ export default function Starmap({
   }, [draw]);
 
   const startAnimation = useCallback(() => {
+    if (hasScrolledPastRef.current) return;
     if (rafRef.current !== null) return;
     const tick = (timeMs: number) => {
+      const container = containerRef.current;
+      if (!container) {
+        rafRef.current = null;
+        return;
+      }
+
+      if (container.getBoundingClientRect().bottom <= 0) {
+        hasScrolledPastRef.current = true;
+        rafRef.current = null;
+        return;
+      }
+
       if (animationStartRef.current === null) {
         animationStartRef.current = timeMs;
       }

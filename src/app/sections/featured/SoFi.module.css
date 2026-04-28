@@ -1,6 +1,7 @@
 .sofi {
   display: grid;
   grid-template-columns: 45% 55%;
+  grid-template-rows: auto 1fr;
   grid-template-areas:
     "header media"
     "desc media";
@@ -21,23 +22,75 @@
   gap: 1rem;
 }
 
+.mainImg,
+.thumb1,
+.thumb2 {
+  border-radius: 1rem;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
 .mainImg {
   grid-area: main;
-  object-fit: contain;
-  max-width: 100%;
-  height: auto;
 }
 
 .thumb1 {
   grid-area: thumb1;
-  object-fit: contain;
-  max-width: 100%;
-  height: auto;
 }
 
 .thumb2 {
   grid-area: thumb2;
-  object-fit: contain;
-  max-width: 100%;
-  height: auto;
+}
+
+/* size before image layout breaks */
+@media (max-width: 1234px) {
+  .media {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .mainImg,
+  .thumb1 {
+    max-width: 500px;
+  }
+
+  .thumb2 {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .mainImg,
+  .thumb1,
+  .thumb2 {
+    display: block;
+    max-width: 445px;
+  }
+}
+
+@media (max-width: 58.5rem) {
+  .sofi {
+    grid-template-columns: 100%;
+    grid-template-areas:
+      "header"
+      "media"
+      "desc";
+  }
+
+  .desc {
+    padding: 0;
+  }
+
+  .mainImg {
+    max-width: 100%;
+  }
+
+  .thumb1,
+  .thumb2 {
+    display: none;
+  }
 }

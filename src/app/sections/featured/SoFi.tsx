@@ -67,8 +67,7 @@ export default function SoFi() {
           loop
           playsInline
           preload="metadata"
-          height={190}
-          width={388}
+          width={550}
         >
           <source src="/sf-thumb2.mp4" type="video/mp4" />
         </video>
