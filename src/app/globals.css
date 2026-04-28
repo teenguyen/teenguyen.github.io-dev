@@ -77,7 +77,8 @@ h6 {
 
 a {
   color: var(--theme-color);
-  text-decoration: dotted;
+  text-decoration: underline dotted;
+  text-underline-offset: 0.25rem;
 }
 
 section:not(:first-child) {

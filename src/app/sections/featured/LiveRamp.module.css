@@ -1,0 +1,48 @@
+.liveramp {
+  display: grid;
+  grid-template-columns: 49% 6% 45%;
+  grid-template-areas:
+    "thumbs header header"
+    "main main desc";
+  row-gap: 2rem;
+}
+
+.header {
+  justify-content: flex-end;
+}
+
+.rightAlign {
+  text-align: right;
+}
+
+.desc {
+  padding-left: 2rem;
+}
+
+.mainImg {
+  grid-area: main;
+  object-fit: cover;
+  max-width: 100%;
+  height: auto;
+}
+
+.thumbs {
+  display: grid;
+  grid-template-columns: 54% 46%;
+  align-items: flex-start;
+  gap: 1rem;
+  grid-area: thumbs;
+  padding-right: 2rem;
+}
+
+.thumb1 {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.thumb2 {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}

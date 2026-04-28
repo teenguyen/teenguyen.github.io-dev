@@ -20,35 +20,18 @@
 .content {
   align-items: center;
   display: flex;
+  flex: 1;
   flex-direction: column;
+  gap: 8rem;
+  justify-content: space-between;
   max-width: var(--max-width-desktop);
 }
 
-.sofi {
-  display: grid;
-  grid-template-columns: 40% 60%;
-  grid-template-areas:
-    "title imgs"
-    "desc imgs";
-  margin-bottom: 4rem;
-}
-
-.liveramp {
-  display: grid;
-  grid-template-areas:
-    "title imgs"
-    "desc imgs";
-}
-
-.title {
+.header {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  grid-area: title;
-}
-
-.subtitle {
-  text-align: right;
+  grid-area: header;
+  gap: 0.75rem;
 }
 
 .heading {
@@ -57,25 +40,26 @@
 
 .desc {
   grid-area: desc;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.desc ul {
   list-style: none;
 }
 
-.imgs {
-  grid-area: imgs;
+.desc li {
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--theme-color-25);
 }
 
-.sofiImgs {
-  display: grid;
-  grid-template-areas:
-    "main main"
-    "thumb1 thumb2";
+.desc li:last-child {
+  border-bottom: 1px solid var(--theme-color-25);
 }
 
-.mainVideo {
-  grid-area: main;
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: 0.5rem;
-  object-fit: cover;
+.desc li p:first-child {
+  color: var(--theme-color-48);
+  text-align: right;
+  margin-bottom: 0.5rem;
 }

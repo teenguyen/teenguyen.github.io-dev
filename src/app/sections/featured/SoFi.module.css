@@ -1,0 +1,43 @@
+.sofi {
+  display: grid;
+  grid-template-columns: 45% 55%;
+  grid-template-areas:
+    "header media"
+    "desc media";
+  row-gap: 2rem;
+}
+
+.desc {
+  padding-right: 2rem;
+}
+
+.media {
+  display: grid;
+  grid-area: media;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-areas:
+    "main main"
+    "thumb1 thumb2";
+  gap: 1rem;
+}
+
+.mainImg {
+  grid-area: main;
+  object-fit: contain;
+  max-width: 100%;
+  height: auto;
+}
+
+.thumb1 {
+  grid-area: thumb1;
+  object-fit: contain;
+  max-width: 100%;
+  height: auto;
+}
+
+.thumb2 {
+  grid-area: thumb2;
+  object-fit: contain;
+  max-width: 100%;
+  height: auto;
+}
