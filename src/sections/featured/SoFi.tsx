@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function SoFi() {
   return (
-    <article className={styles.sofi}>
+    <article id="social-finance" className={styles.sofi}>
       <div className={shared.header}>
         <p className="subtitle">SOCIAL FINANCE · SAN FRANCISCO · 2023–2025</p>
         <h2 className={shared.heading}>

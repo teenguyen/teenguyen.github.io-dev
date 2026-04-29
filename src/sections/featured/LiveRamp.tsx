@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function LiveRamp() {
   return (
-    <article className={styles.liveramp}>
+    <article id="liveramp" className={styles.liveramp}>
       <div className={clsx(shared.header, styles.header)}>
         <p className={clsx("subtitle", styles.styleAlign)}>
           LIVERAMP · SAN FRANCISCO · 2018–2023
