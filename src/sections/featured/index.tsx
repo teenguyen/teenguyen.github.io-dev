@@ -4,7 +4,7 @@ import SoFi from "./SoFi";
 
 export default function Featured() {
   return (
-    <section>
+    <section className={styles.section}>
       <div className={styles.divider}>
         <hr />
         <h6>FEATURED WORK</h6>

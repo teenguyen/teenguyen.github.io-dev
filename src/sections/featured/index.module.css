@@ -1,3 +1,13 @@
+.section {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-height: 100vh;
+  padding: 4rem;
+  width: 100%;
+}
+
 .divider {
   display: flex;
   align-items: center;
@@ -22,7 +32,6 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 8rem;
   justify-content: space-between;
   max-width: var(--max-width-desktop);
 }
@@ -65,6 +74,11 @@
 }
 
 @media (max-width: 58.5rem) {
+  .section {
+    gap: 1rem;
+    padding: 2rem;
+  }
+
   .desc ul {
     display: flex;
     flex-direction: column;

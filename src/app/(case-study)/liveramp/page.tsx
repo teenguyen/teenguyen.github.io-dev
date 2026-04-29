@@ -1,8 +1,8 @@
 import Image from "next/image";
 import clsx from "clsx";
-import Highlight from "@/components/Highlights";
-import CaseStudyWrapper from "../CaseStudyWrapper";
-import shared from "../layout.module.css";
+import Highlight from "../Highlights";
+import CaseStudyWrapper from "../CaseStudy";
+import shared from "../shared.module.css";
 import styles from "./page.module.css";
 
 const HIGHLIGHTS = [

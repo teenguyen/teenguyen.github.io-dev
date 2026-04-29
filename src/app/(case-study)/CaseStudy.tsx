@@ -1,6 +1,6 @@
 import Link from "next/link";
 import clsx from "clsx";
-import styles from "./layout.module.css";
+import styles from "./shared.module.css";
 
 type CaseStudyWrapperProps = {
   children: React.ReactNode;
@@ -17,7 +17,7 @@ export default function CaseStudyWrapper({
         <Link href={portfolioHref} className="subtitle">
           ← PORTFOLIO
         </Link>
-        <h6 className={clsx("subtitle", styles.name)}>THERESA NGUYEN</h6>
+        0<h6 className={clsx("subtitle", styles.name)}>THERESA NGUYEN</h6>
       </header>
       {children}
 
