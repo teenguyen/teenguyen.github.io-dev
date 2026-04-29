@@ -77,13 +77,6 @@ export default function LiveRampCaseStudy() {
             className={styles.buttons}
           />
           <Image
-            src="/lr-buttons-horizontal.png"
-            alt="Liveramp Buttons component"
-            width={2784}
-            height={460}
-            className={styles.buttonsHorizontal}
-          />
-          <Image
             src="/lr-stepper.png"
             alt="Liveramp Stepper component"
             width={1464}

@@ -40,11 +40,6 @@
   grid-area: buttons;
 }
 
-.buttonsHorizontal {
-  display: none;
-  grid-area: buttonsHorizontal;
-}
-
 .stepper {
   grid-area: stepper;
   padding-top: 0.625rem;
@@ -62,33 +57,21 @@
   grid-area: desc3;
 }
 
+.details {
+  grid-area: details;
+}
+
 @media (max-width: 58.5rem) {
   .body {
-    grid-template-columns: 100%;
+    grid-template-columns: 3fr 2fr;
     grid-template-areas:
-      "main"
-      "desc1"
-      "desc2"
-      "rdt"
-      "buttonsHorizontal"
-      "stepper"
-      "desc3"
-      "content";
-  }
-
-  .buttons {
-    display: none;
-  }
-
-  .buttonsHorizontal {
-    display: block;
-  }
-
-  .rdt,
-  .buttonsHorizontal,
-  .stepper {
-    height: clamp(12rem, 36vw, 18rem);
-    width: 100%;
+      "main main"
+      "desc1 desc1"
+      "desc2 desc2"
+      "rdt buttons"
+      "stepper buttons"
+      "desc3 desc3"
+      "details details";
   }
 
   .media,
