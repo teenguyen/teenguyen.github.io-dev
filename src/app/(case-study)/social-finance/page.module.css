@@ -1,0 +1,85 @@
+.body {
+  display: grid;
+  grid-template-columns: 55fr 45fr;
+  grid-template-areas: "media content";
+  gap: 2rem;
+}
+
+.media {
+  grid-area: media;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: auto auto 1fr;
+  grid-template-areas:
+    "main main"
+    "thumb1 thumb2"
+    "options options";
+  gap: 1rem;
+}
+
+.mainImg,
+.thumb1,
+.thumb2,
+.options {
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+  place-self: center;
+}
+
+.mainImg {
+  grid-area: main;
+}
+
+.thumb1 {
+  grid-area: thumb1;
+}
+
+.thumb2 {
+  grid-area: thumb2;
+}
+
+.options {
+  grid-area: options;
+}
+
+.desc1 {
+  grid-area: desc1;
+}
+
+.desc2 {
+  grid-area: desc2;
+}
+
+.desc3 {
+  grid-area: desc3;
+}
+
+.desc4 {
+  grid-area: desc4;
+}
+
+.details {
+  grid-area: details;
+}
+
+@media (max-width: 58.5rem) {
+  .body {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas:
+      "desc1 desc1"
+      "desc2 desc2"
+      "main main"
+      "thumb1 thumb2"
+      "desc3 desc3"
+      "options options"
+      "desc4 desc4"
+      "details details";
+  }
+
+  .media,
+  .content,
+  .desc {
+    display: contents;
+  }
+}

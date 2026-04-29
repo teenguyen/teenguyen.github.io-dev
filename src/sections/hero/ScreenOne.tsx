@@ -2,6 +2,7 @@ import { RefObject } from "react";
 import { Codepen, GitHub, Linkedin, Mail } from "react-feather";
 import HeroLogo from "./Logo";
 import styles from "./index.module.css";
+import Link from "next/link";
 
 const SOCIAL_ICON_PROPS = {
   size: "2.5rem",
@@ -51,7 +52,7 @@ export default function ScreenOne({
           {SOCIAL_LINKS.map(({ href, Icon, label }) => {
             const isExternal = href.startsWith("http");
             return (
-              <a
+              <Link
                 key={href}
                 href={href}
                 target={isExternal ? "_blank" : undefined}
@@ -59,7 +60,7 @@ export default function ScreenOne({
                 aria-label={label}
               >
                 <Icon {...SOCIAL_ICON_PROPS} />
-              </a>
+              </Link>
             );
           })}
         </div>

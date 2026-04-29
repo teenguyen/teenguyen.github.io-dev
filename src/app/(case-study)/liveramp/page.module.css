@@ -1,0 +1,99 @@
+.body {
+  display: grid;
+  grid-template-columns: 45fr 55fr;
+  grid-template-areas: "content media";
+  gap: 2rem;
+}
+
+.media {
+  grid-area: media;
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  grid-template-rows: auto auto 1fr;
+  grid-template-areas:
+    "main main"
+    "rdt buttons"
+    "stepper buttons";
+  gap: 1rem;
+}
+
+.mainImg,
+.rdt,
+.buttons,
+.buttonsHorizontal,
+.stepper {
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.mainImg {
+  grid-area: main;
+}
+
+.rdt {
+  grid-area: rdt;
+}
+
+.buttons {
+  display: block;
+  grid-area: buttons;
+}
+
+.buttonsHorizontal {
+  display: none;
+  grid-area: buttonsHorizontal;
+}
+
+.stepper {
+  grid-area: stepper;
+  padding-top: 0.625rem;
+}
+
+.desc1 {
+  grid-area: desc1;
+}
+
+.desc2 {
+  grid-area: desc2;
+}
+
+.desc3 {
+  grid-area: desc3;
+}
+
+@media (max-width: 58.5rem) {
+  .body {
+    grid-template-columns: 100%;
+    grid-template-areas:
+      "main"
+      "desc1"
+      "desc2"
+      "rdt"
+      "buttonsHorizontal"
+      "stepper"
+      "desc3"
+      "content";
+  }
+
+  .buttons {
+    display: none;
+  }
+
+  .buttonsHorizontal {
+    display: block;
+  }
+
+  .rdt,
+  .buttonsHorizontal,
+  .stepper {
+    height: clamp(12rem, 36vw, 18rem);
+    width: 100%;
+  }
+
+  .media,
+  .content,
+  .desc {
+    display: contents;
+  }
+}

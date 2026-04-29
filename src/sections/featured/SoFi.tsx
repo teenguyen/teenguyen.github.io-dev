@@ -2,17 +2,18 @@ import clsx from "clsx";
 import Image from "next/image";
 import styles from "./SoFi.module.css";
 import shared from "./index.module.css";
+import Link from "next/link";
 
 export default function SoFi() {
   return (
     <article className={styles.sofi}>
-      <header className={shared.header}>
+      <div className={shared.header}>
         <p className="subtitle">SOCIAL FINANCE · SAN FRANCISCO · 2023–2025</p>
         <h2 className={shared.heading}>
           stock ticker
           <br />& invest redesign
         </h2>
-      </header>
+      </div>
 
       <div className={clsx(shared.desc, styles.desc)}>
         <ul>
@@ -39,7 +40,9 @@ export default function SoFi() {
             </p>
           </li>
         </ul>
-        <a className="subtitle">VIEW CASE STUDY →</a>
+        <Link className="subtitle" href="/social-finance">
+          VIEW CASE STUDY →
+        </Link>
       </div>
 
       <figure className={styles.media}>

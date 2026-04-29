@@ -2,11 +2,12 @@ import clsx from "clsx";
 import Image from "next/image";
 import styles from "./LiveRamp.module.css";
 import shared from "./index.module.css";
+import Link from "next/link";
 
 export default function LiveRamp() {
   return (
     <article className={styles.liveramp}>
-      <header className={clsx(shared.header, styles.header)}>
+      <div className={clsx(shared.header, styles.header)}>
         <p className={clsx("subtitle", styles.styleAlign)}>
           LIVERAMP · SAN FRANCISCO · 2018–2023
         </p>
@@ -14,7 +15,7 @@ export default function LiveRamp() {
           component libraries
           <br />& design systems
         </h2>
-      </header>
+      </div>
 
       <div
         className={clsx(shared.desc, styles.desc)}
@@ -44,7 +45,9 @@ export default function LiveRamp() {
             </p>
           </li>
         </ul>
-        <a className="subtitle">VIEW CASE STUDY →</a>
+        <Link className="subtitle" href="/liveramp">
+          VIEW CASE STUDY →
+        </Link>
       </div>
 
       <Image
