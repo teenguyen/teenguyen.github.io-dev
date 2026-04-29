@@ -17,7 +17,7 @@ export default function CaseStudyWrapper({
         <Link href={portfolioHref} className="subtitle">
           ← PORTFOLIO
         </Link>
-        0<h6 className={clsx("subtitle", styles.name)}>THERESA NGUYEN</h6>
+        <h6 className={clsx("subtitle", styles.name)}>THERESA NGUYEN</h6>
       </header>
       {children}
 
