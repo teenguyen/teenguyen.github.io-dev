@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import gsap from "gsap";
 import Blurb from "./Blurb";
+import Slide from "./Slide";
 import styles from "./index.module.css";
 
 export default function Creative() {
@@ -57,21 +57,15 @@ export default function Creative() {
       <div className={styles.content}>
         <div className={styles.media}>
           {BLURBS.map((blurb, i) => (
-            <div
+            <Slide
               key={blurb.title}
               ref={(el) => {
                 slideRefs.current[i] = el;
               }}
-              className={styles.slide}
-              style={{ transform: `translateY(${i === 0 ? "0%" : "100%"})` }}
-            >
-              <Image
-                src={blurb.image}
-                alt={blurb.title}
-                fill
-                className={styles.image}
-              />
-            </div>
+              src={blurb.image}
+              alt={blurb.title}
+              initial={i === 0}
+            />
           ))}
         </div>
 
@@ -140,6 +134,6 @@ const BLURBS = [
       target: "_blank",
       rel: "noopener noreferrer",
     },
-    image: "/lr-buttons.png",
+    image: "/creative-github.mp4",
   },
 ];

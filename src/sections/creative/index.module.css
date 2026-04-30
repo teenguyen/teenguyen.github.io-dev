@@ -16,17 +16,6 @@
   width: 100%;
 }
 
-.slide {
-  position: absolute;
-  inset: 0;
-  will-change: transform;
-}
-
-.image {
-  object-fit: cover;
-  height: 100%;
-}
-
 .article {
   display: flex;
   flex-direction: column;
