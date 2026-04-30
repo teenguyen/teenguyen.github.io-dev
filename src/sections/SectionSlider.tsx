@@ -8,6 +8,7 @@ import {
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from "react";
 import gsap from "gsap";
 import styles from "./SectionSlider.module.css";
@@ -27,9 +28,11 @@ type SliderApi = {
 
 const SliderContext = createContext<SliderApi | null>(null);
 const SlideIndexContext = createContext<number>(0);
+const ActiveSlideContext = createContext<number>(0);
 
 export const useSliderApi = () => useContext(SliderContext);
 export const useSlideIndex = () => useContext(SlideIndexContext);
+export const useActiveSlideIndex = () => useContext(ActiveSlideContext);
 
 type SectionSliderProps = {
   children: ReactNode;
@@ -38,6 +41,7 @@ type SectionSliderProps = {
 export default function SectionSlider({ children }: SectionSliderProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const activeRef = useRef(0);
+  const [activeIndex, setActiveIndex] = useState(0);
   const interceptorsRef = useRef(new Map<number, WheelInterceptor>());
   const slides = Children.toArray(children);
   const slideCount = slides.length;
@@ -63,6 +67,7 @@ export default function SectionSlider({ children }: SectionSliderProps) {
       if (clamped === activeRef.current) return;
 
       activeRef.current = clamped;
+      setActiveIndex(clamped);
       gsap.to(container, {
         y: -clamped * window.innerHeight,
         duration: TWEEN_DURATION,
@@ -105,15 +110,17 @@ export default function SectionSlider({ children }: SectionSliderProps) {
 
   return (
     <SliderContext.Provider value={api}>
-      <div className={styles.master}>
-        <div ref={containerRef} className={styles.panelWrap}>
-          {slides.map((child, i) => (
-            <SlideIndexContext.Provider key={i} value={i}>
-              <div className={styles.panel}>{child}</div>
-            </SlideIndexContext.Provider>
-          ))}
+      <ActiveSlideContext.Provider value={activeIndex}>
+        <div className={styles.master}>
+          <div ref={containerRef} className={styles.panelWrap}>
+            {slides.map((child, i) => (
+              <SlideIndexContext.Provider key={i} value={i}>
+                <div className={styles.panel}>{child}</div>
+              </SlideIndexContext.Provider>
+            ))}
+          </div>
         </div>
-      </div>
+      </ActiveSlideContext.Provider>
     </SliderContext.Provider>
   );
 }

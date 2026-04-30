@@ -4,9 +4,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import Blurb from "./Blurb";
 import Slide from "./Slide";
+import { useActiveSlideIndex, useSlideIndex } from "../SectionSlider";
 import styles from "./index.module.css";
 
 export default function Creative() {
+  const sectionIndex = useSlideIndex();
+  const activeSection = useActiveSlideIndex();
+  const isActive = sectionIndex === activeSection;
+
   const [active, setActive] = useState(0);
   const animating = useRef(false);
   const userInteracted = useRef(false);
@@ -47,10 +52,25 @@ export default function Creative() {
   );
 
   useEffect(() => {
-    if (userInteracted.current) return;
+    if (!isActive) return;
+    userInteracted.current = false;
+    animating.current = false;
+    setActive(0);
+    slideRefs.current.forEach((el, i) => {
+      if (!el) return;
+      gsap.killTweensOf(el);
+      gsap.set(el, {
+        y: i === 0 ? "0%" : "100%",
+        zIndex: i === 0 ? 1 : 0,
+      });
+    });
+  }, [isActive]);
+
+  useEffect(() => {
+    if (!isActive || userInteracted.current) return;
     const t = setTimeout(() => goTo((active + 1) % BLURBS.length), 4000);
     return () => clearTimeout(t);
-  }, [active, goTo]);
+  }, [isActive, active, goTo]);
 
   return (
     <section className={styles.section}>
@@ -65,6 +85,7 @@ export default function Creative() {
               src={blurb.image}
               alt={blurb.title}
               initial={i === 0}
+              playing={isActive && i === active}
             />
           ))}
         </div>

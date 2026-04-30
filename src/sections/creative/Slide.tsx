@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import styles from "./Slide.module.css";
 
@@ -5,11 +6,31 @@ type SlideProps = {
   src: string;
   alt: string;
   initial?: boolean;
+  playing?: boolean;
   ref?: React.Ref<HTMLDivElement>;
 };
 
-export default function Slide({ src, alt, initial, ref }: SlideProps) {
+export default function Slide({
+  src,
+  alt,
+  initial,
+  playing,
+  ref,
+}: SlideProps) {
   const isVideo = src.endsWith(".mp4");
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (!isVideo) return;
+    const v = videoRef.current;
+    if (!v) return;
+    if (playing) {
+      v.currentTime = 0;
+      v.play().catch(() => {});
+    } else {
+      v.pause();
+    }
+  }, [isVideo, playing]);
 
   return (
     <div
@@ -19,9 +40,9 @@ export default function Slide({ src, alt, initial, ref }: SlideProps) {
     >
       {isVideo ? (
         <video
+          ref={videoRef}
           src={src}
           className={`${styles.image} ${styles.video}`}
-          autoPlay
           loop
           muted
           playsInline
