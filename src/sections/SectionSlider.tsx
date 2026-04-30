@@ -1,10 +1,35 @@
 "use client";
 
-import { Children, ReactNode, useEffect, useRef } from "react";
+import {
+  Children,
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 import gsap from "gsap";
 import styles from "./SectionSlider.module.css";
 
-const TWEEN_DURATION = 1.25;
+const TWEEN_DURATION = 1.1;
+const WHEEL_THROTTLE_MS = 250;
+
+type WheelDirection = 1 | -1;
+export type WheelInterceptor = (direction: WheelDirection) => boolean;
+
+type SliderApi = {
+  setInterceptor: (
+    slideIndex: number,
+    interceptor: WheelInterceptor | null,
+  ) => void;
+};
+
+const SliderContext = createContext<SliderApi | null>(null);
+const SlideIndexContext = createContext<number>(0);
+
+export const useSliderApi = () => useContext(SliderContext);
+export const useSlideIndex = () => useContext(SlideIndexContext);
 
 type SectionSliderProps = {
   children: ReactNode;
@@ -13,30 +38,51 @@ type SectionSliderProps = {
 export default function SectionSlider({ children }: SectionSliderProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const activeRef = useRef(0);
+  const interceptorsRef = useRef(new Map<number, WheelInterceptor>());
   const slides = Children.toArray(children);
   const slideCount = slides.length;
+
+  const api = useMemo<SliderApi>(
+    () => ({
+      setInterceptor: (idx, interceptor) => {
+        if (interceptor) interceptorsRef.current.set(idx, interceptor);
+        else interceptorsRef.current.delete(idx);
+      },
+    }),
+    [],
+  );
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container || slideCount < 2) return;
 
+    let lastWheelTime = 0;
+
     const goTo = (next: number) => {
       const clamped = Math.max(0, Math.min(slideCount - 1, next));
       if (clamped === activeRef.current) return;
-      if (gsap.isTweening(container)) return;
 
       activeRef.current = clamped;
       gsap.to(container, {
         y: -clamped * window.innerHeight,
         duration: TWEEN_DURATION,
-        ease: "power4.inOut",
+        ease: "power3.inOut",
+        overwrite: true,
       });
     };
 
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
-      if (gsap.isTweening(container)) return;
-      const direction = e.deltaY > 0 ? 1 : -1;
+
+      const now = e.timeStamp;
+      if (now - lastWheelTime < WHEEL_THROTTLE_MS) return;
+      lastWheelTime = now;
+
+      const direction: WheelDirection = e.deltaY > 0 ? 1 : -1;
+
+      const interceptor = interceptorsRef.current.get(activeRef.current);
+      if (interceptor && interceptor(direction)) return;
+
       goTo(activeRef.current + direction);
     };
 
@@ -58,14 +104,16 @@ export default function SectionSlider({ children }: SectionSliderProps) {
   }, [slideCount]);
 
   return (
-    <div className={styles.master}>
-      <div ref={containerRef} className={styles.panelWrap}>
-        {slides.map((child, i) => (
-          <div key={i} className={styles.panel}>
-            {child}
-          </div>
-        ))}
+    <SliderContext.Provider value={api}>
+      <div className={styles.master}>
+        <div ref={containerRef} className={styles.panelWrap}>
+          {slides.map((child, i) => (
+            <SlideIndexContext.Provider key={i} value={i}>
+              <div className={styles.panel}>{child}</div>
+            </SlideIndexContext.Provider>
+          ))}
+        </div>
       </div>
-    </div>
+    </SliderContext.Provider>
   );
 }

@@ -1,15 +1,17 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Starmap from "../../demos/starmap/Starmap";
+import {
+  useSliderApi,
+  useSlideIndex,
+  type WheelInterceptor,
+} from "../SectionSlider";
 import ScreenOne from "./ScreenOne";
 import ScreenTwo from "./ScreenTwo";
 import styles from "./index.module.css";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const SMALL_VIEWPORT_MAX_WIDTH = 768;
 const SHORT_VIEWPORT_MAX_HEIGHT = 720;
@@ -33,12 +35,11 @@ const SOCIALS_AND_STARMAP_SCROLL_DURATION = 1;
 const TAGLINE_LINE_ONE_START = 1;
 const TAGLINE_LINE_TWO_START = 1.24;
 const TIMELINE_START = 0;
-const SCROLL_PROGRESS_MIN = 0.01;
-const SCROLL_PROGRESS_MAX = 0.99;
-const SCROLL_TRIGGER_END = "bottom bottom";
 const SCREEN_TWO_INITIAL_Y = 24;
 const SCREEN_TWO_REVEAL_DURATION = 0.45;
 export default function Hero() {
+  const sliderApi = useSliderApi();
+  const slideIndex = useSlideIndex();
   const [beginCelestialReveal, setBeginCelestialReveal] = useState(false);
   const rootRef = useRef<HTMLElement | null>(null);
   const stageRef = useRef<HTMLDivElement | null>(null);
@@ -50,6 +51,8 @@ export default function Hero() {
   const socialsRef = useRef<HTMLDivElement | null>(null);
   const lineOneRef = useRef<HTMLParagraphElement | null>(null);
   const lineTwoRef = useRef<HTMLParagraphElement | null>(null);
+  const phase2TimelineRef = useRef<gsap.core.Timeline | null>(null);
+  const phase1DoneRef = useRef(false);
 
   useGSAP(
     () => {
@@ -151,10 +154,6 @@ export default function Hero() {
           },
           SOCIALS_SETTLE_OFFSET,
         );
-      introTimeline.eventCallback("onComplete", () => {
-        setBeginCelestialReveal(true);
-      });
-
       const timeline = gsap.timeline({
         paused: true,
         defaults: {
@@ -224,55 +223,44 @@ export default function Hero() {
         .to(lineOneRef.current, revealTagLine, TAGLINE_LINE_ONE_START)
         .to(lineTwoRef.current, revealTagLine, TAGLINE_LINE_TWO_START);
 
-      const syncTimelineToScroll = (progress: number) => {
-        // Keep visual state deterministic after ScrollTrigger refresh/resize.
-        if (progress <= SCROLL_PROGRESS_MIN) {
-          timeline.pause(0);
-          return;
-        }
-        if (progress >= SCROLL_PROGRESS_MAX) {
-          timeline.pause(1);
-          return;
-        }
-        timeline.pause(progress);
-      };
+      phase2TimelineRef.current = timeline;
 
-      ScrollTrigger.create({
-        trigger: rootRef.current,
-        pin: stageRef.current,
-        start: "top top",
-        end: SCROLL_TRIGGER_END,
-        pinSpacing: false,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-        onRefresh: (self) => {
-          timeline.invalidate();
-          syncTimelineToScroll(self.progress);
-        },
-        onUpdate: (self) => {
-          if (
-            self.direction === 1 &&
-            self.progress > SCROLL_PROGRESS_MIN &&
-            timeline.progress() < SCROLL_PROGRESS_MAX
-          ) {
-            timeline.play();
-          }
-
-          if (
-            self.direction === -1 &&
-            self.progress < SCROLL_PROGRESS_MAX &&
-            timeline.progress() > SCROLL_PROGRESS_MIN
-          ) {
-            timeline.reverse();
-          }
-        },
-        onLeaveBack: () => {
-          timeline.pause(0);
-        },
+      introTimeline.eventCallback("onComplete", () => {
+        setBeginCelestialReveal(true);
+        phase1DoneRef.current = true;
       });
     },
     { scope: rootRef },
   );
+
+  useEffect(() => {
+    if (!sliderApi) return;
+
+    const interceptor: WheelInterceptor = (direction) => {
+      const tl = phase2TimelineRef.current;
+      if (!tl) return false;
+      if (!phase1DoneRef.current) return true;
+
+      const progress = tl.progress();
+
+      if (direction === 1) {
+        if (progress < 1) {
+          tl.play();
+          return true;
+        }
+        return false;
+      }
+
+      if (progress > 0) {
+        tl.reverse();
+        return true;
+      }
+      return false;
+    };
+
+    sliderApi.setInterceptor(slideIndex, interceptor);
+    return () => sliderApi.setInterceptor(slideIndex, null);
+  }, [sliderApi, slideIndex]);
 
   return (
     <section ref={rootRef} className={styles.hero}>
