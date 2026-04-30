@@ -1,0 +1,42 @@
+.blurb {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 12px;
+  padding: 16px 0;
+  cursor: pointer;
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
+}
+
+.blurb:not(.blurbActive):hover {
+  opacity: 0.7;
+}
+
+.blurbActive {
+  opacity: 1;
+}
+
+.index {
+  padding-top: 0.45rem;
+}
+
+.blurbBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title {
+  font-size: 1.5rem;
+  color: var(--text-color);
+}
+
+.skills {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+
+.link {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}

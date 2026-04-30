@@ -1,0 +1,137 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import gsap from "gsap";
+import Blurb from "./Blurb";
+import styles from "./index.module.css";
+
+export default function Creative() {
+  const [active, setActive] = useState(0);
+  const animating = useRef(false);
+  const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const goTo = (next: number) => {
+    if (animating.current || next === active) return;
+    animating.current = true;
+
+    const prev = active;
+    const dir = next > prev ? 1 : -1;
+    setActive(next);
+
+    gsap.set(slideRefs.current[next], {
+      y: dir > 0 ? "100%" : "-100%",
+      zIndex: 2,
+    });
+
+    gsap
+      .timeline({
+        onComplete: () => {
+          animating.current = false;
+        },
+      })
+      .to(
+        slideRefs.current[prev],
+        { y: dir > 0 ? "-100%" : "100%", duration: 0.5, ease: "power2.out" },
+        0,
+      )
+      .to(
+        slideRefs.current[next],
+        { y: "0%", duration: 0.5, ease: "power2.out" },
+        0,
+      );
+  };
+
+  useEffect(() => {
+    const t = setTimeout(() => goTo((active + 1) % BLURBS.length), 4000);
+    return () => clearTimeout(t);
+  }, [active]);
+
+  return (
+    <section className={styles.section}>
+      <div className={styles.content}>
+        <div className={styles.media}>
+          {BLURBS.map((blurb, i) => (
+            <div
+              key={blurb.title}
+              ref={(el) => {
+                slideRefs.current[i] = el;
+              }}
+              className={styles.slide}
+              style={{ transform: `translateY(${i === 0 ? "0%" : "100%"})` }}
+            >
+              <Image
+                src={blurb.image}
+                alt={blurb.title}
+                fill
+                className={styles.image}
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className={styles.article}>
+          <h2 className={styles.heading}>creative</h2>
+
+          <div className={styles.blurbs}>
+            {BLURBS.map((blurb, i) => (
+              <Blurb
+                key={blurb.title}
+                index={i + 1}
+                title={blurb.title}
+                description={blurb.description}
+                skills={blurb.skills}
+                linkProps={blurb.linkProps}
+                active={i === active}
+                onClick={() => goTo(i)}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const BLURBS = [
+  {
+    title: "interactive celestial map",
+    description:
+      "A celestial map that allows you to explore the stars and constellations in the night sky.",
+    skills: "D3.JS · CANVAS · GEOMETRIC PROJECTIONS",
+    image: "/lr-buttons.png",
+  },
+  {
+    title: "custom SVGs & CSS animations",
+    description:
+      "Pixel-faithful SVG recreation of the Animal Crossing Nookphone. Every button, hand drawn and animated in pure CSS. Built because it seemed fun, which is the best reason. (WIP)",
+    skills: "SVG · CSS ANIMATION · ANIMAL CROSSING",
+    linkProps: {
+      children: "HERO",
+      href: "/creative/nookphone",
+      target: "_blank",
+      rel: "noopener noreferrer",
+    },
+    image: "/lr-buttons.png",
+  },
+  {
+    title: "GSAP motion",
+    description:
+      "Physics-based easing, staggered sequences, squash & stretch – exploring what the browser feels like as a stage. Each sketch started as a question about timing.",
+    skills: "GSAP · CANVAS · EASING · PHYSICS",
+    image: "/lr-buttons.png",
+  },
+  {
+    title: "dark & light glassmorphism theming",
+    description:
+      "The GitHub issues tracker reimagined in frosted glass. An exercise in layered transparency & making utility UI feel tactile.",
+    skills: "API · GLASSMORPHISM · CSS THEMING",
+    linkProps: {
+      children: "HERO",
+      href: "/creative/github-issues",
+      target: "_blank",
+      rel: "noopener noreferrer",
+    },
+    image: "/lr-buttons.png",
+  },
+];
