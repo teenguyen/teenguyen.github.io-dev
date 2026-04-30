@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import Blurb from "./Blurb";
@@ -9,43 +9,48 @@ import styles from "./index.module.css";
 export default function Creative() {
   const [active, setActive] = useState(0);
   const animating = useRef(false);
+  const userInteracted = useRef(false);
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  const goTo = (next: number) => {
-    if (animating.current || next === active) return;
-    animating.current = true;
+  const goTo = useCallback(
+    (next: number) => {
+      if (animating.current || next === active) return;
+      animating.current = true;
 
-    const prev = active;
-    const dir = next > prev ? 1 : -1;
-    setActive(next);
+      const prev = active;
+      const dir = next > prev ? 1 : -1;
+      setActive(next);
 
-    gsap.set(slideRefs.current[next], {
-      y: dir > 0 ? "100%" : "-100%",
-      zIndex: 2,
-    });
+      gsap.set(slideRefs.current[next], {
+        y: dir > 0 ? "100%" : "-100%",
+        zIndex: 2,
+      });
 
-    gsap
-      .timeline({
-        onComplete: () => {
-          animating.current = false;
-        },
-      })
-      .to(
-        slideRefs.current[prev],
-        { y: dir > 0 ? "-100%" : "100%", duration: 0.5, ease: "power2.out" },
-        0,
-      )
-      .to(
-        slideRefs.current[next],
-        { y: "0%", duration: 0.5, ease: "power2.out" },
-        0,
-      );
-  };
+      gsap
+        .timeline({
+          onComplete: () => {
+            animating.current = false;
+          },
+        })
+        .to(
+          slideRefs.current[prev],
+          { y: dir > 0 ? "-100%" : "100%", duration: 0.5, ease: "power2.out" },
+          0,
+        )
+        .to(
+          slideRefs.current[next],
+          { y: "0%", duration: 0.5, ease: "power2.out" },
+          0,
+        );
+    },
+    [active],
+  );
 
   useEffect(() => {
+    if (userInteracted.current) return;
     const t = setTimeout(() => goTo((active + 1) % BLURBS.length), 4000);
     return () => clearTimeout(t);
-  }, [active]);
+  }, [active, goTo]);
 
   return (
     <section className={styles.section}>
@@ -83,7 +88,10 @@ export default function Creative() {
                 skills={blurb.skills}
                 linkProps={blurb.linkProps}
                 active={i === active}
-                onClick={() => goTo(i)}
+                onClick={() => {
+                  userInteracted.current = true;
+                  goTo(i);
+                }}
               />
             ))}
           </div>
