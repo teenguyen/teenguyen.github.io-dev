@@ -137,6 +137,7 @@ function drawCrossGlyph(
 type StarmapProps = {
   className?: string;
   beginCelestialReveal?: boolean;
+  playing?: boolean;
 };
 
 type CanvasLayout = {
@@ -239,6 +240,7 @@ function drawLineByDistance(
 export default function Starmap({
   className,
   beginCelestialReveal = false,
+  playing = false,
 }: StarmapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -250,6 +252,7 @@ export default function Starmap({
   const animationStartRef = useRef<number | null>(null);
   const revealStartRef = useRef<number | null>(null);
   const beginCelestialRevealRef = useRef(beginCelestialReveal);
+  const playingRef = useRef(playing);
   const hasScrolledPastRef = useRef(false);
 
   const readThemeColors = useCallback(() => {
@@ -317,19 +320,24 @@ export default function Starmap({
 
     const themeColor = themeColor48Ref.current;
     const themeColor25 = themeColor25Ref.current;
-    let revealElapsedMs = 0;
     let starOpacity = 0;
     let constellationDrawDistance = 0;
+    let constellationsVisible = false;
 
-    if (beginCelestialRevealRef.current) {
+    if (playingRef.current) {
+      starOpacity = 1;
+      constellationDrawDistance = Number.POSITIVE_INFINITY;
+      constellationsVisible = true;
+    } else if (beginCelestialRevealRef.current) {
       if (revealStartRef.current === null) {
         revealStartRef.current = timeMs;
       }
-      revealElapsedMs = timeMs - revealStartRef.current;
+      const revealElapsedMs = timeMs - revealStartRef.current;
       starOpacity = clamp01(revealElapsedMs / STAR_REVEAL_DURATION_MS);
       constellationDrawDistance =
         (Math.max(0, revealElapsedMs - STAR_REVEAL_DURATION_MS) / 1000) *
         CONSTELLATION_DRAW_SPEED_PX_PER_SECOND;
+      constellationsVisible = revealElapsedMs > STAR_REVEAL_DURATION_MS;
     }
 
     const projection = d3
@@ -353,10 +361,7 @@ export default function Starmap({
     graticulePath(d3.geoGraticule10());
     ctx.stroke();
 
-    if (
-      constellationDrawDistance > 0 &&
-      revealElapsedMs > STAR_REVEAL_DURATION_MS
-    ) {
+    if (constellationDrawDistance > 0 && constellationsVisible) {
       ctx.strokeStyle = themeColor25;
 
       const projectedConstellations: ProjectedConstellation[] = [];
@@ -380,7 +385,10 @@ export default function Starmap({
             points.push([x, y]);
           }
           if (points.length >= 2) {
-            const splitLines = splitLineOnProjectionGaps(points, maxSegmentGapPx);
+            const splitLines = splitLineOnProjectionGaps(
+              points,
+              maxSegmentGapPx,
+            );
             if (splitLines.length > 0) {
               projectedLines.push(...splitLines);
             }
@@ -478,7 +486,13 @@ export default function Starmap({
         return;
       }
 
-      if (container.getBoundingClientRect().bottom <= 0) {
+      // While a parent is driving `playing`, the container can briefly land at
+      // bottom <= 0 between slide cycles even though the user is still on the
+      // section. Skip the auto-stop in that case.
+      if (
+        !playingRef.current &&
+        container.getBoundingClientRect().bottom <= 0
+      ) {
         hasScrolledPastRef.current = true;
         rafRef.current = null;
         return;
@@ -604,6 +618,18 @@ export default function Starmap({
       revealStartRef.current = null;
     }
   }, [beginCelestialReveal]);
+
+  useEffect(() => {
+    playingRef.current = playing;
+    // The container can translate fully off-screen between slide cycles,
+    // which trips the `bottom <= 0` guard inside the rAF loop and stops it.
+    // When the slide becomes active again, clear that latch and restart so
+    // the globe keeps spinning and the stars stay rendered on each cycle.
+    if (playing) {
+      hasScrolledPastRef.current = false;
+      startAnimation();
+    }
+  }, [playing, startAnimation]);
 
   return (
     <div ref={containerRef} className={clsx(styles.root, className)}>

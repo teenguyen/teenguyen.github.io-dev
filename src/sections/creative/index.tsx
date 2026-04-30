@@ -6,6 +6,7 @@ import Blurb from "./Blurb";
 import Slide from "./Slide";
 import { useActiveSlideIndex, useSlideIndex } from "../SectionSlider";
 import styles from "./index.module.css";
+import Starmap from "@/demos/starmap/Starmap";
 
 export default function Creative() {
   const sectionIndex = useSlideIndex();
@@ -122,7 +123,7 @@ const BLURBS = [
     description:
       "A celestial map that allows you to explore the stars and constellations in the night sky.",
     skills: "D3.JS · CANVAS · GEOMETRIC PROJECTIONS",
-    image: "/lr-buttons.png",
+    image: Starmap,
   },
   {
     title: "custom SVGs & CSS animations",

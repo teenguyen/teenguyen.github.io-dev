@@ -52,7 +52,6 @@ export default function Hero() {
   const lineOneRef = useRef<HTMLParagraphElement | null>(null);
   const lineTwoRef = useRef<HTMLParagraphElement | null>(null);
   const phase2TimelineRef = useRef<gsap.core.Timeline | null>(null);
-  const phase1DoneRef = useRef(false);
 
   useGSAP(
     () => {
@@ -227,7 +226,6 @@ export default function Hero() {
 
       introTimeline.eventCallback("onComplete", () => {
         setBeginCelestialReveal(true);
-        phase1DoneRef.current = true;
       });
     },
     { scope: rootRef },
@@ -239,7 +237,6 @@ export default function Hero() {
     const interceptor: WheelInterceptor = (direction) => {
       const tl = phase2TimelineRef.current;
       if (!tl) return false;
-      if (!phase1DoneRef.current) return true;
 
       const progress = tl.progress();
 
