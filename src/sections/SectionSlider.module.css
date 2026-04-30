@@ -1,0 +1,17 @@
+.master {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+.panelWrap {
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+
+.panel {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
