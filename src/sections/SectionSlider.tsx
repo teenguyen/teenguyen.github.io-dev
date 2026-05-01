@@ -17,7 +17,10 @@ const TWEEN_DURATION = 1.1;
 const WHEEL_THROTTLE_MS = 250;
 
 type WheelDirection = 1 | -1;
-export type WheelInterceptor = (direction: WheelDirection) => boolean;
+export type WheelInterceptor = (
+  direction: WheelDirection,
+  event: WheelEvent,
+) => boolean;
 
 type SliderApi = {
   setInterceptor: (
@@ -77,16 +80,19 @@ export default function SectionSlider({ children }: SectionSliderProps) {
     };
 
     const onWheel = (e: WheelEvent) => {
+      const direction: WheelDirection = e.deltaY > 0 ? 1 : -1;
+
+      const interceptor = interceptorsRef.current.get(activeRef.current);
+      if (interceptor?.(direction, e)) {
+        e.preventDefault();
+        return;
+      }
+
       e.preventDefault();
 
       const now = e.timeStamp;
       if (now - lastWheelTime < WHEEL_THROTTLE_MS) return;
       lastWheelTime = now;
-
-      const direction: WheelDirection = e.deltaY > 0 ? 1 : -1;
-
-      const interceptor = interceptorsRef.current.get(activeRef.current);
-      if (interceptor && interceptor(direction)) return;
 
       goTo(activeRef.current + direction);
     };

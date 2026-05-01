@@ -234,7 +234,7 @@ export default function Hero() {
   useEffect(() => {
     if (!sliderApi) return;
 
-    const interceptor: WheelInterceptor = (direction) => {
+    const interceptor: WheelInterceptor = (direction, _event) => {
       const tl = phase2TimelineRef.current;
       if (!tl) return false;
 
