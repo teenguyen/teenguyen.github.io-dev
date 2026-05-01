@@ -4,7 +4,69 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import clsx from "clsx";
 import { useActiveSlideIndex, useSlideIndex } from "../SectionSlider";
+import ExperienceFooter from "./footer";
 import styles from "./index.module.css";
+
+const CURRENT_JOB = {
+  title: "senior front end engineer",
+  company: "SOCIAL FINANCE",
+  location: "SAN FRANCISCO CA, USA",
+  dates: "MARCH 2023 – DECEMBER 2025",
+  logo: "/experience/sofi.svg",
+};
+
+const PRIOR_JOBS = [
+  {
+    id: "lr",
+    title: "senior front end engineer",
+    company: "LIVERAMP",
+    location: "SAN FRANCISCO, USA",
+    dates: "SEP 2018 – JAN 2023",
+    logo: "/experience/liveramp.svg",
+  },
+  {
+    id: "rba",
+    title: "front end / java developer",
+    company: "RESERVE BANK OF AUSTRALIA",
+    location: "SYDNEY, AUS",
+    dates: "MAR 2016 – AUG 2018",
+    logo: "/experience/rba.svg",
+  },
+];
+
+const EARLY_JOBS = [
+  {
+    role: "it graduate",
+    company: "RESERVE BANK OF AUSTRALIA",
+    year: "2014",
+    logo: "/experience/rba.svg",
+  },
+  {
+    role: "developer operations",
+    company: "ING DIRECT",
+    year: "2013",
+    logo: "/experience/ing%20direct.svg",
+  },
+  {
+    role: "junior java developer",
+    company: "SYPLE TECHNOLOGIES",
+    year: "2012",
+    logo: "/experience/syple.svg",
+  },
+  {
+    role: "junior .net developer",
+    company: "MERRILL LYNCH",
+    year: "2011",
+    logo: "/experience/merrill%20lynch.svg",
+  },
+];
+
+const EDUCATION = [
+  {
+    degree: "bachelor of information technology\nco-op scholarship",
+    school: "UNIVERSITY OF TECHNOLOGY, SYDNEY",
+  },
+];
 
 type Rect = { top: number; left: number; right: number; bottom: number };
 
@@ -17,7 +79,10 @@ type Wrap2Paths = {
 };
 
 const ANIM_DUR = 900;
-const T0 = 100;
+/** Base delay before first grid stroke (slide settle + extra pause). */
+const T0 = 350;
+/** After education cell starts fading in (+ buffer for .cell opacity transition) */
+const FOOTER_RULE_DELAY_MS = T0 + ANIM_DUR + 200 + 940 + 420;
 
 function getRect(el: HTMLElement, parent: HTMLElement): Rect {
   const er = el.getBoundingClientRect();
@@ -263,14 +328,14 @@ export default function Experience() {
   const viewBox2 = `0 0 ${wrap2Size.w} ${wrap2Size.h}`;
 
   return (
-    <section className={styles.section}>
-      <div className={styles.page}>
+    <div className={styles.slide}>
+      <section className={styles.section}>
         <h2 className={styles.heading}>experience</h2>
 
-        <div className={styles.tablesWrap}>
-          <div ref={wrap1Ref} className={styles.gridWrap}>
+        <div className={styles.tableWrapper}>
+          <div ref={wrap1Ref} className={styles.gridWrapper}>
             <svg
-              className={styles.svgOverlay}
+              className={styles.gridLines}
               viewBox={viewBox1}
               width={wrap1Size.w}
               height={wrap1Size.h}
@@ -305,15 +370,17 @@ export default function Experience() {
                   className={styles.heroLogo}
                   src={CURRENT_JOB.logo}
                   alt={`${CURRENT_JOB.company} logo`}
-                  width={64}
-                  height={64}
+                  width={100}
+                  height={100}
                 />
                 <div>
                   <div className={styles.heroTitleRow}>
                     <span className={styles.heroTitle}>
                       {CURRENT_JOB.title}
                     </span>
-                    <span className={styles.heroCo}>{CURRENT_JOB.company}</span>
+                    <span className={styles.heroMeta}>
+                      {CURRENT_JOB.company}
+                    </span>
                   </div>
                   <div className={styles.heroMeta}>
                     {CURRENT_JOB.location}
@@ -339,8 +406,10 @@ export default function Experience() {
                     />
                     <div className={styles.subText}>
                       <div className={styles.subTitle}>{job.title}</div>
-                      <div className={styles.subCo}>{job.company}</div>
                       <div className={styles.subMeta}>
+                        {job.company}
+                        <br />
+                        <br />
                         {job.location}
                         <br />
                         {job.dates}
@@ -352,9 +421,9 @@ export default function Experience() {
             </div>
           </div>
 
-          <div ref={wrap2Ref} className={styles.gridWrap2}>
+          <div ref={wrap2Ref} className={styles.gridWrapper}>
             <svg
-              className={styles.svgOverlay}
+              className={styles.gridLines}
               viewBox={viewBox2}
               width={wrap2Size.w}
               height={wrap2Size.h}
@@ -385,39 +454,37 @@ export default function Experience() {
               )}
             </svg>
 
-            <div className={styles.expGrid2}>
+            <div className={styles.expGrid}>
               <div className={styles.earlyRow}>
-                <div
+                <h3
                   ref={earlyRef}
-                  className={clsx(cellClass("early"), styles.earlyLabel)}
+                  className={clsx(
+                    cellClass("early"),
+                    styles.earlyLabel,
+                    styles.accentSectionHeading,
+                  )}
                 >
-                  <span className={styles.accentSectionHeading}>
-                    early career
-                  </span>
-                </div>
+                  early career
+                </h3>
                 <div
                   ref={logosRef}
                   className={clsx(cellClass("logos"), styles.earlyLogos)}
                 >
                   {EARLY_JOBS.map((job) => (
-                    <div key={job.year} className={styles.logoItem}>
+                    <div key={job.year} className={styles.detailItem}>
                       <Image
-                        className={styles.logoMark}
+                        className={styles.earlyLogo}
                         src={job.logo}
                         alt={`${job.company} logo`}
                         width={36}
                         height={36}
                       />
-                      <div>
-                        <div className={styles.serifDetailTitle}>
-                          {job.role}
-                        </div>
-                        <div className={styles.sansDetailSubtext}>
-                          {job.company}
-                          <br />
-                          {job.year}
-                        </div>
-                      </div>
+                      <p className={styles.serifDetailTitle}>{job.role}</p>
+                      <p className={styles.sansDetailSubtext}>
+                        {job.company}
+                        <br />
+                        {job.year}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -426,89 +493,20 @@ export default function Experience() {
                 ref={eduRef}
                 className={clsx(cellClass("edu"), styles.eduRow)}
               >
-                <div>
-                  <div className={styles.serifDetailTitle}>
-                    {EDUCATION.degree.map((line, i) => (
-                      <span key={i}>
-                        {line}
-                        {i < EDUCATION.degree.length - 1 && <br />}
-                      </span>
-                    ))}
-                  </div>
-                  <div className={styles.sansDetailSubtext}>
-                    {EDUCATION.school}
-                  </div>
-                </div>
-                <div
-                  ref={eduHeadingRef}
-                  className={styles.accentSectionHeading}
-                >
+                <h3 ref={eduHeadingRef} className={styles.accentSectionHeading}>
                   education
-                </div>
+                </h3>
+                {EDUCATION.map(({ degree, school }) => (
+                  <div key={degree} className={styles.eduDetail}>
+                    <p className={styles.serifDetailTitle}>{degree}</p>
+                    <p className={styles.sansDetailSubtext}>{school}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }
-
-const CURRENT_JOB = {
-  title: "senior front end engineer",
-  company: "SOCIAL FINANCE",
-  location: "SAN FRANCISCO CA, USA",
-  dates: "MARCH 2023 – DECEMBER 2025",
-  logo: "/experience/sofi.svg",
-};
-
-const PRIOR_JOBS = [
-  {
-    id: "lr",
-    title: "senior front end engineer",
-    company: "LIVERAMP",
-    location: "SAN FRANCISCO, USA",
-    dates: "SEP 2018 – JAN 2023",
-    logo: "/experience/liveramp.svg",
-  },
-  {
-    id: "rba",
-    title: "front end / java developer",
-    company: "RESERVE BANK OF AUSTRALIA",
-    location: "SYDNEY, AUS",
-    dates: "MAR 2016 – AUG 2018",
-    logo: "/experience/rba.svg",
-  },
-];
-
-const EARLY_JOBS = [
-  {
-    role: "it graduate",
-    company: "RESERVE BANK OF AUSTRALIA",
-    year: "2014",
-    logo: "/experience/rba.svg",
-  },
-  {
-    role: "developer operations",
-    company: "ING DIRECT",
-    year: "2013",
-    logo: "/experience/ing%20direct.svg",
-  },
-  {
-    role: "junior java developer",
-    company: "SYPLE TECHNOLOGIES",
-    year: "2012",
-    logo: "/experience/syple.svg",
-  },
-  {
-    role: "junior .net developer",
-    company: "MERRILL LYNCH",
-    year: "2011",
-    logo: "/experience/merrill%20lynch.svg",
-  },
-];
-
-const EDUCATION = {
-  degree: ["bachelor of information technology", "co-op scholarship"],
-  school: "UNIVERSITY OF TECHNOLOGY, SYDNEY",
-};
