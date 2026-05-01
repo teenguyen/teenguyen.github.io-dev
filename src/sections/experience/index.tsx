@@ -79,6 +79,8 @@ type Wrap2Paths = {
 };
 
 const ANIM_DUR = 900;
+/** Edge slack so OS overscroll / float scrollTop doesn't trap slide navigation. */
+const SCROLL_BOUNDARY_EPS = 3;
 /** Base delay before first grid stroke (slide settle + extra pause). */
 const T0 = 350;
 /** After education cell starts fading in (+ buffer for .cell opacity transition) */
@@ -100,6 +102,7 @@ export default function Experience() {
   const activeSection = useActiveSlideIndex();
   const isActive = sectionIndex === activeSection;
 
+  const scrollRef = useRef<HTMLDivElement>(null);
   const wrap1Ref = useRef<HTMLDivElement>(null);
   const wrap2Ref = useRef<HTMLDivElement>(null);
 
@@ -321,6 +324,30 @@ export default function Experience() {
     };
   }, [isActive, wrap1Paths, wrap2Paths, wrap1Size, wrap2Size]);
 
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const onWheel = (e: WheelEvent) => {
+      if (e.ctrlKey || e.metaKey) return;
+
+      const maxScroll = el.scrollHeight - el.clientHeight;
+      if (maxScroll <= 1) return;
+
+      if (e.deltaY === 0) return;
+
+      const top = el.scrollTop;
+
+      if (e.deltaY > 0 && top >= maxScroll - SCROLL_BOUNDARY_EPS) return;
+      if (e.deltaY < 0 && top <= SCROLL_BOUNDARY_EPS) return;
+
+      e.stopPropagation();
+    };
+
+    el.addEventListener("wheel", onWheel, { passive: true });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, []);
+
   const cellClass = (id: string) =>
     clsx(styles.cell, visibleCells.has(id) && styles.cellVisible);
 
@@ -328,8 +355,8 @@ export default function Experience() {
   const viewBox2 = `0 0 ${wrap2Size.w} ${wrap2Size.h}`;
 
   return (
-    <div className={styles.slide}>
-      <section className={styles.section}>
+    <section className={styles.section}>
+      <div ref={scrollRef} className={styles.inner}>
         <h2 className={styles.heading}>experience</h2>
 
         <div className={styles.tableWrapper}>
@@ -373,20 +400,14 @@ export default function Experience() {
                   width={100}
                   height={100}
                 />
-                <div>
+                <div className={styles.textWrapper}>
                   <div className={styles.heroTitleRow}>
-                    <span className={styles.heroTitle}>
-                      {CURRENT_JOB.title}
-                    </span>
-                    <span className={styles.heroMeta}>
-                      {CURRENT_JOB.company}
-                    </span>
+                    <p className={styles.heroTitle}>{CURRENT_JOB.title}</p>
+                    <p className={styles.heroMeta}>{CURRENT_JOB.company}</p>
                   </div>
-                  <div className={styles.heroMeta}>
-                    {CURRENT_JOB.location}
-                    <br />
-                    {CURRENT_JOB.dates}
-                  </div>
+                  <p className={styles.heroMeta}>
+                    {`${CURRENT_JOB.location}\n${CURRENT_JOB.dates}`}
+                  </p>
                 </div>
               </div>
 
@@ -404,16 +425,12 @@ export default function Experience() {
                       width={40}
                       height={40}
                     />
-                    <div className={styles.subText}>
-                      <div className={styles.subTitle}>{job.title}</div>
-                      <div className={styles.subMeta}>
-                        {job.company}
-                        <br />
-                        <br />
-                        {job.location}
-                        <br />
-                        {job.dates}
-                      </div>
+                    <div className={styles.textWrapper}>
+                      <p className={styles.subTitle}>{job.title}</p>
+                      <p className={styles.subMeta}>{job.company}</p>
+                      <p
+                        className={styles.subMeta}
+                      >{`${job.location}\n${job.dates}`}</p>
                     </div>
                   </div>
                 ))}
@@ -481,9 +498,7 @@ export default function Experience() {
                       />
                       <p className={styles.serifDetailTitle}>{job.role}</p>
                       <p className={styles.sansDetailSubtext}>
-                        {job.company}
-                        <br />
-                        {job.year}
+                        {`${job.company}\n${job.year}`}
                       </p>
                     </div>
                   ))}
@@ -506,7 +521,7 @@ export default function Experience() {
             </div>
           </div>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   );
 }
