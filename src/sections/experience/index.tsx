@@ -521,6 +521,11 @@ export default function Experience() {
             </div>
           </div>
         </div>
+
+        <ExperienceFooter
+          active={isActive}
+          lineDelayMs={FOOTER_RULE_DELAY_MS}
+        />
       </div>
     </section>
   );

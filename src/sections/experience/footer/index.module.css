@@ -1,0 +1,54 @@
+.footer {
+  display: flex;
+  flex-direction: column;
+}
+
+.hrWrapper {
+  flex-shrink: 0;
+  margin-left: calc(50% - 50vw);
+  width: 100vw;
+}
+
+.hr {
+  height: 2px;
+  width: 100%;
+}
+
+.hrLine {
+  stroke-width: 1;
+  stroke: var(--theme-color);
+}
+
+.footerContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  max-width: var(--max-width-desktop);
+  padding: 4rem 0 2rem;
+  place-items: center;
+}
+
+.footerContent svg {
+  max-height: 8.25rem;
+  width: auto;
+}
+
+.footerContentSocials {
+  display: flex;
+  flex: 1;
+  gap: 4rem;
+}
+
+.footerText {
+  font-style: italic;
+  font-weight: 600;
+  text-align: right;
+}
+
+@media (max-width: 59.5rem) {
+  .footerContent {
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+  }
+}

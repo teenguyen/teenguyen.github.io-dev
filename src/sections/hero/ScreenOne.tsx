@@ -1,29 +1,7 @@
 import { RefObject } from "react";
-import { Codepen, GitHub, Linkedin, Mail } from "react-feather";
 import HeroLogo from "./Logo";
+import Socials from "./Socials";
 import styles from "./index.module.css";
-import Link from "next/link";
-
-const SOCIAL_ICON_PROPS = {
-  size: "2.5rem",
-  strokeWidth: 1,
-  color: "var(--theme-color)",
-} as const;
-
-const SOCIAL_LINKS = [
-  { href: "https://codepen.io/teenguyen", Icon: Codepen, label: "Codepen" },
-  { href: "https://github.com/teenguyen", Icon: GitHub, label: "GitHub" },
-  {
-    href: "https://www.linkedin.com/in/theresaanguyen/",
-    Icon: Linkedin,
-    label: "LinkedIn",
-  },
-  {
-    href: "mailto:tee.nguyen+portfolio@live.com.au",
-    Icon: Mail,
-    label: "Email",
-  },
-] as const;
 
 type ScreenOneProps = {
   screenOneRef: RefObject<HTMLDivElement | null>;
@@ -47,22 +25,9 @@ export default function ScreenOne({
           </div>
         </header>
       </div>
-      <div ref={socialsRef} className={styles.socialsLayer}>
-        <div className={styles.socials}>
-          {SOCIAL_LINKS.map(({ href, Icon, label }) => {
-            const isExternal = href.startsWith("http");
-            return (
-              <Link
-                key={href}
-                href={href}
-                target={isExternal ? "_blank" : undefined}
-                rel={isExternal ? "noopener noreferrer" : undefined}
-                aria-label={label}
-              >
-                <Icon {...SOCIAL_ICON_PROPS} />
-              </Link>
-            );
-          })}
+      <div className={styles.socialsLayer}>
+        <div ref={socialsRef} className={styles.socialsShift}>
+          <Socials />
         </div>
       </div>
     </>
