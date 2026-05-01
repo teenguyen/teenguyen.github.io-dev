@@ -51,21 +51,21 @@ export default function LiveRamp() {
       </div>
 
       <Image
-        src="/lr-main.png"
+        src="/featured/lr-main.png"
         alt="Liveramp Motif home page"
         width={2596}
         height={1240}
         className={styles.mainImg}
       />
       <Image
-        src="/lr-thumb1.png"
+        src="/featured/lr-thumb1.png"
         alt="Liveramp Motif's FormControlLabel component"
         className={styles.thumb1}
         width={274}
         height={116}
       />
       <Image
-        src="/lr-thumb2.png"
+        src="/featured/lr-thumb2.png"
         alt="Liveramp Motif's ContainedButton component"
         className={styles.thumb2}
         width={235}

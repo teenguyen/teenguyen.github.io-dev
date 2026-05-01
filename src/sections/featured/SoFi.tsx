@@ -54,10 +54,10 @@ export default function SoFi() {
           playsInline
           preload="metadata"
         >
-          <source src="/sofi-main.mp4" type="video/mp4" />
+          <source src="/featured/sf-main.mp4" type="video/mp4" />
         </video>
         <Image
-          src="/sf-thumb1.png"
+          src="/featured/sf-thumb1.png"
           alt="SoFi options chain interface"
           className={styles.thumb1}
           width={1268}
@@ -72,7 +72,7 @@ export default function SoFi() {
           preload="metadata"
           width={550}
         >
-          <source src="/sf-thumb2.mp4" type="video/mp4" />
+          <source src="/featured/sf-thumb2.mp4" type="video/mp4" />
         </video>
       </figure>
     </article>
