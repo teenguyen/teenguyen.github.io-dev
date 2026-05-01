@@ -74,7 +74,7 @@
   }
 }
 
-@media (max-width: 58.5rem) {
+@media (max-width: 59.5rem) {
   .liveramp {
     grid-template-columns: 100%;
     grid-template-areas:

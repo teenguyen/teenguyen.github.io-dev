@@ -50,7 +50,7 @@
   letter-spacing: 8%;
 }
 
-@media (max-width: 58.5rem) {
+@media (max-width: 59.5rem) {
   .highlights {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

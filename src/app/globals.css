@@ -11,11 +11,11 @@
 
   /* 
     padding + logo + gap + socials + padding = porfolio width
-    (4rem + 31rem + 2rem + 17.5rem + 4rem) = 936px = 58.5rem
+    (4rem + 32rem + 2rem + 17.5rem + 4rem) = 952px = 59.5rem
 
     this is only here as a reference since variables in @media queries can be unreliable
   */
-  --max-width: 58.5rem;
+  --max-width: 59.5rem;
   --max-width-desktop: 90rem; /* 1440px */
 }
 
@@ -86,7 +86,7 @@ a {
   text-underline-offset: 0.25rem;
 }
 
-@media (max-width: 58.5rem) {
+@media (max-width: 59.5rem) {
   h2 {
     font-size: 2.5rem;
     line-height: 2rem;

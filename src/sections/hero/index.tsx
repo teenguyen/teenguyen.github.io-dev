@@ -13,7 +13,8 @@ import ScreenOne from "./ScreenOne";
 import ScreenTwo from "./ScreenTwo";
 import styles from "./index.module.css";
 
-const SMALL_VIEWPORT_MAX_WIDTH = 768;
+/** Matches hero CSS `@media (max-width: 59.5rem)` at default root font size */
+const HERO_MOBILE_MAX_WIDTH_PX = 952;
 const SHORT_VIEWPORT_MAX_HEIGHT = 720;
 const SOCIALS_TOP_INSET_SMALL = 32;
 const SOCIALS_TOP_INSET_LARGE = 64;
@@ -169,7 +170,7 @@ export default function Hero() {
       const socialsTargetTopPx = () => {
         const shortViewport =
           window.innerHeight <= SHORT_VIEWPORT_MAX_HEIGHT ||
-          window.innerWidth <= SMALL_VIEWPORT_MAX_WIDTH;
+          window.innerWidth <= HERO_MOBILE_MAX_WIDTH_PX;
         return shortViewport
           ? SOCIALS_TOP_INSET_SMALL
           : SOCIALS_TOP_INSET_LARGE;
