@@ -82,9 +82,9 @@
   align-items: center;
 }
 
-.logo {
-  width: 32rem;
-  height: auto;
+.logoWrap svg {
+  width: 100%;
+  height: 100%;
 }
 
 /* Outer shell: positioning only (GSAP animates translateY on .socialsShift). */

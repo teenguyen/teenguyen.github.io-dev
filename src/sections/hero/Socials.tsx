@@ -1,6 +1,10 @@
+"use client";
+
 import clsx from "clsx";
 import Link from "next/link";
+import { forwardRef } from "react";
 import { Codepen, GitHub, Linkedin, Mail } from "react-feather";
+import gsap from "gsap";
 import styles from "./Socials.module.css";
 
 const SOCIAL_LINKS = [
@@ -30,12 +34,106 @@ const SOCIAL_LINKS = [
   },
 ] as const;
 
+/** Row layout (hero): motion on Y — rise up with a light overshoot. */
+export const SOCIALS_ROW_INITIAL_Y = 16;
+export const SOCIALS_ROW_PEAK_Y = -4;
+
+/** Column layout (footer): fade + slide on **X** from inline-start toward rest (no overshoot). */
+export const SOCIALS_COL_INITIAL_X = -18;
+export const SOCIALS_COL_REVEAL_DURATION = 0.5;
+
+export const SOCIALS_STAGGER_REVEAL_DURATION = 0.4;
+export const SOCIALS_STAGGER_SETTLE_DURATION = 0.25;
+export const SOCIALS_STAGGER_STEP = 0.08;
+/** Insert overlap vs preceding tweens on the parent timeline (hero intro). */
+export const SOCIALS_STAGGER_REVEAL_OVERLAP = "-=0.5";
+/** Chain offset after the reveal peak phase. */
+export const SOCIALS_STAGGER_SETTLE_OFFSET = ">-0.1";
+
+function socialRevealItems(nav: HTMLElement | null): HTMLElement[] {
+  return Array.from(nav?.querySelectorAll(":scope > ul > li") ?? []);
+}
+
+/**
+ * Hides each `<li>` until the stagger timeline runs (`autoAlpha` avoids invisible focus traps).
+ */
+export function prepareSocialsReveal(
+  nav: HTMLElement | null,
+  vertical: boolean,
+): boolean {
+  const items = socialRevealItems(nav);
+  if (items.length === 0) return false;
+
+  if (vertical) {
+    gsap.set(items, { autoAlpha: 0, x: SOCIALS_COL_INITIAL_X });
+  } else {
+    gsap.set(items, { autoAlpha: 0, y: SOCIALS_ROW_INITIAL_Y });
+  }
+  return true;
+}
+
+/**
+ * hero row uses a two-phase **Y** motion with overshoot
+ * vertical column uses a single **X** slide plus fade, no bounce
+ */
+export function addSocialsStaggerRevealToTimeline(
+  timeline: gsap.core.Timeline,
+  nav: HTMLElement | null,
+  position: gsap.Position,
+  vertical = false,
+): void {
+  const items = socialRevealItems(nav);
+  if (items.length === 0) return;
+
+  prepareSocialsReveal(nav, vertical);
+
+  if (vertical) {
+    timeline.to(
+      items,
+      {
+        autoAlpha: 1,
+        x: 0,
+        duration: SOCIALS_COL_REVEAL_DURATION,
+        ease: "power2.out",
+        stagger: SOCIALS_STAGGER_STEP,
+      },
+      position,
+    );
+  } else {
+    timeline
+      .to(
+        items,
+        {
+          autoAlpha: 1,
+          y: SOCIALS_ROW_PEAK_Y,
+          duration: SOCIALS_STAGGER_REVEAL_DURATION,
+          ease: "none",
+          stagger: SOCIALS_STAGGER_STEP,
+        },
+        position,
+      )
+      .to(
+        items,
+        {
+          y: 0,
+          duration: SOCIALS_STAGGER_SETTLE_DURATION,
+          ease: "power2.inOut",
+          stagger: SOCIALS_STAGGER_STEP,
+        },
+        SOCIALS_STAGGER_SETTLE_OFFSET,
+      );
+  }
+}
+
 type SocialsProps = {
   vertical?: boolean;
   className?: string;
 };
 
-export default function Socials({ vertical = false, className }: SocialsProps) {
+const Socials = forwardRef<HTMLElement, SocialsProps>(function Socials(
+  { vertical = false },
+  ref,
+) {
   const iconBase = {
     strokeWidth: 1.5 as const,
     color: "var(--theme-color)",
@@ -43,7 +141,8 @@ export default function Socials({ vertical = false, className }: SocialsProps) {
 
   return (
     <nav
-      className={clsx(styles.nav, vertical && styles.vertical, className)}
+      ref={ref}
+      className={clsx(styles.nav, vertical && styles.vertical)}
       aria-label="Social links"
     >
       <ul className={styles.list}>
@@ -69,4 +168,6 @@ export default function Socials({ vertical = false, className }: SocialsProps) {
       </ul>
     </nav>
   );
-}
+});
+
+export default Socials;

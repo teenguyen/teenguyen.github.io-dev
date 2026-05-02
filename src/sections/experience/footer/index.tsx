@@ -1,81 +1,164 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import HeroLogo from "@/sections/hero/Logo";
-import Socials from "@/sections/hero/Socials";
+import { useRef } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import HeroAnimatedLogo, {
+  addHeroLogoRevealToTimeline,
+  heroLogoRevealDuration,
+  prepareHeroLogoReveal,
+} from "@/sections/hero/HeroAnimatedLogo";
+import Socials, {
+  addSocialsStaggerRevealToTimeline,
+  SOCIALS_COL_REVEAL_DURATION,
+  SOCIALS_STAGGER_STEP,
+} from "@/sections/hero/Socials";
 import styles from "./index.module.css";
 import clsx from "clsx";
 
 const DRAW_MS = 520;
+const MEASURE_RETRY_CAP = 120;
+const FOOTER_SOCIALS_OVERLAP_BEFORE_LOGO_END = 0.42;
+/** Match hero ScreenTwo tagline initial offset (`INITIAL_Y`). */
+const FOOTER_TAGLINE_INITIAL_Y = 16;
+/** Slower than hero taglines (`TAGLINE_REVEAL_DURATION` 0.8). */
+const FOOTER_TAGLINE_REVEAL_DURATION = 1.25;
 
 type ExperienceFooterProps = {
   active: boolean;
-  /** Sync with experience table choreography (ms after slide activates) */
   lineDelayMs: number;
 };
+
+function killFooterAnimations(
+  line: SVGLineElement | null,
+  svg: SVGSVGElement | null,
+  socialsNav: HTMLElement | null,
+  tagLine: HTMLElement | null,
+) {
+  if (line) gsap.killTweensOf(line);
+  if (svg) gsap.killTweensOf(svg.querySelectorAll("path"));
+  if (socialsNav) gsap.killTweensOf(socialsNav.querySelectorAll("li"));
+  if (tagLine) gsap.killTweensOf(tagLine);
+}
 
 export default function ExperienceFooter({
   active,
   lineDelayMs,
 }: ExperienceFooterProps) {
+  const footerRef = useRef<HTMLElement | null>(null);
   const lineRef = useRef<SVGLineElement>(null);
+  const logoRef = useRef<SVGSVGElement>(null);
+  const socialsNavRef = useRef<HTMLElement | null>(null);
+  const footerTagRef = useRef<HTMLParagraphElement | null>(null);
+  const choreographyRunIdRef = useRef(0);
 
-  useEffect(() => {
-    if (!active) return;
+  useGSAP(
+    () => {
+      const line = lineRef.current;
+      const svg = logoRef.current;
+      const socialsNav = socialsNavRef.current;
+      const tagLine = footerTagRef.current;
 
-    const line = lineRef.current;
-    if (!line) return;
+      choreographyRunIdRef.current += 1;
+      const runId = choreographyRunIdRef.current;
 
-    let cancelled = false;
-    let startTimer = 0;
-    let cleanupTimer = 0;
-    let raf = 0;
+      killFooterAnimations(line, svg, socialsNav, tagLine);
 
-    const armDash = () => {
-      if (cancelled) return;
-      const len = line.getTotalLength();
-      if (len <= 0) {
-        raf = requestAnimationFrame(armDash);
+      if (!active) {
         return;
       }
 
-      line.style.transition = "none";
-      line.style.strokeDasharray = String(len);
-      line.style.strokeDashoffset = String(len);
-      line.getBoundingClientRect();
+      if (!line || !svg || !socialsNav || !tagLine) return;
 
-      startTimer = window.setTimeout(() => {
-        if (cancelled) return;
-        line.style.transition = `stroke-dashoffset ${DRAW_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`;
-        line.style.strokeDashoffset = "0";
-      }, lineDelayMs);
+      gsap.set(tagLine, {
+        opacity: 0,
+        y: FOOTER_TAGLINE_INITIAL_Y,
+      });
 
-      cleanupTimer = window.setTimeout(
-        () => {
-          if (cancelled) return;
-          line.style.transition = "";
-          line.style.strokeDasharray = "";
-          line.style.strokeDashoffset = "";
-        },
-        lineDelayMs + DRAW_MS + 50,
-      );
-    };
+      let attempts = 0;
 
-    raf = requestAnimationFrame(armDash);
+      const measureAndBuild = () => {
+        if (runId !== choreographyRunIdRef.current) return;
 
-    return () => {
-      cancelled = true;
-      cancelAnimationFrame(raf);
-      window.clearTimeout(startTimer);
-      window.clearTimeout(cleanupTimer);
-      line.style.transition = "";
-      line.style.strokeDasharray = "";
-      line.style.strokeDashoffset = "";
-    };
-  }, [active, lineDelayMs]);
+        attempts++;
+        const lineLen = line.getTotalLength();
+        const logoReady = prepareHeroLogoReveal(svg);
+
+        if (lineLen <= 0 || !logoReady) {
+          if (attempts < MEASURE_RETRY_CAP) {
+            gsap.delayedCall(0, measureAndBuild);
+          }
+          return;
+        }
+
+        if (runId !== choreographyRunIdRef.current) return;
+
+        const delaySec = lineDelayMs / 1000;
+        const drawSec = DRAW_MS / 1000;
+        const logoStart = delaySec + drawSec;
+
+        gsap.set(line, {
+          strokeDasharray: lineLen,
+          strokeDashoffset: lineLen,
+        });
+
+        const tl = gsap.timeline();
+        tl.to(
+          line,
+          {
+            strokeDashoffset: 0,
+            duration: drawSec,
+            ease: "power2.out",
+          },
+          delaySec,
+        ).set(
+          line,
+          {
+            clearProps: "strokeDasharray,strokeDashoffset",
+          },
+          logoStart,
+        );
+
+        addHeroLogoRevealToTimeline(tl, svg, logoStart);
+
+        const pathCount = svg.querySelectorAll("path").length;
+        const logoRevealTotal = heroLogoRevealDuration(pathCount);
+        const socialsStart =
+          logoStart +
+          Math.max(0, logoRevealTotal - FOOTER_SOCIALS_OVERLAP_BEFORE_LOGO_END);
+
+        addSocialsStaggerRevealToTimeline(tl, socialsNav, socialsStart, true);
+
+        const socialCount = socialsNav.querySelectorAll("li").length;
+        const verticalSocialRevealDuration =
+          socialCount > 0
+            ? (socialCount - 1) * SOCIALS_STAGGER_STEP +
+              SOCIALS_COL_REVEAL_DURATION
+            : 0;
+        const tagStart = socialsStart + verticalSocialRevealDuration;
+
+        tl.to(
+          tagLine,
+          {
+            opacity: 1,
+            y: 0,
+            duration: FOOTER_TAGLINE_REVEAL_DURATION,
+            ease: "power2.out",
+          },
+          tagStart,
+        );
+      };
+
+      measureAndBuild();
+    },
+    {
+      scope: footerRef,
+      dependencies: [active, lineDelayMs],
+    },
+  );
 
   return (
-    <footer className={styles.footer}>
+    <footer ref={footerRef} className={styles.footer}>
       <div className={styles.hrWrapper} aria-hidden>
         <svg
           className={styles.hr}
@@ -96,10 +179,13 @@ export default function ExperienceFooter({
       </div>
       <div className={styles.footerContent}>
         <div className={styles.footerContentSocials}>
-          <HeroLogo />
-          <Socials vertical />
+          <HeroAnimatedLogo ref={logoRef} />
+          <Socials ref={socialsNavRef} vertical />
         </div>
-        <p className={clsx("subtitle", styles.footerText)}>
+        <p
+          ref={footerTagRef}
+          className={clsx("subtitle", styles.footerText)}
+        >
           Built with love, from Sydney to San Francisco and back again ❤︎
         </p>
       </div>

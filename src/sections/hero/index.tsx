@@ -9,6 +9,11 @@ import {
   useSlideIndex,
   type WheelInterceptor,
 } from "../SectionSlider";
+import { addHeroLogoRevealToTimeline } from "./HeroAnimatedLogo";
+import {
+  addSocialsStaggerRevealToTimeline,
+  SOCIALS_STAGGER_REVEAL_OVERLAP,
+} from "./Socials";
 import ScreenOne from "./ScreenOne";
 import ScreenTwo from "./ScreenTwo";
 import styles from "./index.module.css";
@@ -19,25 +24,16 @@ const SHORT_VIEWPORT_MAX_HEIGHT = 720;
 const SOCIALS_TOP_INSET_SMALL = 32;
 const SOCIALS_TOP_INSET_LARGE = 64;
 const INITIAL_Y = 16;
-const SOCIAL_ICONS_PEAK_Y = -4;
-const LOGO_PATH_DELAY_STEP = 0.1;
-const LOGO_DRAW_DURATION = 0.5;
-const LOGO_FILL = 0.3;
-const LOGO_STROKE_WIDTH = 1;
-const LOGO_STROKE_DASH_OFFSET_EPSILON = 0.5;
-const SOCIALS_REVEAL_DURATION = 0.4;
-const SOCIALS_SETTLE_DURATION = 0.25;
-const SOCIALS_STAGGER = 0.08;
-const SOCIALS_REVEAL_OVERLAP = "-=0.5";
-const SOCIALS_SETTLE_OFFSET = ">-0.1";
 const TAGLINE_REVEAL_DURATION = 0.8;
 const HERO_FADE_DURATION = 0.35;
 const SOCIALS_AND_STARMAP_SCROLL_DURATION = 1;
 const TAGLINE_LINE_ONE_START = 1;
 const TAGLINE_LINE_TWO_START = 1.24;
 const TIMELINE_START = 0;
+const LOGO_ANIMATION_START = TIMELINE_START;
 const SCREEN_TWO_INITIAL_Y = 24;
 const SCREEN_TWO_REVEAL_DURATION = 0.45;
+
 export default function Hero() {
   const sliderApi = useSliderApi();
   const slideIndex = useSlideIndex();
@@ -47,7 +43,6 @@ export default function Hero() {
   const screenOneRef = useRef<HTMLDivElement | null>(null);
   const screenTwoRef = useRef<HTMLDivElement | null>(null);
   const starmapWrapRef = useRef<HTMLDivElement | null>(null);
-  const logoWrapRef = useRef<HTMLDivElement | null>(null);
   const logoRef = useRef<SVGSVGElement | null>(null);
   const socialsRef = useRef<HTMLDivElement | null>(null);
   const lineOneRef = useRef<HTMLParagraphElement | null>(null);
@@ -62,7 +57,7 @@ export default function Hero() {
         !screenOneRef.current ||
         !screenTwoRef.current ||
         !starmapWrapRef.current ||
-        !logoWrapRef.current ||
+        !logoRef.current ||
         !socialsRef.current ||
         !lineOneRef.current ||
         !lineTwoRef.current
@@ -75,7 +70,7 @@ export default function Hero() {
         y: INITIAL_Y,
       });
 
-      gsap.set(logoWrapRef.current, { opacity: 1 });
+      gsap.set(logoRef.current, { opacity: 1 });
       gsap.set(socialsRef.current, { y: 0 });
       gsap.set(starmapWrapRef.current, { y: 0 });
       gsap.set(screenOneRef.current, { autoAlpha: 1 });
@@ -84,76 +79,25 @@ export default function Hero() {
         y: SCREEN_TWO_INITIAL_Y,
       });
 
-      const logoPaths = Array.from(
-        logoRef.current?.querySelectorAll("path") ?? [],
-      );
-      const socialIcons = Array.from(
-        socialsRef.current?.querySelectorAll("svg") ?? [],
-      );
+      const socialsNav =
+        socialsRef.current?.querySelector<HTMLElement>("nav") ?? null;
+
       const introTimeline = gsap.timeline();
 
-      logoPaths.forEach((path, i) => {
-        const length = path.getTotalLength();
-        const pathDelay = i * LOGO_PATH_DELAY_STEP;
-        const drawDuration = LOGO_DRAW_DURATION;
-        const fillStart = LOGO_FILL;
-        const fillDuration = LOGO_FILL;
+      addHeroLogoRevealToTimeline(
+        introTimeline,
+        logoRef.current,
+        LOGO_ANIMATION_START,
+      );
 
-        gsap.set(path, {
-          stroke: "var(--theme-color)",
-          strokeWidth: LOGO_STROKE_WIDTH,
-          strokeDasharray: length,
-          strokeDashoffset: length + LOGO_STROKE_DASH_OFFSET_EPSILON,
-          fillOpacity: 0,
-          strokeOpacity: 1,
-        });
-
-        introTimeline
-          .to(
-            path,
-            {
-              strokeDashoffset: 0,
-              duration: drawDuration,
-              ease: "sine.inOut",
-            },
-            pathDelay,
-          )
-          .to(
-            path,
-            {
-              fillOpacity: 1,
-              strokeOpacity: 0,
-              duration: fillDuration,
-              ease: "power1.inOut",
-            },
-            pathDelay + fillStart,
-          );
-      });
-
-      gsap.set(socialIcons, { opacity: 0, y: INITIAL_Y });
-
-      introTimeline
-        .to(
-          socialIcons,
-          {
-            opacity: 1,
-            y: SOCIAL_ICONS_PEAK_Y,
-            duration: SOCIALS_REVEAL_DURATION,
-            ease: "none",
-            stagger: SOCIALS_STAGGER,
-          },
-          SOCIALS_REVEAL_OVERLAP,
-        )
-        .to(
-          socialIcons,
-          {
-            y: 0,
-            duration: SOCIALS_SETTLE_DURATION,
-            ease: "power2.inOut",
-            stagger: SOCIALS_STAGGER,
-          },
-          SOCIALS_SETTLE_OFFSET,
+      if (socialsNav) {
+        addSocialsStaggerRevealToTimeline(
+          introTimeline,
+          socialsNav,
+          SOCIALS_STAGGER_REVEAL_OVERLAP,
+          false,
         );
+      }
       const timeline = gsap.timeline({
         paused: true,
         defaults: {
@@ -188,7 +132,7 @@ export default function Hero() {
 
       timeline
         .to(
-          logoWrapRef.current,
+          logoRef.current,
           {
             opacity: 0,
             duration: HERO_FADE_DURATION,
@@ -272,7 +216,6 @@ export default function Hero() {
         </div>
         <ScreenOne
           screenOneRef={screenOneRef}
-          logoWrapRef={logoWrapRef}
           logoRef={logoRef}
           socialsRef={socialsRef}
         />
