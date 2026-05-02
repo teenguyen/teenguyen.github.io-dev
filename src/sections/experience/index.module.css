@@ -1,21 +1,18 @@
 .section {
-  align-items: center;
   display: flex;
   flex-direction: column;
-  height: 100%;
   min-height: 0;
-  overflow: hidden;
 }
 
-.inner {
+.scrollArea {
   display: flex;
-  flex: 1;
   flex-direction: column;
   max-width: var(--max-width-desktop);
+  min-height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 4rem;
   padding-bottom: 0;
+  padding: 4rem;
 }
 
 .heading {
@@ -25,6 +22,7 @@
 .tableWrapper {
   display: flex;
   flex-direction: column;
+  flex: 1;
   gap: 2rem;
   padding-bottom: 8rem;
 }
@@ -34,17 +32,17 @@
 }
 
 .gridLines {
+  left: 0;
+  overflow: visible;
+  pointer-events: none;
   position: absolute;
   top: 0;
-  left: 0;
-  pointer-events: none;
-  overflow: visible;
 }
 
 .gridLine {
   fill: none;
-  stroke: var(--theme-color-48);
   stroke-width: 1;
+  stroke: var(--theme-color-48);
 }
 
 .expGrid {
@@ -53,8 +51,8 @@
 }
 
 .cell {
-  padding: 2rem;
   opacity: 0;
+  padding: 2rem;
   transition: opacity 0.4s ease;
 }
 
@@ -63,8 +61,8 @@
 }
 
 .hero {
-  display: flex;
   align-items: center;
+  display: flex;
   gap: 2rem;
   padding: 2rem 2rem 2.5rem;
 }
@@ -80,8 +78,8 @@
 }
 
 .heroTitleRow {
-  display: flex;
   align-items: baseline;
+  display: flex;
   flex-wrap: wrap;
   gap: 0 0.75rem;
 }
@@ -111,16 +109,16 @@
 }
 
 .subCell {
-  display: flex;
   align-items: flex-start;
+  display: flex;
   gap: 2rem;
 }
 
 .subLogo {
   flex-shrink: 0;
-  width: 4rem;
   height: 4rem;
   object-fit: contain;
+  width: 4rem;
 }
 
 .subTitle {
@@ -142,8 +140,8 @@
 }
 
 .earlyLabel {
-  display: flex;
   align-items: center;
+  display: flex;
 }
 
 .accentSectionHeading {
@@ -152,25 +150,25 @@
 }
 
 .earlyLogos {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.5rem;
   align-items: center;
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(4, 1fr);
 }
 
 .detailItem {
-  place-items: center;
   display: grid;
-  grid-template-rows: 2.5rem 2.5rem auto;
   gap: 0.75rem;
+  grid-template-rows: 2.5rem 2.5rem auto;
+  place-items: center;
   text-align: center;
   white-space: pre-line;
 }
 
 .earlyLogo {
-  width: 2.5rem;
   height: 2.5rem;
   object-fit: contain;
+  width: 2.5rem;
 }
 
 .serifDetailTitle {
@@ -199,11 +197,4 @@
   flex-direction: column;
   flex: 1;
   gap: 0.75rem;
-}
-
-@media (max-width: 59.5rem) {
-  .inner {
-    gap: 1rem;
-    padding: 2rem;
-  }
 }

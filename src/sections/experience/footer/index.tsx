@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import Starmap from "@/demos/starmap/Starmap";
 import HeroAnimatedLogo, {
   addHeroLogoRevealToTimeline,
   heroLogoRevealDuration,
@@ -23,6 +24,10 @@ const FOOTER_SOCIALS_OVERLAP_BEFORE_LOGO_END = 0.42;
 const FOOTER_TAGLINE_INITIAL_Y = 16;
 /** Slower than hero taglines (`TAGLINE_REVEAL_DURATION` 0.8). */
 const FOOTER_TAGLINE_REVEAL_DURATION = 0.8;
+/** Full-sky backdrop reveal after tagline (wrapper opacity — Starmap uses `playing`). */
+const FOOTER_STARMAP_FADE_DURATION = 0.85;
+/** Let `playing` run briefly while the backdrop is still hidden so RAF paints stars/lines before the fade. */
+const FOOTER_STARMAP_PLAY_BEFORE_FADE_SEC = 0.2;
 
 type ExperienceFooterProps = {
   active: boolean;
@@ -41,11 +46,17 @@ function killFooterAnimations(
   if (tagLine) gsap.killTweensOf(tagLine);
 }
 
+function killStarmapBackdrop(backdrop: HTMLDivElement | null) {
+  if (backdrop) gsap.killTweensOf(backdrop);
+}
+
 export default function ExperienceFooter({
   active,
   lineDelayMs,
 }: ExperienceFooterProps) {
   const footerRef = useRef<HTMLElement | null>(null);
+  const starmapBackdropRef = useRef<HTMLDivElement>(null);
+  const [footerStarmapPlaying, setFooterStarmapPlaying] = useState(false);
   const lineRef = useRef<SVGLineElement>(null);
   const logoRef = useRef<SVGSVGElement>(null);
   const socialsNavRef = useRef<HTMLElement | null>(null);
@@ -64,11 +75,20 @@ export default function ExperienceFooter({
 
       killFooterAnimations(line, svg, socialsNav, tagLine);
 
+      const starmapBackdrop = starmapBackdropRef.current;
+      killStarmapBackdrop(starmapBackdrop);
+
       if (!active) {
+        if (starmapBackdrop) gsap.set(starmapBackdrop, { autoAlpha: 0 });
+        queueMicrotask(() => {
+          setFooterStarmapPlaying(false);
+        });
         return;
       }
 
-      if (!line || !svg || !socialsNav || !tagLine) return;
+      if (!line || !svg || !socialsNav || !tagLine || !starmapBackdrop) return;
+
+      gsap.set(starmapBackdrop, { autoAlpha: 0 });
 
       gsap.set(tagLine, {
         opacity: 0,
@@ -136,6 +156,11 @@ export default function ExperienceFooter({
               SOCIALS_COL_REVEAL_DURATION
             : 0;
         const tagStart = socialsStart + verticalSocialRevealDuration;
+        const tagEndSec = tagStart + FOOTER_TAGLINE_REVEAL_DURATION;
+        const starmapPlayingAt = Math.max(
+          0,
+          tagEndSec - FOOTER_STARMAP_PLAY_BEFORE_FADE_SEC,
+        );
 
         tl.to(
           tagLine,
@@ -146,7 +171,23 @@ export default function ExperienceFooter({
             ease: "power2.out",
           },
           tagStart,
-        );
+        )
+          .call(
+            () => {
+              setFooterStarmapPlaying(true);
+            },
+            undefined,
+            starmapPlayingAt,
+          )
+          .to(
+            starmapBackdrop,
+            {
+              autoAlpha: 1,
+              duration: FOOTER_STARMAP_FADE_DURATION,
+              ease: "power2.out",
+            },
+            tagEndSec,
+          );
       };
 
       measureAndBuild();
@@ -159,7 +200,14 @@ export default function ExperienceFooter({
 
   return (
     <footer ref={footerRef} className={styles.footer}>
-      <div className={styles.hrWrapper} aria-hidden>
+      <div
+        ref={starmapBackdropRef}
+        className={styles.starmapBackdrop}
+        aria-hidden
+      >
+        <Starmap playing={footerStarmapPlaying} />
+      </div>
+      <div className={styles.footerForeground}>
         <svg
           className={styles.hr}
           viewBox="0 0 100 2"
@@ -176,15 +224,15 @@ export default function ExperienceFooter({
             vectorEffect="nonScalingStroke"
           />
         </svg>
-      </div>
-      <div className={styles.footerContent}>
-        <div className={styles.footerContentSocials}>
-          <HeroAnimatedLogo ref={logoRef} />
-          <Socials ref={socialsNavRef} vertical />
+        <div className={styles.footerContent}>
+          <div className={styles.footerContentSocials}>
+            <HeroAnimatedLogo ref={logoRef} />
+            <Socials ref={socialsNavRef} vertical />
+          </div>
+          <p ref={footerTagRef} className={clsx("subtitle", styles.footerText)}>
+            Built with love, from Sydney to San Francisco and back again ❤︎
+          </p>
         </div>
-        <p ref={footerTagRef} className={clsx("subtitle", styles.footerText)}>
-          Built with love, from Sydney to San Francisco and back again ❤︎
-        </p>
       </div>
     </footer>
   );

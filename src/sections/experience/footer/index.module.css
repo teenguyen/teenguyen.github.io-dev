@@ -1,28 +1,42 @@
 .footer {
   display: flex;
   flex-direction: column;
+  isolation: isolate;
+  position: relative;
 }
 
-.hrWrapper {
-  flex-shrink: 0;
-  margin-left: calc(50% - 50vw);
+.starmapBackdrop {
+  bottom: 0;
+  isolation: isolate;
+  left: -4rem;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
   width: 100vw;
+  z-index: 0;
+}
+
+.footerForeground {
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
 }
 
 .hr {
   height: 2px;
-  width: 100%;
+  margin: 0 -4rem;
+  width: 100vw;
 }
 
 .hrLine {
   stroke-width: 1;
-  stroke: var(--theme-color);
+  stroke: var(--theme-color-48);
 }
 
 .footerContent {
   display: flex;
   flex-direction: column;
-  gap: 4rem;
+  gap: 2rem;
   max-width: var(--max-width-desktop);
   padding: 4rem 0 2rem;
   place-items: center;
@@ -43,12 +57,4 @@
   font-style: italic;
   font-weight: 600;
   text-align: right;
-}
-
-@media (max-width: 59.5rem) {
-  .footerContent {
-    flex-direction: column;
-    gap: 2rem;
-    padding: 2rem;
-  }
 }

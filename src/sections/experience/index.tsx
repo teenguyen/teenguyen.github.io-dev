@@ -367,7 +367,7 @@ export default function Experience() {
 
   return (
     <section className={styles.section}>
-      <div ref={scrollRef} className={styles.inner}>
+      <div ref={scrollRef} className={styles.scrollArea}>
         <h2 className={styles.heading}>experience</h2>
 
         <div className={styles.tableWrapper}>
@@ -532,7 +532,6 @@ export default function Experience() {
             </div>
           </div>
         </div>
-
         <ExperienceFooter
           active={isActive}
           lineDelayMs={FOOTER_RULE_DELAY_MS}
