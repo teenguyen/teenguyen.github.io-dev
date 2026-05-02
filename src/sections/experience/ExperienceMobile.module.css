@@ -1,0 +1,86 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-bottom: 4rem;
+}
+
+.jobExp {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr;
+  grid-template-areas:
+    "logo title"
+    "logo company"
+    "logo meta";
+  gap: 0.5rem 1.5rem;
+}
+
+.revealable {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.revealed {
+  opacity: 1;
+}
+
+.divider {
+  border: none;
+  border-top: 1.5px solid var(--theme-color);
+  margin-left: 5.5rem;
+}
+
+.logo {
+  grid-area: logo;
+  height: auto;
+  margin-top: 0.5rem;
+  object-fit: contain;
+  width: auto;
+}
+
+.logoFeatured {
+  max-height: 4.5rem;
+  max-width: 4.5rem;
+}
+
+.logoCompact {
+  max-height: 2.75rem;
+  max-width: 2.75rem;
+  justify-self: center;
+}
+
+.heroTitle {
+  font-family: var(--font-dm-serif-display);
+  font-size: 2rem;
+  line-height: 1.5rem;
+}
+
+.prevTitle {
+  font-family: var(--font-dm-serif-display);
+  font-size: 1.5rem;
+}
+
+.meta {
+  color: var(--text-color);
+  white-space: pre-line;
+}
+
+.sectionLabel {
+  text-align: right;
+}
+
+.earlyJobs {
+  list-style: none;
+}
+
+.earlyRole {
+  font-family: var(--font-dm-serif-display);
+  font-size: 1.25rem;
+  white-space: pre-line;
+}
+
+@media (min-width: 59.5rem) {
+  .root {
+    display: none;
+  }
+}

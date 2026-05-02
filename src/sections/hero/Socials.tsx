@@ -9,18 +9,6 @@ import styles from "./Socials.module.css";
 
 const SOCIAL_LINKS = [
   {
-    href: "https://codepen.io/teenguyen",
-    Icon: Codepen,
-    label: "Codepen",
-    detail: "codepen.io/teenguyen",
-  },
-  {
-    href: "https://github.com/teenguyen",
-    Icon: GitHub,
-    label: "GitHub",
-    detail: "github.com/teenguyen",
-  },
-  {
     href: "https://www.linkedin.com/in/theresaanguyen/",
     Icon: Linkedin,
     label: "LinkedIn",
@@ -31,6 +19,18 @@ const SOCIAL_LINKS = [
     Icon: Mail,
     label: "Email",
     detail: "tee.nguyen+portfolio@live.com.au",
+  },
+  {
+    href: "https://github.com/teenguyen",
+    Icon: GitHub,
+    label: "GitHub",
+    detail: "github.com/teenguyen",
+  },
+  {
+    href: "https://codepen.io/teenguyen",
+    Icon: Codepen,
+    label: "Codepen",
+    detail: "codepen.io/teenguyen",
   },
 ] as const;
 
