@@ -58,3 +58,10 @@
   font-weight: 600;
   text-align: right;
 }
+
+@media (max-width: 59.5rem) {
+  .footerContentSocials {
+    flex-direction: column;
+    gap: 2rem;
+  }
+}
