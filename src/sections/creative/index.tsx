@@ -56,7 +56,7 @@ export default function Creative() {
     if (!isActive) return;
     userInteracted.current = false;
     animating.current = false;
-    setActive(0);
+    queueMicrotask(() => setActive(0));
     slideRefs.current.forEach((el, i) => {
       if (!el) return;
       gsap.killTweensOf(el);
@@ -119,11 +119,11 @@ export default function Creative() {
 
 const BLURBS = [
   {
-    title: "interactive celestial map",
+    title: "GSAP motion",
     description:
-      "A celestial map that allows you to explore the stars and constellations in the night sky.",
-    skills: "D3.JS · CANVAS · GEOMETRIC PROJECTIONS",
-    image: Starmap,
+      "Physics-based easing, staggered sequences, squash & stretch – exploring what the browser feels like as a stage. Each sketch started as a question about timing.",
+    skills: "GSAP · CANVAS · EASING · PHYSICS",
+    image: "/featured/lr-buttons.png",
   },
   {
     title: "custom SVGs & CSS animations",
@@ -139,11 +139,11 @@ const BLURBS = [
     image: "/featured/lr-buttons.png",
   },
   {
-    title: "GSAP motion",
+    title: "interactive celestial map",
     description:
-      "Physics-based easing, staggered sequences, squash & stretch – exploring what the browser feels like as a stage. Each sketch started as a question about timing.",
-    skills: "GSAP · CANVAS · EASING · PHYSICS",
-    image: "/featured/lr-buttons.png",
+      "A celestial map that allows you to explore the stars and constellations in the night sky.",
+    skills: "D3.JS · CANVAS · GEOMETRIC PROJECTIONS",
+    image: Starmap,
   },
   {
     title: "dark & light glassmorphism theming",

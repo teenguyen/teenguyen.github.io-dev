@@ -12,13 +12,7 @@ type SlideProps = {
   ref?: React.Ref<HTMLDivElement>;
 };
 
-export default function Slide({
-  src,
-  alt,
-  initial,
-  playing,
-  ref,
-}: SlideProps) {
+export default function Slide({ src, alt, initial, playing, ref }: SlideProps) {
   const isVideo = typeof src === "string" && src.endsWith(".mp4");
   const videoRef = useRef<HTMLVideoElement>(null);
 

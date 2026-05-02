@@ -24,3 +24,20 @@
   height: 100%;
   justify-content: center;
 }
+
+@media (max-width: 59.5rem) {
+  .content {
+    grid-template-columns: 100%;
+    grid-template-rows: 1fr auto;
+  }
+
+  .media {
+    flex: 1;
+  }
+
+  .article {
+    gap: 2rem;
+    padding: 2rem;
+    justify-content: flex-start;
+  }
+}
