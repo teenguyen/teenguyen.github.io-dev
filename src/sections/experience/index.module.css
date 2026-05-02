@@ -189,9 +189,9 @@
 
 .eduRow {
   display: flex;
-  flex-direction: column;
   flex-direction: row-reverse;
   gap: 2rem;
+  place-items: center;
 }
 
 .eduDetail {

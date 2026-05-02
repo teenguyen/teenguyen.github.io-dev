@@ -22,7 +22,7 @@ const FOOTER_SOCIALS_OVERLAP_BEFORE_LOGO_END = 0.42;
 /** Match hero ScreenTwo tagline initial offset (`INITIAL_Y`). */
 const FOOTER_TAGLINE_INITIAL_Y = 16;
 /** Slower than hero taglines (`TAGLINE_REVEAL_DURATION` 0.8). */
-const FOOTER_TAGLINE_REVEAL_DURATION = 1.25;
+const FOOTER_TAGLINE_REVEAL_DURATION = 0.8;
 
 type ExperienceFooterProps = {
   active: boolean;
@@ -182,10 +182,7 @@ export default function ExperienceFooter({
           <HeroAnimatedLogo ref={logoRef} />
           <Socials ref={socialsNavRef} vertical />
         </div>
-        <p
-          ref={footerTagRef}
-          className={clsx("subtitle", styles.footerText)}
-        >
+        <p ref={footerTagRef} className={clsx("subtitle", styles.footerText)}>
           Built with love, from Sydney to San Francisco and back again ❤︎
         </p>
       </div>

@@ -81,10 +81,21 @@ type Wrap2Paths = {
 const ANIM_DUR = 900;
 /** Edge slack so OS overscroll / float scrollTop doesn't trap slide navigation. */
 const SCROLL_BOUNDARY_EPS = 3;
-/** Base delay before first grid stroke (slide settle + extra pause). */
+/** Base delay before any wrap-1 stroke (matches `outer1Ref` start below). */
 const T0 = 350;
-/** After education cell starts fading in (+ buffer for .cell opacity transition) */
-const FOOTER_RULE_DELAY_MS = T0 + ANIM_DUR + 200 + 940 + 420;
+/**
+ * When the Experience footer GSAP timeline should start drawing the horizontal rule,
+ * in ms from slide activation. Sum tracks the entrance effect (see `showCell` / `T1`):
+ *   T0          — wait for slide settle; first grid stroke begins (`outer1Ref` at T0).
+ *   ANIM_DUR    — duration of wrap-1 outer rectangle draw (900ms).
+ *   200         — gap between wrap-1 finishing and `T1`; wrap-2 outer begins at T1.
+ *   940         — offset after T1 until `showCell("edu", …)` (last row fades in).
+ *   420         — buffer after the edu cue for `.cell` opacity / layout to read as “landed”.
+ *   FOOTER_AFTER_EXPERIENCE_MS — extra hold so the footer reads as a separate beat after the grid.
+ */
+const FOOTER_AFTER_EXPERIENCE_MS = 750;
+const FOOTER_RULE_DELAY_MS =
+  T0 + ANIM_DUR + 200 + 940 + 420 + FOOTER_AFTER_EXPERIENCE_MS;
 
 function getRect(el: HTMLElement, parent: HTMLElement): Rect {
   const er = el.getBoundingClientRect();
