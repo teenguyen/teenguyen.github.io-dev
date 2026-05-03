@@ -4,9 +4,10 @@ import { useEffect, useRef } from "react";
 import { useActiveSlideIndex, useSlideIndex } from "../SectionSlider";
 import ExperienceDesktop from "./ExperienceDesktop";
 import ExperienceMobile from "./ExperienceMobile";
-import { EXPERIENCE_T0, EXPERIENCE_ANIM_DUR } from "./consts";
+import { EXPERIENCE_T0 as T0, EXPERIENCE_ANIM_DUR as ANIM_DUR } from "./consts";
 import ExperienceFooter from "./footer";
 import styles from "./index.module.css";
+import { SCROLL_BOUNDARY_EPS } from "../consts";
 
 /**
  * When the Experience footer GSAP timeline should start drawing the horizontal rule,
@@ -18,11 +19,7 @@ import styles from "./index.module.css";
  *   420         — buffer after the edu cue for `.cell` opacity / layout to read as “landed”.
  *   750         — extra hold so the footer reads as a separate beat after the grid.
  */
-const EXPERIENCE_FOOTER_RULE_DELAY_MS =
-  EXPERIENCE_T0 + EXPERIENCE_ANIM_DUR + 200 + 940 + 420 + 750;
-
-/** Edge slack so OS overscroll / float scrollTop doesn't trap slide navigation. */
-const SCROLL_BOUNDARY_EPS = 3;
+const EXPERIENCE_FOOTER_RULE_DELAY_MS = T0 + ANIM_DUR + 200 + 940 + 420 + 750;
 
 export default function Experience() {
   const sectionIndex = useSlideIndex();

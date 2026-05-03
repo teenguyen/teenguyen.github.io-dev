@@ -4,9 +4,7 @@ import { useEffect, useRef } from "react";
 import styles from "./index.module.css";
 import LiveRamp from "./LiveRamp";
 import SoFi from "./SoFi";
-
-/** Edge slack so OS overscroll / float scrollTop doesn't trap slide navigation. */
-const SCROLL_BOUNDARY_EPS = 3;
+import { SCROLL_BOUNDARY_EPS } from "../consts";
 
 export default function Featured() {
   const scrollRef = useRef<HTMLDivElement>(null);

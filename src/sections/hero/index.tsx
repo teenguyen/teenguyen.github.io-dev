@@ -19,18 +19,9 @@ import ScreenOne from "./ScreenOne";
 import ScreenTwo from "./ScreenTwo";
 import styles from "./index.module.css";
 
-const SHORT_VIEWPORT_MAX_HEIGHT = 720;
-const SOCIALS_TOP_INSET_SMALL = 32;
-const SOCIALS_TOP_INSET_LARGE = 64;
 const INITIAL_Y = 16;
 const HERO_FADE_DURATION = 0.35;
-const SOCIALS_AND_STARMAP_SCROLL_DURATION = 1;
-const TAGLINE_LINE_ONE_START = 1;
-const TAGLINE_LINE_TWO_START = 1.24;
 const TIMELINE_START = 0;
-const LOGO_ANIMATION_START = TIMELINE_START;
-const SCREEN_TWO_INITIAL_Y = 24;
-const SCREEN_TWO_REVEAL_DURATION = 0.45;
 
 export default function Hero() {
   const sliderApi = useSliderApi();
@@ -74,7 +65,7 @@ export default function Hero() {
       gsap.set(screenOneRef.current, { autoAlpha: 1 });
       gsap.set(screenTwoRef.current, {
         autoAlpha: 0,
-        y: SCREEN_TWO_INITIAL_Y,
+        y: 24,
       });
 
       const socialsNav =
@@ -85,7 +76,7 @@ export default function Hero() {
       addHeroLogoRevealToTimeline(
         introTimeline,
         logoRef.current,
-        LOGO_ANIMATION_START,
+        TIMELINE_START,
       );
 
       if (socialsNav) {
@@ -111,11 +102,9 @@ export default function Hero() {
 
       const socialsTargetTopPx = () => {
         const shortViewport =
-          window.innerHeight <= SHORT_VIEWPORT_MAX_HEIGHT ||
+          window.innerHeight <= 720 ||
           window.innerWidth <= SECTION_LAYOUT_BREAKPOINT_PX_DEFAULT_ROOT;
-        return shortViewport
-          ? SOCIALS_TOP_INSET_SMALL
-          : SOCIALS_TOP_INSET_LARGE;
+        return shortViewport ? 32 : 64;
       };
 
       const socialsScrollY = () => {
@@ -141,7 +130,7 @@ export default function Hero() {
           [socialsRef.current, starmapWrapRef.current],
           {
             y: socialsScrollY,
-            duration: SOCIALS_AND_STARMAP_SCROLL_DURATION,
+            duration: 1,
           },
           TIMELINE_START,
         )
@@ -158,12 +147,12 @@ export default function Hero() {
           {
             autoAlpha: 1,
             y: 0,
-            duration: SCREEN_TWO_REVEAL_DURATION,
+            duration: 0.45,
           },
           0.48,
         )
-        .to(lineOneRef.current, revealTagLine, TAGLINE_LINE_ONE_START)
-        .to(lineTwoRef.current, revealTagLine, TAGLINE_LINE_TWO_START);
+        .to(lineOneRef.current, revealTagLine, 1)
+        .to(lineTwoRef.current, revealTagLine, 1.25);
 
       phase2TimelineRef.current = timeline;
 

@@ -15,11 +15,6 @@ import styles from "./ExperienceMobile.module.css";
 
 const MOBILE_MQ = `(max-width: ${SECTION_LAYOUT_BREAKPOINT_REM}rem)`;
 
-/** Delay after section title before first body line. */
-const AFTER_TITLE_MS = 120;
-/** Stagger between each line (text, logo, or rule). */
-const LINE_STAGGER_MS = 90;
-
 export type ExperienceMobileProps = {
   isActive: boolean;
 };
@@ -81,7 +76,7 @@ export default function ExperienceMobile({ isActive }: ExperienceMobileProps) {
       EXPERIENCE_T0,
     );
 
-    let t = EXPERIENCE_T0 + AFTER_TITLE_MS;
+    let t = EXPERIENCE_T0 + 120;
 
     const revealLine = (id: string) => {
       schedule(
@@ -92,7 +87,7 @@ export default function ExperienceMobile({ isActive }: ExperienceMobileProps) {
         },
         t,
       );
-      t += LINE_STAGGER_MS;
+      t += 120;
     };
 
     revealLine("feat-logo");

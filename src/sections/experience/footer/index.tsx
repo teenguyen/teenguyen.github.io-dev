@@ -17,17 +17,8 @@ import Socials, {
 import styles from "./index.module.css";
 import clsx from "clsx";
 
-const DRAW_MS = 520;
-const MEASURE_RETRY_CAP = 120;
-const FOOTER_SOCIALS_OVERLAP_BEFORE_LOGO_END = 0.42;
-/** Match hero ScreenTwo tagline initial offset (`INITIAL_Y`). */
-const FOOTER_TAGLINE_INITIAL_Y = 16;
 /** Slower than hero taglines (`TAGLINE_REVEAL_DURATION` 0.8). */
-const FOOTER_TAGLINE_REVEAL_DURATION = 0.8;
-/** Full-sky backdrop reveal after tagline (wrapper opacity — Starmap uses `playing`). */
-const FOOTER_STARMAP_FADE_DURATION = 0.85;
-/** Let `playing` run briefly while the backdrop is still hidden so RAF paints stars/lines before the fade. */
-const FOOTER_STARMAP_PLAY_BEFORE_FADE_SEC = 0.2;
+const FOOTER_REVEAL_DURATION = 0.8;
 
 type ExperienceFooterProps = {
   active: boolean;
@@ -92,7 +83,7 @@ export default function ExperienceFooter({
 
       gsap.set(tagLine, {
         opacity: 0,
-        y: FOOTER_TAGLINE_INITIAL_Y,
+        y: 16,
       });
 
       let attempts = 0;
@@ -105,7 +96,7 @@ export default function ExperienceFooter({
         const logoReady = prepareHeroLogoReveal(svg);
 
         if (lineLen <= 0 || !logoReady) {
-          if (attempts < MEASURE_RETRY_CAP) {
+          if (attempts < 120) {
             gsap.delayedCall(0, measureAndBuild);
           }
           return;
@@ -114,7 +105,7 @@ export default function ExperienceFooter({
         if (runId !== choreographyRunIdRef.current) return;
 
         const delaySec = lineDelayMs / 1000;
-        const drawSec = DRAW_MS / 1000;
+        const drawSec = 0.52;
         const logoStart = delaySec + drawSec;
 
         gsap.set(line, {
@@ -143,9 +134,7 @@ export default function ExperienceFooter({
 
         const pathCount = svg.querySelectorAll("path").length;
         const logoRevealTotal = heroLogoRevealDuration(pathCount);
-        const socialsStart =
-          logoStart +
-          Math.max(0, logoRevealTotal - FOOTER_SOCIALS_OVERLAP_BEFORE_LOGO_END);
+        const socialsStart = logoStart + Math.max(0, logoRevealTotal - 0.42); // 0.42 is the overlap before the logo ends
 
         addSocialsStaggerRevealToTimeline(tl, socialsNav, socialsStart, true);
 
@@ -156,10 +145,10 @@ export default function ExperienceFooter({
               SOCIALS_COL_REVEAL_DURATION
             : 0;
         const tagStart = socialsStart + verticalSocialRevealDuration;
-        const tagEndSec = tagStart + FOOTER_TAGLINE_REVEAL_DURATION;
+        const tagEndSec = tagStart + FOOTER_REVEAL_DURATION;
         const starmapPlayingAt = Math.max(
           0,
-          tagEndSec - FOOTER_STARMAP_PLAY_BEFORE_FADE_SEC,
+          tagEndSec - 0.2, // 0.2 is the overlap before the tagline ends
         );
 
         tl.to(
@@ -167,7 +156,7 @@ export default function ExperienceFooter({
           {
             opacity: 1,
             y: 0,
-            duration: FOOTER_TAGLINE_REVEAL_DURATION,
+            duration: FOOTER_REVEAL_DURATION,
             ease: "power2.out",
           },
           tagStart,
@@ -183,7 +172,7 @@ export default function ExperienceFooter({
             starmapBackdrop,
             {
               autoAlpha: 1,
-              duration: FOOTER_STARMAP_FADE_DURATION,
+              duration: FOOTER_REVEAL_DURATION,
               ease: "power2.out",
             },
             tagEndSec,

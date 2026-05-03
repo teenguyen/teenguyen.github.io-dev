@@ -7,8 +7,6 @@ import styles from "./index.module.css";
 export const LOGO_PATH_DELAY_STEP = 0.1;
 export const LOGO_DRAW_DURATION = 0.5;
 export const LOGO_FILL = 0.3;
-export const LOGO_STROKE_WIDTH = 1;
-export const LOGO_STROKE_DASH_OFFSET_EPSILON = 0.5;
 
 export type HeroAnimatedLogoProps = {
   className?: string;
@@ -41,9 +39,9 @@ export function prepareHeroLogoReveal(svg: SVGSVGElement | null): boolean {
     if (length <= 0) measurable = false;
     gsap.set(path, {
       stroke: "var(--theme-color)",
-      strokeWidth: LOGO_STROKE_WIDTH,
+      strokeWidth: 1,
       strokeDasharray: length,
-      strokeDashoffset: length + LOGO_STROKE_DASH_OFFSET_EPSILON,
+      strokeDashoffset: length + 0.5,
       fillOpacity: 0,
       strokeOpacity: 1,
     });
