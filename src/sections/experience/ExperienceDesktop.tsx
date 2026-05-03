@@ -3,11 +3,18 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import clsx from "clsx";
-import { EXPERIENCE_ANIM_DUR as ANIM_DUR, EXPERIENCE_T0 as T0 } from "./consts";
+import {
+  EXPERIENCE_ANIM_DUR as ANIM_DUR,
+  EXPERIENCE_T0 as T0,
+  CURRENT_JOB,
+  PRIOR_JOBS,
+  EARLY_JOBS,
+  EDUCATION,
+} from "./consts";
+import { SECTION_LAYOUT_BREAKPOINT_REM } from "../consts";
 import styles from "./ExperienceDesktop.module.css";
-import { CURRENT_JOB, PRIOR_JOBS, EARLY_JOBS, EDUCATION } from "./consts";
 
-const EXPERIENCE_DESKTOP_MEDIA = "(min-width: 59.5rem)";
+const DESKTOP_MQ = `(min-width: ${SECTION_LAYOUT_BREAKPOINT_REM}rem)`;
 
 type Rect = { top: number; left: number; right: number; bottom: number };
 
@@ -68,7 +75,7 @@ export default function ExperienceDesktop({
     const wrap2 = wrap2Ref.current;
     if (!wrap1 || !wrap2) return;
 
-    const mq = window.matchMedia(EXPERIENCE_DESKTOP_MEDIA);
+    const mq = window.matchMedia(DESKTOP_MQ);
 
     const measure = () => {
       if (!mq.matches) return;
@@ -148,7 +155,7 @@ export default function ExperienceDesktop({
     }
     if (
       typeof window !== "undefined" &&
-      !window.matchMedia(EXPERIENCE_DESKTOP_MEDIA).matches
+      !window.matchMedia(DESKTOP_MQ).matches
     ) {
       return;
     }

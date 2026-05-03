@@ -34,21 +34,9 @@ const SOCIAL_LINKS = [
   },
 ] as const;
 
-/** Row layout (hero): motion on Y — rise up with a light overshoot. */
-export const SOCIALS_ROW_INITIAL_Y = 16;
-export const SOCIALS_ROW_PEAK_Y = -4;
-
-/** Column layout (footer): fade + slide on **X** from inline-start toward rest (no overshoot). */
-export const SOCIALS_COL_INITIAL_X = -18;
 export const SOCIALS_COL_REVEAL_DURATION = 0.5;
-
-export const SOCIALS_STAGGER_REVEAL_DURATION = 0.4;
-export const SOCIALS_STAGGER_SETTLE_DURATION = 0.25;
 export const SOCIALS_STAGGER_STEP = 0.08;
-/** Insert overlap vs preceding tweens on the parent timeline (hero intro). */
 export const SOCIALS_STAGGER_REVEAL_OVERLAP = "-=0.5";
-/** Chain offset after the reveal peak phase. */
-export const SOCIALS_STAGGER_SETTLE_OFFSET = ">-0.1";
 
 function socialRevealItems(nav: HTMLElement | null): HTMLElement[] {
   return Array.from(nav?.querySelectorAll(":scope > ul > li") ?? []);
@@ -65,9 +53,9 @@ export function prepareSocialsReveal(
   if (items.length === 0) return false;
 
   if (vertical) {
-    gsap.set(items, { autoAlpha: 0, x: SOCIALS_COL_INITIAL_X });
+    gsap.set(items, { autoAlpha: 0, x: -18 });
   } else {
-    gsap.set(items, { autoAlpha: 0, y: SOCIALS_ROW_INITIAL_Y });
+    gsap.set(items, { autoAlpha: 0, y: 16 });
   }
   return true;
 }
@@ -105,8 +93,8 @@ export function addSocialsStaggerRevealToTimeline(
         items,
         {
           autoAlpha: 1,
-          y: SOCIALS_ROW_PEAK_Y,
-          duration: SOCIALS_STAGGER_REVEAL_DURATION,
+          y: -4,
+          duration: 0.4,
           ease: "none",
           stagger: SOCIALS_STAGGER_STEP,
         },
@@ -116,11 +104,11 @@ export function addSocialsStaggerRevealToTimeline(
         items,
         {
           y: 0,
-          duration: SOCIALS_STAGGER_SETTLE_DURATION,
+          duration: 0.25,
           ease: "power2.inOut",
           stagger: SOCIALS_STAGGER_STEP,
         },
-        SOCIALS_STAGGER_SETTLE_OFFSET,
+        ">-0.1",
       );
   }
 }

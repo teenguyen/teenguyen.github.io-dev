@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import Starmap from "../../demos/starmap/Starmap";
+import { SECTION_LAYOUT_BREAKPOINT_PX_DEFAULT_ROOT } from "../consts";
 import {
   useSliderApi,
   useSlideIndex,
@@ -18,13 +19,10 @@ import ScreenOne from "./ScreenOne";
 import ScreenTwo from "./ScreenTwo";
 import styles from "./index.module.css";
 
-/** Matches hero CSS `@media (max-width: 59.5rem)` at default root font size */
-const HERO_MOBILE_MAX_WIDTH_PX = 952;
 const SHORT_VIEWPORT_MAX_HEIGHT = 720;
 const SOCIALS_TOP_INSET_SMALL = 32;
 const SOCIALS_TOP_INSET_LARGE = 64;
 const INITIAL_Y = 16;
-const TAGLINE_REVEAL_DURATION = 0.8;
 const HERO_FADE_DURATION = 0.35;
 const SOCIALS_AND_STARMAP_SCROLL_DURATION = 1;
 const TAGLINE_LINE_ONE_START = 1;
@@ -107,14 +105,14 @@ export default function Hero() {
       const revealTagLine = {
         opacity: 1,
         y: 0,
-        duration: TAGLINE_REVEAL_DURATION,
+        duration: 0.8,
         ease: "power2.out",
       } as const;
 
       const socialsTargetTopPx = () => {
         const shortViewport =
           window.innerHeight <= SHORT_VIEWPORT_MAX_HEIGHT ||
-          window.innerWidth <= HERO_MOBILE_MAX_WIDTH_PX;
+          window.innerWidth <= SECTION_LAYOUT_BREAKPOINT_PX_DEFAULT_ROOT;
         return shortViewport
           ? SOCIALS_TOP_INSET_SMALL
           : SOCIALS_TOP_INSET_LARGE;

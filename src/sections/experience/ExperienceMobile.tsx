@@ -10,10 +10,11 @@ import {
   EXPERIENCE_T0,
   PRIOR_JOBS,
 } from "./consts";
+import { SECTION_LAYOUT_BREAKPOINT_REM } from "../consts";
 import styles from "./ExperienceMobile.module.css";
 
-/** Matches `ExperienceDesktop.module.css` hide breakpoint. */
-const MOBILE_MQ = "(max-width: 59.5rem)";
+const MOBILE_MQ = `(max-width: ${SECTION_LAYOUT_BREAKPOINT_REM}rem)`;
+
 /** Delay after section title before first body line. */
 const AFTER_TITLE_MS = 120;
 /** Stagger between each line (text, logo, or rule). */
