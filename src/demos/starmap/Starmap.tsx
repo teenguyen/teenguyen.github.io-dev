@@ -5,6 +5,11 @@ import * as d3 from "d3";
 import clsx from "clsx";
 import styles from "./Starmap.module.css";
 
+// static fallback for solid theme color on the cream background so star transparency doesn't ovelap
+const THEME_COLOR_48_SOLID_FALLBACK = "rgba(186, 139, 137, 1)";
+const THEME_COLOR_25_FALLBACK = "rgba(122, 28, 28, 0.25)";
+const STAR_REVEAL_DURATION_MS = 720;
+
 type StarFeature = {
   geometry: { coordinates: [number, number] };
   properties: { mag: number; bv?: number };
@@ -33,23 +38,9 @@ type SkyData = {
   magnitudeExtent: [number, number];
 };
 
-const BASE_HEIGHT = 1080;
-const BASE_SCALE = 1000;
-const MIN_SCALE_FACTOR = 0.72;
 const HASH_SIN_MULTIPLIER = 12.9898;
 const HASH_SPREAD_MULTIPLIER = 43758.5453;
 const STAR_VARIANT_COUNT = 4;
-const STAR_RADIUS_MAX = 15;
-const STAR_RADIUS_MIN = 1.1;
-const MIN_DRAWABLE_STAR_RADIUS = 1.2;
-// static fallback for solid theme color on the cream background so star transparency doesn't ovelap
-const THEME_COLOR_48_SOLID_FALLBACK = "rgba(186, 139, 137, 1)";
-const THEME_COLOR_25_FALLBACK = "rgba(122, 28, 28, 0.25)";
-const ROTATION_DEGREES_PER_SECOND = 1;
-const STAR_REVEAL_DURATION_MS = 700;
-const CONSTELLATION_DRAW_SPEED_PX_PER_SECOND = 250;
-const MAX_CONSTELLATION_SEGMENT_GAP_FACTOR = 0.2;
-
 function seededVariant(seed: number) {
   const value = Math.abs(
     Math.sin(seed * HASH_SIN_MULTIPLIER) * HASH_SPREAD_MULTIPLIER,
@@ -58,6 +49,8 @@ function seededVariant(seed: number) {
   return Math.floor(fraction * STAR_VARIANT_COUNT);
 }
 
+const STAR_RADIUS_MAX = 15;
+const STAR_RADIUS_MIN = 1.1;
 function mapMagnitudeToRadius(
   mag: number,
   magnitudeExtent: [number, number],
@@ -335,21 +328,16 @@ export default function Starmap({
       const revealElapsedMs = timeMs - revealStartRef.current;
       starOpacity = clamp01(revealElapsedMs / STAR_REVEAL_DURATION_MS);
       constellationDrawDistance =
-        (Math.max(0, revealElapsedMs - STAR_REVEAL_DURATION_MS) / 1000) *
-        CONSTELLATION_DRAW_SPEED_PX_PER_SECOND;
+        (Math.max(0, revealElapsedMs - STAR_REVEAL_DURATION_MS) / 1000) * 250;
       constellationsVisible = revealElapsedMs > STAR_REVEAL_DURATION_MS;
     }
 
     const projection = d3
       .geoMercator()
       .translate([width / 2, height / 2])
-      // Keep perspective stable across narrow viewports (avoid min(width,height) compression).
-      .scale(Math.max(MIN_SCALE_FACTOR, height / BASE_HEIGHT) * BASE_SCALE)
+      .scale(Math.max(0.72, height / 1000) * 1000)
       .rotate([
-        -(
-          ((timeMs - (animationStartRef.current ?? timeMs)) / 1000) *
-          ROTATION_DEGREES_PER_SECOND
-        ),
+        -(((timeMs - (animationStartRef.current ?? timeMs)) / 1000) * 1),
         0,
       ])
       .angle(15);
@@ -365,8 +353,7 @@ export default function Starmap({
       ctx.strokeStyle = themeColor25;
 
       const projectedConstellations: ProjectedConstellation[] = [];
-      const maxSegmentGapPx =
-        Math.max(width, height) * MAX_CONSTELLATION_SEGMENT_GAP_FACTOR;
+      const maxSegmentGapPx = Math.max(width, height) * 0.2;
       for (const line of data.constellations.features) {
         const rawCoordinates = line.geometry?.coordinates;
         if (!Array.isArray(rawCoordinates)) continue;
@@ -561,8 +548,7 @@ export default function Starmap({
 
         const drawableStars = preparedStars.filter(
           (star) =>
-            mapMagnitudeToRadius(star.mag, magnitudeExtentBeforeFilter) >=
-            MIN_DRAWABLE_STAR_RADIUS,
+            mapMagnitudeToRadius(star.mag, magnitudeExtentBeforeFilter) >= 1.2,
         );
 
         const filteredMagnitudeExtentRaw = d3.extent(
