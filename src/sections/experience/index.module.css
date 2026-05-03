@@ -25,10 +25,3 @@
 .heading {
   font-size: 2rem;
 }
-
-.textWrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  white-space: pre-line;
-}

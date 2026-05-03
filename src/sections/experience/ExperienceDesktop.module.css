@@ -39,21 +39,26 @@
   opacity: 1;
 }
 
-.hero {
-  align-items: center;
-  display: flex;
-  gap: 2rem;
-  padding: 2rem 2rem 2.5rem;
+.logo {
+  grid-area: logo;
+  height: auto;
+  margin-top: 0.5rem;
+  object-fit: contain;
+  width: auto;
+}
+
+.heroExp {
+  display: grid;
+  grid-template-columns: 6rem 1fr;
+  grid-template-areas:
+    "logo title"
+    "logo meta";
+  gap: 0.5rem 1.5rem;
 }
 
 .heroLogo {
-  aspect-ratio: 1;
-  height: auto;
-  margin-top: 1rem;
-  max-height: 100px;
-  max-width: 100px;
-  object-fit: contain;
-  width: auto;
+  max-height: 6rem;
+  max-width: 6rem;
 }
 
 .heroTitleRow {
@@ -73,6 +78,7 @@
   font-family: var(--font-open-sans);
   font-size: 1rem;
   letter-spacing: 0.08em;
+  white-space: pre-line;
 }
 
 .subRow {
@@ -80,17 +86,19 @@
   grid-template-columns: 1fr 1fr;
 }
 
-.subCell {
-  align-items: flex-start;
-  display: flex;
-  gap: 2rem;
+.jobExp {
+  display: grid;
+  grid-template-columns: 4rem 1fr;
+  grid-template-areas:
+    "logo title"
+    "logo company"
+    "logo meta";
+  gap: 0.5rem 1.5rem;
 }
 
 .subLogo {
-  flex-shrink: 0;
-  height: 4rem;
-  object-fit: contain;
-  width: 4rem;
+  max-height: 4rem;
+  max-width: 4rem;
 }
 
 .subTitle {
@@ -109,16 +117,13 @@
 .accentSectionHeading {
   font-size: 2rem;
   letter-spacing: 0.04em;
+  align-items: center;
+  display: flex;
 }
 
 .earlyRow {
   display: grid;
   grid-template-columns: auto 1fr;
-}
-
-.earlyLabel {
-  align-items: center;
-  display: flex;
 }
 
 .earlyLogos {

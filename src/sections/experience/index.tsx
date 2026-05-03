@@ -64,10 +64,7 @@ export default function Experience() {
             experience
           </h2>
           <ExperienceDesktop isActive={isActive} />
-          <ExperienceMobile
-            isActive={isActive}
-            experienceTitleRef={experienceTitleRef}
-          />
+          <ExperienceMobile isActive={isActive} />
         </div>
         <ExperienceFooter
           active={isActive}

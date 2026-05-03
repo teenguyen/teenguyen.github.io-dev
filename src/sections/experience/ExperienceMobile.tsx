@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import {
   CURRENT_JOB,
@@ -31,10 +31,7 @@ function schedule(
   timeouts.push(setTimeout(fn, delay));
 }
 
-export default function ExperienceMobile({
-  isActive,
-  experienceTitleRef,
-}: ExperienceMobileProps) {
+export default function ExperienceMobile({ isActive }: ExperienceMobileProps) {
   const runIdRef = useRef(0);
   const [revealed, setRevealed] = useState<Set<string>>(() => new Set());
   const [narrow, setNarrow] = useState(() =>
@@ -54,43 +51,31 @@ export default function ExperienceMobile({
   useEffect(() => {
     const runId = ++runIdRef.current;
     const timeouts: ReturnType<typeof setTimeout>[] = [];
-    const titleEl = experienceTitleRef?.current ?? null;
-
-    const clearTitleStyles = () => {
-      if (!titleEl) return;
-      titleEl.style.opacity = "";
-      titleEl.style.transition = "";
-    };
 
     if (!isActive) {
-      clearTitleStyles();
-      setRevealed(new Set());
+      queueMicrotask(() => {
+        setRevealed(new Set());
+      });
       return () => {
         timeouts.forEach(clearTimeout);
       };
     }
 
     if (!narrow) {
-      clearTitleStyles();
       return () => {
         timeouts.forEach(clearTimeout);
       };
     }
 
-    if (titleEl) {
-      titleEl.style.transition = "none";
-      titleEl.style.opacity = "0";
-      titleEl.getBoundingClientRect();
-    }
-
-    setRevealed(new Set());
+    queueMicrotask(() => {
+      setRevealed(new Set());
+    });
 
     schedule(
       timeouts,
       () => {
-        if (runId !== runIdRef.current || !titleEl) return;
-        titleEl.style.transition = "opacity 0.4s ease";
-        titleEl.style.opacity = "1";
+        if (runId !== runIdRef.current) return;
+        setRevealed((prev) => new Set([...prev, "feat-logo"]));
       },
       EXPERIENCE_T0,
     );
@@ -139,7 +124,7 @@ export default function ExperienceMobile({
     return () => {
       timeouts.forEach(clearTimeout);
     };
-  }, [isActive, experienceTitleRef, narrow]);
+  }, [isActive, narrow]);
 
   const lineClass = (id: string) =>
     clsx(styles.revealable, revealed.has(id) && styles.revealed);

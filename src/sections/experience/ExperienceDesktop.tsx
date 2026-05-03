@@ -4,8 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import clsx from "clsx";
 import { EXPERIENCE_ANIM_DUR as ANIM_DUR, EXPERIENCE_T0 as T0 } from "./consts";
-import desktop from "./ExperienceDesktop.module.css";
-import shared from "./index.module.css";
+import styles from "./ExperienceDesktop.module.css";
 import { CURRENT_JOB, PRIOR_JOBS, EARLY_JOBS, EDUCATION } from "./consts";
 
 const EXPERIENCE_DESKTOP_MEDIA = "(min-width: 59.5rem)";
@@ -267,16 +266,16 @@ export default function ExperienceDesktop({
   }, [isActive, wrap1Paths, wrap2Paths, wrap1Size, wrap2Size]);
 
   const cellClass = (id: string) =>
-    clsx(desktop.cell, visibleCells.has(id) && desktop.cellVisible);
+    clsx(styles.cell, visibleCells.has(id) && styles.cellVisible);
 
   const viewBox1 = `0 0 ${wrap1Size.w} ${wrap1Size.h}`;
   const viewBox2 = `0 0 ${wrap2Size.w} ${wrap2Size.h}`;
 
   return (
-    <div className={desktop.tableWrapper}>
-      <div ref={wrap1Ref} className={desktop.gridWrapper}>
+    <div className={styles.tableWrapper}>
+      <div ref={wrap1Ref} className={styles.gridWrapper}>
         <svg
-          className={desktop.gridLines}
+          className={styles.gridLines}
           viewBox={viewBox1}
           width={wrap1Size.w}
           height={wrap1Size.h}
@@ -285,73 +284,72 @@ export default function ExperienceDesktop({
             <>
               <path
                 ref={outer1Ref}
-                className={desktop.gridLine}
+                className={styles.gridLine}
                 d={wrap1Paths.outer}
               />
               <path
                 ref={divH1Ref}
-                className={desktop.gridLine}
+                className={styles.gridLine}
                 d={wrap1Paths.divH}
               />
               <path
                 ref={divV1Ref}
-                className={desktop.gridLine}
+                className={styles.gridLine}
                 d={wrap1Paths.divV}
               />
             </>
           )}
         </svg>
 
-        <div className={desktop.expGrid}>
-          <div ref={heroRef} className={clsx(cellClass("hero"), desktop.hero)}>
+        <div className={styles.expGrid}>
+          <div
+            ref={heroRef}
+            className={clsx(cellClass("hero"), styles.heroExp)}
+          >
             <Image
-              className={desktop.heroLogo}
+              className={clsx(styles.logo, styles.heroLogo)}
               src={CURRENT_JOB.logo}
               alt={`${CURRENT_JOB.company} logo`}
               width={100}
               height={100}
             />
-            <div className={shared.textWrapper}>
-              <div className={desktop.heroTitleRow}>
-                <p className={shared.heroTitle}>{CURRENT_JOB.title}</p>
-                <p className={shared.heroMeta}>{CURRENT_JOB.company}</p>
-              </div>
-              <p className={shared.heroMeta}>
-                {`${CURRENT_JOB.location}\n${CURRENT_JOB.dates}`}
-              </p>
+            <div className={styles.heroTitleRow}>
+              <p className={styles.heroTitle}>{CURRENT_JOB.title}</p>
+              <p className={styles.heroMeta}>{CURRENT_JOB.company}</p>
             </div>
+            <p className={styles.heroMeta}>
+              {`${CURRENT_JOB.location}\n${CURRENT_JOB.dates}`}
+            </p>
           </div>
 
-          <div className={desktop.subRow}>
+          <div className={styles.subRow}>
             {PRIOR_JOBS.map((job) => (
               <div
                 key={job.id}
                 ref={job.id === "lr" ? lrRef : rbaRef}
-                className={clsx(cellClass(job.id), desktop.subCell)}
+                className={clsx(cellClass(job.id), styles.jobExp)}
               >
                 <Image
-                  className={desktop.subLogo}
+                  className={clsx(styles.logo, styles.subLogo)}
                   src={job.logo}
                   alt={`${job.company} logo`}
                   width={40}
                   height={40}
                 />
-                <div className={shared.textWrapper}>
-                  <p className={shared.subTitle}>{job.title}</p>
-                  <p className={shared.subMeta}>{job.company}</p>
-                  <p
-                    className={shared.subMeta}
-                  >{`${job.location}\n${job.dates}`}</p>
-                </div>
+                <p className={styles.subTitle}>{job.title}</p>
+                <p className={styles.subMeta}>{job.company}</p>
+                <p
+                  className={styles.subMeta}
+                >{`${job.location}\n${job.dates}`}</p>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      <div ref={wrap2Ref} className={desktop.gridWrapper}>
+      <div ref={wrap2Ref} className={styles.gridWrapper}>
         <svg
-          className={desktop.gridLines}
+          className={styles.gridLines}
           viewBox={viewBox2}
           width={wrap2Size.w}
           height={wrap2Size.h}
@@ -360,69 +358,65 @@ export default function ExperienceDesktop({
             <>
               <path
                 ref={outer2Ref}
-                className={desktop.gridLine}
+                className={styles.gridLine}
                 d={wrap2Paths.outer}
               />
               <path
                 ref={divH2Ref}
-                className={desktop.gridLine}
+                className={styles.gridLine}
                 d={wrap2Paths.divH}
               />
               <path
                 ref={divV2Ref}
-                className={desktop.gridLine}
+                className={styles.gridLine}
                 d={wrap2Paths.divV}
               />
               <path
                 ref={divEdu2Ref}
-                className={desktop.gridLine}
+                className={styles.gridLine}
                 d={wrap2Paths.divEdu}
               />
             </>
           )}
         </svg>
 
-        <div className={desktop.expGrid}>
-          <div className={desktop.earlyRow}>
+        <div className={styles.expGrid}>
+          <div className={styles.earlyRow}>
             <h3
               ref={earlyRef}
-              className={clsx(
-                cellClass("early"),
-                desktop.earlyLabel,
-                shared.accentSectionHeading,
-              )}
+              className={clsx(cellClass("early"), styles.accentSectionHeading)}
             >
               early career
             </h3>
             <div
               ref={logosRef}
-              className={clsx(cellClass("logos"), desktop.earlyLogos)}
+              className={clsx(cellClass("logos"), styles.earlyLogos)}
             >
               {EARLY_JOBS.map((job) => (
-                <div key={job.year} className={desktop.detailItem}>
+                <div key={job.year} className={styles.detailItem}>
                   <Image
-                    className={desktop.earlyLogo}
+                    className={styles.earlyLogo}
                     src={job.logo}
                     alt={`${job.company} logo`}
                     width={36}
                     height={36}
                   />
-                  <p className={shared.serifDetailTitle}>{job.role}</p>
-                  <p className={shared.sansDetailSubtext}>
+                  <p className={styles.serifDetailTitle}>{job.role}</p>
+                  <p className={styles.sansDetailSubtext}>
                     {`${job.company}\n${job.year}`}
                   </p>
                 </div>
               ))}
             </div>
           </div>
-          <div ref={eduRef} className={clsx(cellClass("edu"), desktop.eduRow)}>
-            <h3 ref={eduHeadingRef} className={shared.accentSectionHeading}>
+          <div ref={eduRef} className={clsx(cellClass("edu"), styles.eduRow)}>
+            <h3 ref={eduHeadingRef} className={styles.accentSectionHeading}>
               education
             </h3>
             {EDUCATION.map(({ degree, school }) => (
-              <div key={degree} className={shared.eduDetail}>
-                <p className={shared.serifDetailTitle}>{degree}</p>
-                <p className={shared.sansDetailSubtext}>{school}</p>
+              <div key={degree} className={styles.eduDetail}>
+                <p className={styles.serifDetailTitle}>{degree}</p>
+                <p className={styles.sansDetailSubtext}>{school}</p>
               </div>
             ))}
           </div>

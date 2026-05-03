@@ -161,10 +161,6 @@
     justify-content: center;
   }
 
-  .logo {
-    width: min(100%, 32rem);
-  }
-
   .socialsLayer {
     top: calc(50% + min(32rem, calc(100vw - 4rem)) * 101 / 496 + 1.75rem);
     right: auto;
