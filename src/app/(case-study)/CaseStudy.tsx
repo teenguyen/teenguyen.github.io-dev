@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect } from "react";
 import clsx from "clsx";
 import styles from "./shared.module.css";
 
@@ -11,6 +14,11 @@ export default function CaseStudyWrapper({
   children,
   portfolioHref,
 }: CaseStudyWrapperProps) {
+  useEffect(() => {
+    document.body.style.overflow = "auto";
+    document.body.style.overscrollBehaviorY = "auto";
+  }, []);
+
   return (
     <main className={styles.main}>
       <header className={styles.header}>

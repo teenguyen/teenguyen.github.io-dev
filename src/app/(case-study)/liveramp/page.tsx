@@ -58,28 +58,28 @@ export default function LiveRampCaseStudy() {
         <div className={styles.body}>
           <figure className={styles.media}>
             <Image
-              src="/lr-main.png"
+              src="/featured/lr-main.png"
               alt="Liveramp Motif home page"
               width={2596}
               height={1240}
               className={styles.mainImg}
             />
             <Image
-              src="/lr-rdt.png"
+              src="/featured/lr-rdt.png"
               alt="Liveramp Rich Data Table component"
               width={1464}
               height={804}
               className={styles.rdt}
             />
             <Image
-              src="/lr-buttons.png"
+              src="/featured/lr-buttons.png"
               alt="Liveramp Buttons component"
               width={928}
               height={1560}
               className={styles.buttons}
             />
             <Image
-              src="/lr-stepper.png"
+              src="/featured/lr-stepper.png"
               alt="Liveramp Stepper component"
               width={1464}
               height={668}

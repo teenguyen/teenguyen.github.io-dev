@@ -4,6 +4,7 @@
   flex-direction: column;
   gap: 4rem;
   min-height: 100vh;
+  overscroll-behavior-y: auto;
   padding: 2rem 4rem;
   width: 100%;
 }
