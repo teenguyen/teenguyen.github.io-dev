@@ -34,7 +34,7 @@ export default function Featured() {
   }, []);
 
   return (
-    <section className={styles.section}>
+    <section id="featured" className={styles.section}>
       <div ref={scrollRef} className={styles.scrollArea}>
         <div className={styles.divider}>
           <hr />

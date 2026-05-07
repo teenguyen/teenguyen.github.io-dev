@@ -43,7 +43,7 @@ const HIGHLIGHTS = [
 
 export default function LiveRampCaseStudy() {
   return (
-    <CaseStudyWrapper portfolioHref="/#liveramp">
+    <CaseStudyWrapper>
       <article className={shared.article}>
         <div className={shared.heading}>
           <h2 className={shared.title}>

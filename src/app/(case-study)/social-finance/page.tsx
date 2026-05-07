@@ -44,7 +44,7 @@ const HIGHLIGHTS = [
 
 export default function SoFiCaseStudy() {
   return (
-    <CaseStudyWrapper portfolioHref="/#social-finance">
+    <CaseStudyWrapper>
       <article className={shared.article}>
         <div className={shared.heading}>
           <h2 className={shared.title}>

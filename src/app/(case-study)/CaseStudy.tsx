@@ -7,13 +7,9 @@ import styles from "./shared.module.css";
 
 type CaseStudyWrapperProps = {
   children: React.ReactNode;
-  portfolioHref: string;
 };
 
-export default function CaseStudyWrapper({
-  children,
-  portfolioHref,
-}: CaseStudyWrapperProps) {
+export default function CaseStudyWrapper({ children }: CaseStudyWrapperProps) {
   useEffect(() => {
     document.body.style.overflow = "auto";
     document.body.style.overscrollBehaviorY = "auto";
@@ -22,7 +18,7 @@ export default function CaseStudyWrapper({
   return (
     <main className={styles.main}>
       <header className={styles.header}>
-        <Link href={portfolioHref} className="subtitle">
+        <Link href="/#featured" className="subtitle">
           ← PORTFOLIO
         </Link>
         <h6 className={clsx("subtitle", styles.name)}>THERESA NGUYEN</h6>
