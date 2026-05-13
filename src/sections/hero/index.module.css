@@ -153,7 +153,7 @@
   font-size: clamp(1rem, 1.5vw, 1.25rem);
   font-weight: 400;
   font-style: normal;
-  letter-spacing: 4%;
+  letter-spacing: 0.04em;
 }
 
 @media (max-width: 59.5rem) {

@@ -25,9 +25,10 @@ export default function Blurb({
   bodyRef,
 }: BlurbProps) {
   return (
-    <div
+    <button
       className={clsx(styles.blurb, active && styles.blurbActive)}
       onClick={onClick}
+      type="button"
     >
       <p className={clsx("subtitle", styles.index)}>
         {index.toString().padStart(2, "0")}
@@ -40,6 +41,6 @@ export default function Blurb({
           <Link className="subtitle" {...(linkProps as LinkProps)} />
         )}
       </div>
-    </div>
+    </button>
   );
 }
