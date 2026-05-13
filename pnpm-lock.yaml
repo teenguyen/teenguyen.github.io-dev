@@ -11,6 +11,9 @@ importers:
       '@gsap/react':
         specifier: ^2.1.2
         version: 2.1.2(gsap@3.15.0)(react@19.2.4)
+      '@teenguyen/nook-phone':
+        specifier: ^0.1.0
+        version: 0.1.0
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -454,6 +457,10 @@ packages:
 
   '@swc/helpers@0.5.15':
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
+
+  '@teenguyen/nook-phone@0.1.0':
+    resolution: {integrity: sha512-WulKCq6HevYxZ5L/dJbcLeVlGrXbySeq+enqp7lR5WOEUhVClfHSBfcbTtpbkrRkMKim0Ob2cB9RD5inRTuDaw==, tarball: https://npm.pkg.github.com/download/@teenguyen/nook-phone/0.1.0/e439f29551c43c03b1328a245373112712208c6a}
+    engines: {node: '>=18'}
 
   '@tybys/wasm-util@0.10.1':
     resolution: {integrity: sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg==}
@@ -2405,6 +2412,8 @@ snapshots:
   '@swc/helpers@0.5.15':
     dependencies:
       tslib: 2.8.1
+
+  '@teenguyen/nook-phone@0.1.0': {}
 
   '@tybys/wasm-util@0.10.1':
     dependencies:

@@ -1,6 +1,13 @@
+# GitHub-hosted packages (@teenguyen/nook-phone): set NPM_TOKEN in the environment
+# or in a local `.env` file (Compose loads it — do not commit tokens).
+# Use a GitHub PAT with the `read:packages` scope (classic) or SSO-authorized fine-grained token.
+
 services:
   app:
-    build: .
+    build:
+      context: .
+      secrets:
+        - npm_token
     ports:
       - "${APP_PORT:-3000}:3000"
     develop:
@@ -16,3 +23,7 @@ services:
           path: package.json
         - action: rebuild
           path: pnpm-lock.yaml
+
+secrets:
+  npm_token:
+    environment: NPM_TOKEN

@@ -6,10 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "sync:nook-phone": "node scripts/sync-nook-phone.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
+    "@teenguyen/nook-phone": "^0.1.0",
     "clsx": "^2.1.1",
     "d3": "^7.9.0",
     "gsap": "^3.15.0",

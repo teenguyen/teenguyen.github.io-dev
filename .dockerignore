@@ -2,6 +2,9 @@ node_modules
 .next
 .git
 .gitignore
+
+# Avoid copying a machine-local PAT if _authToken is ever added here.
+.npmrc
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

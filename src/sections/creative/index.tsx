@@ -183,12 +183,10 @@ const BLURBS = [
       "Pixel-faithful SVG recreation of the Animal Crossing Nookphone. Every button, hand drawn and animated in pure CSS. Built because it seemed fun, which is the best reason. (WIP)",
     skills: "SVG · CSS ANIMATION · ANIMAL CROSSING",
     linkProps: {
-      children: "HERO",
-      href: "/creative/nookphone",
-      target: "_blank",
-      rel: "noopener noreferrer",
+      children: "/nook-phone",
+      href: "/nook-phone",
     },
-    image: "/featured/lr-buttons.png",
+    image: "/creative/creative-nook.mp4",
   },
   {
     title: "interactive celestial map",
@@ -203,10 +201,8 @@ const BLURBS = [
       "The GitHub issues tracker reimagined in frosted glass. An exercise in layered transparency & making utility UI feel tactile.",
     skills: "API · GLASSMORPHISM · CSS THEMING",
     linkProps: {
-      children: "HERO",
-      href: "/creative/github-issues",
-      target: "_blank",
-      rel: "noopener noreferrer",
+      children: "/react-issues",
+      href: "/react-issues",
     },
     image: "/creative/creative-github.mp4",
   },
