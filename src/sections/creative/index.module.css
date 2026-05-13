@@ -33,10 +33,6 @@
   }
 }
 
-.heading {
-  font-size: 2rem;
-}
-
 .media {
   background-color: var(--background1);
   height: 100%;
@@ -91,6 +87,5 @@
   .article {
     gap: 2rem;
     padding: 2rem;
-    justify-content: flex-start;
   }
 }

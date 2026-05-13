@@ -39,10 +39,6 @@
   width: 100%;
 }
 
-.heading {
-  font-size: 2rem;
-}
-
 @media (max-width: 59.5rem) {
   .divider {
     display: none;

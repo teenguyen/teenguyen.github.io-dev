@@ -132,7 +132,7 @@
   font-size: clamp(2rem, 4vw, 3rem);
   font-style: normal;
   line-height: 1.15;
-  letter-spacing: 6%;
+  letter-spacing: 0.06em;
 }
 
 .tagTextItalics {

@@ -24,7 +24,6 @@
   font-family: var(--font-noto-serif);
   font-size: 2rem;
   letter-spacing: -4%;
-  align-items: baseline;
 }
 
 .prefix {
@@ -38,7 +37,6 @@
   line-height: 2rem;
   letter-spacing: -4%;
   margin-left: 0.25rem;
-  align-self: flex-start;
 }
 
 .xSuperscript {

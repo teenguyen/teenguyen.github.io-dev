@@ -641,7 +641,7 @@ export default function Starmap({
 
   return (
     <div ref={rootRef} className={clsx(styles.root, className)}>
-      <canvas ref={canvasRef} className={styles.canvas} />
+      <canvas ref={canvasRef} />
     </div>
   );
 }

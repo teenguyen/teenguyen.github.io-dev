@@ -34,7 +34,7 @@ export default function Blurb({
       </p>
       <div ref={bodyRef} className={styles.blurbBody}>
         <h3 className={styles.title}>{title}</h3>
-        <p className={styles.description}>{description}</p>
+        <p>{description}</p>
         <p className="subtitle">{skills}</p>
         {linkProps && (
           <Link className="subtitle" {...(linkProps as LinkProps)} />

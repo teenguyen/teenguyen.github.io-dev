@@ -130,7 +130,7 @@ const Socials = forwardRef<HTMLElement, SocialsProps>(function Socials(
   return (
     <nav
       ref={ref}
-      className={clsx(styles.nav, vertical && styles.vertical)}
+      className={clsx(vertical && styles.vertical)}
       aria-label="Social links"
     >
       <ul className={styles.list}>

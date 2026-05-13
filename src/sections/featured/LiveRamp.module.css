@@ -29,8 +29,6 @@
 
 .thumb1,
 .thumb2 {
-  display: flex;
-  align-items: flex-end;
   object-fit: contain;
   width: 100%;
   height: auto;
@@ -57,11 +55,6 @@
 
   .header {
     padding-bottom: 1rem;
-  }
-
-  .thumb1,
-  .thumb2 {
-    align-self: flex-start;
   }
 }
 
@@ -94,9 +87,5 @@
 
   .desc {
     padding: 0;
-  }
-
-  .mainImg {
-    max-width: 100%;
   }
 }

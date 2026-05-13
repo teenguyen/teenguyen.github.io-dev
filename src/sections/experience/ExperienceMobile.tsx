@@ -199,7 +199,7 @@ export default function ExperienceMobile({ isActive }: ExperienceMobileProps) {
         aria-hidden
       />
 
-      <div className={styles.earlySection}>
+      <div>
         <h3 className={clsx(styles.sectionLabel, lineClass("early-h3"))}>
           early career
         </h3>
