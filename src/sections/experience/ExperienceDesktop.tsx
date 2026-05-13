@@ -15,6 +15,7 @@ import { SECTION_LAYOUT_BREAKPOINT_REM } from "../consts";
 import styles from "./ExperienceDesktop.module.css";
 
 const DESKTOP_MQ = `(min-width: ${SECTION_LAYOUT_BREAKPOINT_REM}rem)`;
+const REDUCED_MOTION_MQ = "(prefers-reduced-motion: reduce)";
 
 type Rect = { top: number; left: number; right: number; bottom: number };
 
@@ -171,6 +172,37 @@ export default function ExperienceDesktop({
       return;
     }
     if (!wrap1Paths || !wrap2Paths) return;
+
+    if (typeof window !== "undefined" && window.matchMedia(REDUCED_MOTION_MQ).matches) {
+      playingRef.current = true;
+      setVisibleCells(
+        new Set([
+          "expHeading",
+          "hero",
+          "lr",
+          "rba",
+          "early",
+          "logos",
+          "edu",
+        ]),
+      );
+      const clearLineStyle = (el: SVGPathElement | null) => {
+        if (!el) return;
+        el.style.transition = "";
+        el.style.strokeDasharray = "";
+        el.style.strokeDashoffset = "";
+      };
+      clearLineStyle(outer1Ref.current);
+      clearLineStyle(divHTop1Ref.current);
+      clearLineStyle(divH1Ref.current);
+      clearLineStyle(divV1Ref.current);
+      clearLineStyle(outer2Ref.current);
+      clearLineStyle(divH2Ref.current);
+      clearLineStyle(divV2Ref.current);
+      clearLineStyle(divEdu2Ref.current);
+      return;
+    }
+
     if (playingRef.current) return;
     playingRef.current = true;
 

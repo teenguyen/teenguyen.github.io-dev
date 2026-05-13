@@ -8,9 +8,11 @@ import HeroAnimatedLogo, {
   addHeroLogoRevealToTimeline,
   heroLogoRevealDuration,
   prepareHeroLogoReveal,
+  setHeroLogoRevealComplete,
 } from "@/components/HeroAnimatedLogo";
 import Socials, {
   addSocialsStaggerRevealToTimeline,
+  setSocialsRevealComplete,
   SOCIALS_COL_REVEAL_DURATION,
   SOCIALS_STAGGER_STEP,
 } from "@/components/Socials";
@@ -18,8 +20,9 @@ import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import styles from "./index.module.css";
 import clsx from "clsx";
 
-/** Slower than hero taglines (`TAGLINE_REVEAL_DURATION` 0.8). */
 const FOOTER_REVEAL_DURATION = 0.8;
+
+const REDUCED_MOTION_MQ = "(prefers-reduced-motion: reduce)";
 
 function killFooterAnimations(
   line: SVGLineElement | null,
@@ -73,6 +76,18 @@ export default function Footer() {
       }
 
       if (!line || !svg || !socialsNav || !tagLine || !starmapBackdrop) return;
+
+      if (window.matchMedia(REDUCED_MOTION_MQ).matches) {
+        gsap.set(line, { clearProps: "strokeDasharray,strokeDashoffset" });
+        setHeroLogoRevealComplete(svg);
+        setSocialsRevealComplete(socialsNav);
+        gsap.set(tagLine, { opacity: 1, y: 0 });
+        gsap.set(starmapBackdrop, { autoAlpha: 1 });
+        queueMicrotask(() => {
+          setFooterStarmapPlaying(true);
+        });
+        return;
+      }
 
       gsap.set(starmapBackdrop, { autoAlpha: 0 });
 

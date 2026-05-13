@@ -60,6 +60,12 @@ export function prepareSocialsReveal(
   return true;
 }
 
+export function setSocialsRevealComplete(nav: HTMLElement | null): void {
+  const items = socialRevealItems(nav);
+  if (items.length === 0) return;
+  gsap.set(items, { autoAlpha: 1, x: 0, y: 0 });
+}
+
 /**
  * hero row uses a two-phase **Y** motion with overshoot
  * vertical column uses a single **X** slide plus fade, no bounce

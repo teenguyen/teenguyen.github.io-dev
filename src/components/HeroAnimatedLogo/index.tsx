@@ -50,6 +50,17 @@ export function prepareHeroLogoReveal(svg: SVGSVGElement | null): boolean {
   return measurable;
 }
 
+/** Removes draw-reveal inline props so paths render as filled logo (e.g. reduced motion). */
+export function setHeroLogoRevealComplete(svg: SVGSVGElement | null): void {
+  const logoPaths = Array.from(svg?.querySelectorAll("path") ?? []);
+  for (const path of logoPaths) {
+    gsap.set(path, {
+      clearProps:
+        "stroke,strokeWidth,strokeDasharray,strokeDashoffset,strokeOpacity,fillOpacity",
+    });
+  }
+}
+
 /**
  * Appends stroke-draw and fill tweens for each path in `svg` onto `timeline`,
  * positioned so the reveal begins at `animationStart` (seconds on that timeline).

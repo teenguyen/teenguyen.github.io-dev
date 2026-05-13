@@ -40,6 +40,12 @@
   pointer-events: auto;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .cell {
+    transition: none;
+  }
+}
+
 .logo {
   grid-area: logo;
   height: auto;

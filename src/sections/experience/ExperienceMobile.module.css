@@ -26,6 +26,12 @@
   pointer-events: auto;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .revealable {
+    transition: none;
+  }
+}
+
 .divider {
   border: none;
   border-top: 1.5px solid var(--theme-color);

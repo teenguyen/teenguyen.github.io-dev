@@ -14,6 +14,36 @@ import { SECTION_LAYOUT_BREAKPOINT_REM } from "../consts";
 import styles from "./ExperienceMobile.module.css";
 
 const MOBILE_MQ = `(max-width: ${SECTION_LAYOUT_BREAKPOINT_REM}rem)`;
+const REDUCED_MOTION_MQ = "(prefers-reduced-motion: reduce)";
+
+function allExperienceMobileRevealIds(): string[] {
+  const ids: string[] = [
+    "exp-h3",
+    "rule-after-exp",
+    "feat-logo",
+    "feat-title",
+    "feat-company",
+    "feat-meta",
+    "rule-after-feat",
+  ];
+  for (const job of PRIOR_JOBS) {
+    ids.push(
+      `${job.id}-logo`,
+      `${job.id}-title`,
+      `${job.id}-company`,
+      `${job.id}-meta`,
+    );
+  }
+  ids.push("rule-after-priors", "early-h3");
+  EARLY_JOBS.forEach((_, index) => {
+    ids.push(`early-${index}`);
+  });
+  ids.push("edu-h3");
+  EDUCATION.forEach((_, i) => {
+    ids.push(`edu-${i}-deg`, `edu-${i}-school`);
+  });
+  return ids;
+}
 
 export type ExperienceMobileProps = {
   isActive: boolean;
@@ -58,6 +88,19 @@ export default function ExperienceMobile({ isActive }: ExperienceMobileProps) {
     }
 
     if (!narrow) {
+      return () => {
+        timeouts.forEach(clearTimeout);
+      };
+    }
+
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia(REDUCED_MOTION_MQ).matches
+    ) {
+      queueMicrotask(() => {
+        if (runId !== runIdRef.current) return;
+        setRevealed(new Set(allExperienceMobileRevealIds()));
+      });
       return () => {
         timeouts.forEach(clearTimeout);
       };
