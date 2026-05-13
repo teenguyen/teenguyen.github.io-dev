@@ -29,7 +29,7 @@
 .divider {
   border: none;
   border-top: 1.5px solid var(--theme-color);
-  margin-left: 5.5rem;
+  margin: 0 2.5rem;
 }
 
 .logo {
@@ -68,6 +68,7 @@
 }
 
 .sectionLabel {
+  color: var(--theme-color);
   text-align: right;
 }
 

@@ -58,10 +58,6 @@
 }
 
 @media (max-width: 59.5rem) {
-  .footerContent {
-    padding: 2rem 0;
-  }
-
   .footerContentSocials {
     flex-direction: column;
     gap: 2rem;

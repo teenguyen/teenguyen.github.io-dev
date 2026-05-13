@@ -67,16 +67,7 @@ export default function ExperienceMobile({ isActive }: ExperienceMobileProps) {
       setRevealed(new Set());
     });
 
-    schedule(
-      timeouts,
-      () => {
-        if (runId !== runIdRef.current) return;
-        setRevealed((prev) => new Set([...prev, "feat-logo"]));
-      },
-      EXPERIENCE_T0,
-    );
-
-    let t = EXPERIENCE_T0 + 120;
+    let t = EXPERIENCE_T0;
 
     const revealLine = (id: string) => {
       schedule(
@@ -90,6 +81,8 @@ export default function ExperienceMobile({ isActive }: ExperienceMobileProps) {
       t += 120;
     };
 
+    revealLine("exp-h3");
+    revealLine("rule-after-exp");
     revealLine("feat-logo");
     revealLine("feat-title");
     revealLine("feat-company");
@@ -127,6 +120,15 @@ export default function ExperienceMobile({ isActive }: ExperienceMobileProps) {
 
   return (
     <div className={styles.root}>
+      <h3 className={clsx(styles.sectionLabel, lineClass("exp-h3"))}>
+        experience
+      </h3>
+
+      <hr
+        className={clsx(styles.divider, lineClass("rule-after-exp"))}
+        aria-hidden
+      />
+
       <div className={styles.jobExp}>
         <Image
           className={clsx(

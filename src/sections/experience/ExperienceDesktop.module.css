@@ -123,6 +123,11 @@
   display: flex;
 }
 
+.experienceSectionHeading {
+  display: flex;
+  justify-content: center;
+}
+
 .earlyRow {
   display: grid;
   grid-template-columns: auto 1fr;

@@ -18,7 +18,12 @@ const DESKTOP_MQ = `(min-width: ${SECTION_LAYOUT_BREAKPOINT_REM}rem)`;
 
 type Rect = { top: number; left: number; right: number; bottom: number };
 
-type Wrap1Paths = { outer: string; divH: string; divV: string };
+type Wrap1Paths = {
+  outer: string;
+  divHTop: string;
+  divH: string;
+  divV: string;
+};
 type Wrap2Paths = {
   outer: string;
   divH: string;
@@ -47,6 +52,7 @@ export default function ExperienceDesktop({
   const wrap1Ref = useRef<HTMLDivElement>(null);
   const wrap2Ref = useRef<HTMLDivElement>(null);
 
+  const experienceTitleRef = useRef<HTMLHeadingElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const lrRef = useRef<HTMLDivElement>(null);
   const rbaRef = useRef<HTMLDivElement>(null);
@@ -56,6 +62,7 @@ export default function ExperienceDesktop({
   const eduHeadingRef = useRef<HTMLDivElement>(null);
 
   const outer1Ref = useRef<SVGPathElement>(null);
+  const divHTop1Ref = useRef<SVGPathElement>(null);
   const divH1Ref = useRef<SVGPathElement>(null);
   const divV1Ref = useRef<SVGPathElement>(null);
   const outer2Ref = useRef<SVGPathElement>(null);
@@ -82,6 +89,7 @@ export default function ExperienceDesktop({
       if (
         !wrap1 ||
         !wrap2 ||
+        !experienceTitleRef.current ||
         !heroRef.current ||
         !lrRef.current ||
         !earlyRef.current ||
@@ -92,16 +100,19 @@ export default function ExperienceDesktop({
       }
 
       const wr1 = wrap1.getBoundingClientRect();
+      const experienceTitle = getRect(experienceTitleRef.current, wrap1);
       const hero = getRect(heroRef.current, wrap1);
       const lr = getRect(lrRef.current, wrap1);
       const W1 = wr1.width;
       const H1 = wr1.height;
+      const divYTop = experienceTitle.bottom;
       const divY1 = hero.bottom;
       const divX1 = lr.right;
 
       setWrap1Size({ w: W1, h: H1 });
       setWrap1Paths({
         outer: `M 0 0 L ${W1} 0 L ${W1} ${H1} L 0 ${H1} Z`,
+        divHTop: `M 0 ${divYTop} L ${W1} ${divYTop}`,
         divH: `M 0 ${divY1} L ${W1} ${divY1}`,
         divV: `M ${divX1} ${divY1} L ${divX1} ${H1}`,
       });
@@ -228,9 +239,11 @@ export default function ExperienceDesktop({
       );
     }
 
-    animateLine(divH1Ref.current, 500, T0 + 420);
+    animateLine(divHTop1Ref.current, 500, T0 + 360);
+    animateLine(divH1Ref.current, 500, T0 + 440);
     animateLine(divV1Ref.current, 350, T0 + 620);
 
+    showCell("expHeading", T0 + 260);
     showCell("hero", T0 + 700);
     showCell("lr", T0 + 820);
     showCell("rba", T0 + 920);
@@ -295,6 +308,11 @@ export default function ExperienceDesktop({
                 d={wrap1Paths.outer}
               />
               <path
+                ref={divHTop1Ref}
+                className={styles.gridLine}
+                d={wrap1Paths.divHTop}
+              />
+              <path
                 ref={divH1Ref}
                 className={styles.gridLine}
                 d={wrap1Paths.divH}
@@ -309,6 +327,17 @@ export default function ExperienceDesktop({
         </svg>
 
         <div className={styles.expGrid}>
+          <h3
+            ref={experienceTitleRef}
+            className={clsx(
+              cellClass("expHeading"),
+              styles.accentSectionHeading,
+              styles.experienceSectionHeading,
+            )}
+          >
+            experience
+          </h3>
+
           <div
             ref={heroRef}
             className={clsx(cellClass("hero"), styles.heroExp)}

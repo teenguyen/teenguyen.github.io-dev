@@ -1,9 +1,6 @@
 .hero {
   --hero-logo-band-height: calc(50dvh + 6.5625rem);
   --hero-tagline-runway-height: 150dvh;
-  --hero-tagline-move-duration: 1.35s;
-  --hero-tagline-stagger: 0.32s;
-  --hero-tagline-y: 1rem;
   --hero-tagline-bottom-offset: 50vh;
   min-height: calc(
     var(--hero-logo-band-height) + var(--hero-tagline-runway-height)
@@ -61,6 +58,7 @@
   display: flex;
   justify-content: space-between;
   max-width: var(--max-width-desktop);
+  padding: 0 4rem;
   width: 100%;
 }
 
@@ -105,7 +103,7 @@
 }
 
 .taglinesRailVisible .tagTextBottom {
-  transition-delay: var(--hero-tagline-stagger);
+  transition-delay: 0.32s;
 }
 
 .starmapBottomSentinel {
@@ -122,10 +120,10 @@
 .tagTextBottom {
   margin: 0;
   opacity: 0;
-  transform: translateY(var(--hero-tagline-y));
+  transform: translateY(1rem);
   transition:
-    opacity var(--hero-tagline-move-duration) ease,
-    transform var(--hero-tagline-move-duration) ease;
+    opacity 1.35s ease,
+    transform 1.35s ease;
 }
 
 .tagTextTop {
@@ -156,4 +154,17 @@
   font-weight: 400;
   font-style: normal;
   letter-spacing: 4%;
+}
+
+@media (max-width: 59.5rem) {
+  .hero {
+    --hero-logo-band-height: calc(50dvh + 10rem);
+  }
+
+  .logoAndSocials {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+    padding: 0 2rem;
+  }
 }

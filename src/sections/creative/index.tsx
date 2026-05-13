@@ -170,13 +170,13 @@ export default function Creative() {
 }
 
 const BLURBS = [
-  {
-    title: "GSAP motion",
-    description:
-      "Physics-based easing, staggered sequences, squash & stretch – exploring what the browser feels like as a stage. Each sketch started as a question about timing.",
-    skills: "GSAP · CANVAS · EASING · PHYSICS",
-    image: "/featured/lr-buttons.png",
-  },
+  // {
+  //   title: "GSAP motion",
+  //   description:
+  //     "Physics-based easing, staggered sequences, squash & stretch – exploring what the browser feels like as a stage. Each sketch started as a question about timing.",
+  //   skills: "GSAP · CANVAS · EASING · PHYSICS",
+  //   image: "/featured/lr-buttons.png",
+  // },
   {
     title: "custom SVGs & CSS animations",
     description:

@@ -31,3 +31,9 @@
   font-size: 3rem;
   color: var(--text-color);
 }
+
+@media (max-width: 59.5rem) {
+  .title {
+    font-size: 2rem;
+  }
+}
