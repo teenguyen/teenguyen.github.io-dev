@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import clsx from "clsx";
 import {
@@ -148,7 +148,7 @@ export default function ExperienceDesktop({
     };
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!isActive) {
       playingRef.current = false;
       return;

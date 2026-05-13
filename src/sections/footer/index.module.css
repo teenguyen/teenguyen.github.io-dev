@@ -8,7 +8,6 @@
 .starmapBackdrop {
   bottom: 0;
   isolation: isolate;
-  left: -4rem;
   pointer-events: none;
   position: absolute;
   top: 0;
@@ -23,22 +22,22 @@
 }
 
 .hr {
-  height: 2px;
-  margin: 0 -4rem;
+  height: 1px;
   width: 100vw;
 }
 
 .hrLine {
-  stroke-width: 1;
-  stroke: var(--theme-color-48);
+  stroke-width: 2;
+  stroke: var(--theme-color);
 }
 
 .footerContent {
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  padding: 4rem 0 2rem;
+  padding: 4rem 0;
   place-items: center;
+  background-color: rgba(245, 242, 237, 0.5);
 }
 
 .footerContent svg {

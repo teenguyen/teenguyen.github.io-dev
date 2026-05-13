@@ -22,6 +22,14 @@
   gap: 1rem;
 }
 
+.mediaMainSlot {
+  grid-area: main;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: flex-start;
+}
+
 .mainImg,
 .thumb1,
 .thumb2 {

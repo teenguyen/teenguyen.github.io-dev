@@ -1,22 +1,79 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import gsap from "gsap";
 import Blurb from "./Blurb";
 import Slide from "./Slide";
-import { useActiveSlideIndex, useSlideIndex } from "../SectionSlider";
-import styles from "./index.module.css";
 import Starmap from "@/demos/starmap/Starmap";
+import styles from "./index.module.css";
+
+const BLURB_ACCENT_VERTICAL_OUTSET = 2;
 
 export default function Creative() {
-  const sectionIndex = useSlideIndex();
-  const activeSection = useActiveSlideIndex();
-  const isActive = sectionIndex === activeSection;
-
   const [active, setActive] = useState(0);
   const animating = useRef(false);
   const userInteracted = useRef(false);
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const blurbsRef = useRef<HTMLDivElement | null>(null);
+  const blurbBodyRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const blurbAccentRef = useRef<HTMLDivElement | null>(null);
+  const blurbAccentReady = useRef(false);
+
+  const syncBlurbAccent = useCallback(
+    (animate: boolean) => {
+      const container = blurbsRef.current;
+      const accent = blurbAccentRef.current;
+      const body = blurbBodyRefs.current[active];
+      if (!container || !accent || !body) return;
+
+      const cr = container.getBoundingClientRect();
+      const br = body.getBoundingClientRect();
+      const top =
+        br.top - cr.top + container.scrollTop - BLURB_ACCENT_VERTICAL_OUTSET;
+      const left = br.left - cr.left + container.scrollLeft;
+      const height = br.height + BLURB_ACCENT_VERTICAL_OUTSET * 2;
+
+      if (!blurbAccentReady.current) {
+        gsap.set(accent, { top, left, height });
+        blurbAccentReady.current = true;
+        return;
+      }
+
+      if (animate) {
+        gsap.to(accent, {
+          top,
+          left,
+          height,
+          duration: 0.5,
+          ease: "power2.out",
+        });
+      } else {
+        gsap.set(accent, { top, left, height });
+      }
+    },
+    [active],
+  );
+
+  useLayoutEffect(() => {
+    syncBlurbAccent(true);
+  }, [syncBlurbAccent]);
+
+  useEffect(() => {
+    const container = blurbsRef.current;
+    if (!container) return;
+
+    const ro = new ResizeObserver(() => {
+      syncBlurbAccent(false);
+    });
+    ro.observe(container);
+    return () => ro.disconnect();
+  }, [syncBlurbAccent]);
 
   const goTo = useCallback(
     (next: number) => {
@@ -53,28 +110,17 @@ export default function Creative() {
   );
 
   useEffect(() => {
-    if (!isActive) return;
-    userInteracted.current = false;
-    animating.current = false;
-    queueMicrotask(() => setActive(0));
-    slideRefs.current.forEach((el, i) => {
-      if (!el) return;
-      gsap.killTweensOf(el);
-      gsap.set(el, {
-        y: i === 0 ? "0%" : "100%",
-        zIndex: i === 0 ? 1 : 0,
-      });
-    });
-  }, [isActive]);
-
-  useEffect(() => {
-    if (!isActive || userInteracted.current) return;
+    if (userInteracted.current) return;
     const t = setTimeout(() => goTo((active + 1) % BLURBS.length), 4000);
     return () => clearTimeout(t);
-  }, [isActive, active, goTo]);
+  }, [active, goTo]);
 
   return (
     <section className={styles.section}>
+      <div className={styles.divider}>
+        <hr />
+        <h6>CREATIVE</h6>
+      </div>
       <div className={styles.content}>
         <div className={styles.media}>
           {BLURBS.map((blurb, i) => (
@@ -86,15 +132,18 @@ export default function Creative() {
               src={blurb.image}
               alt={blurb.title}
               initial={i === 0}
-              playing={isActive && i === active}
+              playing={i === active}
             />
           ))}
         </div>
 
         <div className={styles.article}>
-          <h2 className={styles.heading}>creative</h2>
-
-          <div className={styles.blurbs}>
+          <div ref={blurbsRef} className={styles.blurbs}>
+            <div
+              ref={blurbAccentRef}
+              className={styles.blurbAccent}
+              aria-hidden
+            />
             {BLURBS.map((blurb, i) => (
               <Blurb
                 key={blurb.title}
@@ -104,6 +153,9 @@ export default function Creative() {
                 skills={blurb.skills}
                 linkProps={blurb.linkProps}
                 active={i === active}
+                bodyRef={(el) => {
+                  blurbBodyRefs.current[i] = el;
+                }}
                 onClick={() => {
                   userInteracted.current = true;
                   goTo(i);

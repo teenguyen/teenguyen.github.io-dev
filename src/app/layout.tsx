@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Serif_Display, Noto_Serif, Open_Sans } from "next/font/google";
 import clsx from "clsx";
+import { ScrollToTopUnlessHash } from "../components/ScrollUnlessHash";
 import "./globals.css";
 
 const dmSerifDisplay = DM_Serif_Display({
@@ -37,7 +38,10 @@ export default function RootLayout({
         openSans.variable,
       )}
     >
-      <body>{children}</body>
+      <body>
+        <ScrollToTopUnlessHash />
+        {children}
+      </body>
     </html>
   );
 }

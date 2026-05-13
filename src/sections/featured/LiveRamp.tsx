@@ -11,7 +11,7 @@ export default function LiveRamp() {
         <p className={clsx("subtitle", styles.styleAlign)}>
           LIVERAMP · SAN FRANCISCO · 2018–2023
         </p>
-        <h2 className={clsx(shared.heading, styles.styleAlign)}>
+        <h2 className={styles.styleAlign}>
           component libraries
           <br />& design systems
         </h2>

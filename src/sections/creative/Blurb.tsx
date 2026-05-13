@@ -1,3 +1,4 @@
+import type { Ref } from "react";
 import Link, { LinkProps } from "next/link";
 import clsx from "clsx";
 import styles from "./Blurb.module.css";
@@ -10,6 +11,7 @@ type BlurbProps = {
   linkProps?: LinkProps | string;
   active: boolean;
   onClick: () => void;
+  bodyRef?: Ref<HTMLDivElement | null>;
 };
 
 export default function Blurb({
@@ -20,6 +22,7 @@ export default function Blurb({
   linkProps,
   active,
   onClick,
+  bodyRef,
 }: BlurbProps) {
   return (
     <div
@@ -29,7 +32,7 @@ export default function Blurb({
       <p className={clsx("subtitle", styles.index)}>
         {index.toString().padStart(2, "0")}
       </p>
-      <div className={styles.blurbBody}>
+      <div ref={bodyRef} className={styles.blurbBody}>
         <h3 className={styles.title}>{title}</h3>
         <p className={styles.description}>{description}</p>
         <p className="subtitle">{skills}</p>

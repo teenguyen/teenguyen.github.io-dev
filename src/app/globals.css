@@ -1,5 +1,7 @@
 :root {
-  --background: rgba(245, 242, 237, 1);
+  --background1: rgba(245, 242, 237, 1);
+  --background2: rgba(214, 206, 200, 1);
+  --background3: rgba(74, 57, 51, 1);
 
   --theme-color: rgba(122, 28, 28, 1);
   --theme-color-25: rgba(122, 28, 28, 0.25);
@@ -8,6 +10,7 @@
   --theme-color-72: rgba(122, 28, 28, 0.72);
   --text-color: rgba(58, 47, 42, 1);
   --text-color-60: rgba(58, 47, 42, 0.6);
+  --text-color-35: rgba(58, 47, 42, 0.35);
 
   /* 
     padding + logo + gap + socials + padding = porfolio width
@@ -28,9 +31,12 @@
 * {
   box-sizing: border-box;
   margin: 0;
-  overscroll-behavior-y: contain;
   padding: 0;
   scrollbar-width: none;
+}
+
+::selection {
+  background-color: var(--theme-color-25);
 }
 
 html {
@@ -38,16 +44,19 @@ html {
 }
 
 html,
-body,
+body {
+  width: 100%;
+  overflow-x: clip;
+}
+
 main {
   width: 100%;
-  overflow-x: hidden;
 }
 
 body {
   min-height: 100%;
   color: var(--text-color);
-  background: var(--background);
+  background: var(--background1);
   font-family: var(--font-noto-serif);
   font-weight: 400;
   font-style: normal;
@@ -63,7 +72,6 @@ h5,
 h6 {
   font-family: var(--font-dm-serif-display);
   font-weight: 400;
-  color: var(--theme-color);
 }
 
 h2 {

@@ -17,11 +17,13 @@
 
 .revealable {
   opacity: 0;
+  pointer-events: none;
   transition: opacity 0.4s ease;
 }
 
 .revealed {
   opacity: 1;
+  pointer-events: auto;
 }
 
 .divider {

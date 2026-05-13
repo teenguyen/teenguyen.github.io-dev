@@ -1,8 +1,11 @@
-import { ComponentType, useEffect, useRef } from "react";
+import { ComponentType, useEffect, useRef, type RefObject } from "react";
 import Image from "next/image";
 import styles from "./Slide.module.css";
 
-export type SlideMediaComponent = ComponentType<{ playing?: boolean }>;
+export type SlideMediaComponent = ComponentType<{
+  playing?: boolean;
+  rootRef: RefObject<HTMLDivElement | null>;
+}>;
 
 type SlideProps = {
   src: string | SlideMediaComponent;
@@ -15,6 +18,7 @@ type SlideProps = {
 export default function Slide({ src, alt, initial, playing, ref }: SlideProps) {
   const isVideo = typeof src === "string" && src.endsWith(".mp4");
   const videoRef = useRef<HTMLVideoElement>(null);
+  const mediaRootRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!isVideo) return;
@@ -31,7 +35,7 @@ export default function Slide({ src, alt, initial, playing, ref }: SlideProps) {
   let content: React.ReactNode;
   if (typeof src !== "string") {
     const Component = src;
-    content = <Component playing={playing} />;
+    content = <Component playing={playing} rootRef={mediaRootRef} />;
   } else if (isVideo) {
     content = (
       <video

@@ -9,7 +9,7 @@ export default function SoFi() {
     <article id="social-finance" className={styles.sofi}>
       <div className={shared.header}>
         <p className="subtitle">SOCIAL FINANCE · SAN FRANCISCO · 2023–2025</p>
-        <h2 className={shared.heading}>
+        <h2>
           stock ticker
           <br />& invest redesign
         </h2>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { forwardRef } from "react";
 import { Codepen, GitHub, Linkedin, Mail } from "react-feather";
 import gsap from "gsap";
-import styles from "./Socials.module.css";
+import styles from "./index.module.css";
 
 const SOCIAL_LINKS = [
   {

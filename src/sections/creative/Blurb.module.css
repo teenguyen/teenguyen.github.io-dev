@@ -17,16 +17,17 @@
 }
 
 .index {
-  padding-top: 0.5rem;
+  padding-top: 1.75rem;
 }
 
 .blurbBody {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  padding-left: 1rem;
 }
 
 .title {
-  font-size: 1.5rem;
+  font-size: 3rem;
   color: var(--text-color);
 }

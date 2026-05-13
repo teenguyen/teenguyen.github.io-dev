@@ -1,127 +1,131 @@
 .hero {
-  --hero-starmap-overscroll: 50vh;
-  --hero-inline-padding: clamp(4rem, 7vw, 8rem);
-  --hero-content-max-width: 120rem;
-
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.stage {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  --hero-logo-band-height: calc(50dvh + 6.5625rem);
+  --hero-tagline-runway-height: 150dvh;
+  --hero-tagline-move-duration: 1.35s;
+  --hero-tagline-stagger: 0.32s;
+  --hero-tagline-y: 1rem;
+  --hero-tagline-bottom-offset: 50vh;
+  min-height: calc(
+    var(--hero-logo-band-height) + var(--hero-tagline-runway-height)
+  );
   overflow: hidden;
+  position: relative;
 }
 
-.heroScreenOne,
-.heroScreenTwo {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-}
-
-.heroScreenTwo {
-  display: flex;
-  align-items: flex-end;
-  padding: 4rem;
-}
-
-.starmapBackground {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  /* Extra length below hero so parallax translateY does not uncover the viewport bottom */
-  bottom: calc(-1 * var(--hero-starmap-overscroll));
-  z-index: 0;
+.parallaxLayer {
   will-change: transform;
-  min-height: 100dvh;
-  isolation: isolate;
 }
 
-.starmapFade {
-  position: absolute;
+@media (prefers-reduced-motion: reduce) {
+  .parallaxLayer {
+    transform: none !important;
+    will-change: auto;
+  }
+
+  .tagTextTop,
+  .tagTextBottom {
+    transition: none;
+  }
+
+  .taglinesRailVisible .tagTextTop,
+  .taglinesRailVisible .tagTextBottom {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0s;
+  }
+
+  .logo svg {
+    transition: none;
+  }
+}
+
+.content {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  z-index: 1;
+}
+
+.titleContainer {
+  align-items: flex-end;
+  display: flex;
+  justify-content: center;
+  height: var(--hero-logo-band-height);
+  width: 100%;
+}
+
+.logoAndSocials {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  max-width: var(--max-width-desktop);
+  width: 100%;
+}
+
+.logo svg {
+  max-width: 32rem;
+  opacity: 1;
+  transition: opacity 1.15s ease;
+}
+
+.logoFadeOut svg {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.taglinesRail {
+  bottom: var(--hero-tagline-bottom-offset);
   left: 0;
-  right: 0;
-  z-index: 1;
   pointer-events: none;
-  height: clamp(12rem, min(40vh, 30dvw), 24rem);
-  bottom: 0;
-  background: linear-gradient(
-    to bottom,
-    rgb(245 242 237 / 0%) 0%,
-    rgb(245 242 237 / 58%) 38%,
-    rgb(245 242 237 / 94%) 72%,
-    var(--background) 88%,
-    var(--background) 100%
-  );
-}
-
-.starmapFill {
-  position: relative;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.header {
-  position: relative;
-  z-index: 1;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  width: min(100%, var(--hero-content-max-width));
-  margin-inline: auto;
-  padding-inline: var(--hero-inline-padding);
-}
-
-.logoWrap {
-  display: flex;
-  align-items: center;
-}
-
-.logoWrap svg {
-  width: 100%;
-  height: 100%;
-}
-
-/* Outer shell: positioning only (GSAP animates translateY on .socialsShift). */
-.socialsLayer {
   position: absolute;
-  z-index: 3;
-  top: 50%;
-  right: max(
-    var(--hero-inline-padding),
-    calc(
-      (100vw - var(--hero-content-max-width)) / 2 + var(--hero-inline-padding)
-    )
-  );
-  transform: translateY(-50%);
-  pointer-events: none;
+  width: 100%;
+  z-index: 1;
 }
 
-.socialsLayer > * {
+.taglines {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 4rem;
   pointer-events: auto;
+  width: 100%;
 }
 
-.socialsShift {
-  display: block;
+.taglinesRailVisible .tagTextTop,
+.taglinesRailVisible .tagTextBottom {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.tagText {
-  position: relative;
-  max-width: min(52rem, 100%);
-  z-index: 3;
+.taglinesRailVisible .tagTextTop {
+  transition-delay: 0s;
+}
+
+.taglinesRailVisible .tagTextBottom {
+  transition-delay: var(--hero-tagline-stagger);
+}
+
+.starmapBottomSentinel {
+  bottom: var(--hero-tagline-bottom-offset);
+  height: 1px;
+  left: 0;
   pointer-events: none;
+  position: absolute;
+  visibility: hidden;
+  width: 100%;
 }
 
 .tagTextTop,
 .tagTextBottom {
+  margin: 0;
   opacity: 0;
-  transform: translateY(1rem);
-  will-change: opacity, transform;
+  transform: translateY(var(--hero-tagline-y));
+  transition:
+    opacity var(--hero-tagline-move-duration) ease,
+    transform var(--hero-tagline-move-duration) ease;
 }
 
 .tagTextTop {
@@ -141,44 +145,15 @@
   color: var(--theme-color);
 }
 
+.tagTextThemeLight {
+  color: var(--theme-color-72);
+}
+
 .tagTextBottom {
   color: var(--text-color-60);
-  margin-top: 0.75rem;
   font-family: var(--font-noto-serif);
   font-size: clamp(1rem, 1.5vw, 1.25rem);
   font-weight: 400;
   font-style: normal;
   letter-spacing: 4%;
-}
-
-.tagTextThemeLight {
-  color: var(--theme-color-72);
-}
-
-@media (max-width: 59.5rem) {
-  .header {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .socialsLayer {
-    top: calc(50% + min(32rem, calc(100vw - 4rem)) * 101 / 496 + 1.75rem);
-    right: auto;
-    left: 50%;
-    transform: translateX(-50%);
-    max-width: min(32rem, calc(100vw - 4rem));
-    box-sizing: border-box;
-  }
-
-  .tagText {
-    max-width: none;
-  }
-
-  .heroScreenTwo {
-    padding: 2rem;
-  }
-
-  .starmapFade {
-    height: clamp(18rem, min(60vh, 52dvw), 34rem);
-  }
 }

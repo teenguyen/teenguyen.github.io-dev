@@ -1,28 +1,76 @@
 .section {
-  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   width: 100%;
 }
 
 .content {
   display: grid;
+  flex: 1;
   grid-template-columns: 2fr 3fr;
   height: 100%;
 }
 
+.divider {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 1rem;
+  padding: 0 4rem 2rem;
+  width: 100%;
+
+  hr {
+    flex: 1;
+    border: none;
+    border-top: 1px solid var(--theme-color);
+  }
+
+  h6 {
+    color: var(--theme-color);
+    font-size: 0.75rem;
+    font-weight: 400;
+  }
+}
+
+.heading {
+  font-size: 2rem;
+}
+
 .media {
-  position: relative;
-  overflow: hidden;
+  background-color: var(--background1);
   height: 100%;
+  overflow: hidden;
+  position: relative;
   width: 100%;
 }
 
 .article {
+  background-color: var(--background2);
   display: flex;
   flex-direction: column;
-  gap: 4rem;
-  padding: 4rem;
   height: 100%;
+  justify-content: flex-start;
+  padding: 2rem 4rem 4rem;
+}
+
+.blurbs {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
+}
+
+.blurbAccent {
+  background: var(--theme-color);
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 0;
+  z-index: 1;
 }
 
 @media (max-width: 59.5rem) {

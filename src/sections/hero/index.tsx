@@ -1,217 +1,212 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import clsx from "clsx";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import Starmap from "../../demos/starmap/Starmap";
-import { SECTION_LAYOUT_BREAKPOINT_PX_DEFAULT_ROOT } from "../consts";
-import {
-  useSliderApi,
-  useSlideIndex,
-  type WheelInterceptor,
-} from "../SectionSlider";
-import { addHeroLogoRevealToTimeline } from "./HeroAnimatedLogo";
-import {
+import { useEffect, useRef, useState } from "react";
+import Starmap from "@/demos/starmap/Starmap";
+import HeroAnimatedLogo, {
+  addHeroLogoRevealToTimeline,
+  prepareHeroLogoReveal,
+} from "@/components/HeroAnimatedLogo";
+import Socials, {
   addSocialsStaggerRevealToTimeline,
+  prepareSocialsReveal,
   SOCIALS_STAGGER_REVEAL_OVERLAP,
-} from "./Socials";
-import ScreenOne from "./ScreenOne";
-import ScreenTwo from "./ScreenTwo";
+} from "@/components/Socials";
 import styles from "./index.module.css";
 
-const INITIAL_Y = 16;
-const HERO_FADE_DURATION = 0.35;
+const PARALLAX_STARMAP_SPEED = 0.75;
+const PARALLAX_CONTENT_SPEED = 0.1;
 const TIMELINE_START = 0;
 
 export default function Hero() {
-  const sliderApi = useSliderApi();
-  const slideIndex = useSlideIndex();
-  const [beginCelestialReveal, setBeginCelestialReveal] = useState(false);
-  const rootRef = useRef<HTMLElement | null>(null);
-  const stageRef = useRef<HTMLDivElement | null>(null);
-  const screenOneRef = useRef<HTMLDivElement | null>(null);
-  const screenTwoRef = useRef<HTMLDivElement | null>(null);
-  const starmapWrapRef = useRef<HTMLDivElement | null>(null);
+  const heroRef = useRef<HTMLElement>(null);
   const logoRef = useRef<SVGSVGElement | null>(null);
-  const socialsRef = useRef<HTMLDivElement | null>(null);
-  const lineOneRef = useRef<HTMLParagraphElement | null>(null);
-  const lineTwoRef = useRef<HTMLParagraphElement | null>(null);
-  const phase2TimelineRef = useRef<gsap.core.Timeline | null>(null);
+  const socialsRef = useRef<HTMLElement | null>(null);
+  const starmapLayerRef = useRef<HTMLDivElement | null>(null);
+  const brandParallaxRef = useRef<HTMLDivElement | null>(null);
+  const starmapBottomSentinelRef = useRef<HTMLDivElement | null>(null);
+
+  const [beginCelestialReveal, setBeginCelestialReveal] = useState(false);
+  const [parallaxReady, setParallaxReady] = useState(false);
+  const [taglinesVisible, setTaglinesVisible] = useState(false);
+  /** CSS fade when hero bottom sentinel crosses (same milestone as taglines). */
+  const [logoFadeOut, setLogoFadeOut] = useState(false);
 
   useGSAP(
     () => {
-      if (
-        !rootRef.current ||
-        !stageRef.current ||
-        !screenOneRef.current ||
-        !screenTwoRef.current ||
-        !starmapWrapRef.current ||
-        !logoRef.current ||
-        !socialsRef.current ||
-        !lineOneRef.current ||
-        !lineTwoRef.current
-      ) {
+      const svg = logoRef.current;
+      const nav = socialsRef.current;
+      if (!svg || !nav) return;
+
+      const reduced = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
+      if (reduced) {
+        prepareHeroLogoReveal(svg);
+        for (const path of Array.from(svg.querySelectorAll("path"))) {
+          gsap.set(path, {
+            strokeDashoffset: 0,
+            fillOpacity: 1,
+            strokeOpacity: 0,
+          });
+        }
+        gsap.set(svg, { opacity: 1 });
+        prepareSocialsReveal(nav, false);
+        const items = Array.from(nav.querySelectorAll(":scope > ul > li"));
+        gsap.set(items, { autoAlpha: 1, y: 0 });
+        gsap.set(nav, { y: 0 });
+        setBeginCelestialReveal(true);
+        setParallaxReady(true);
         return;
       }
 
-      gsap.set([lineOneRef.current, lineTwoRef.current], {
-        opacity: 0,
-        y: INITIAL_Y,
-      });
+      let attempts = 0;
 
-      gsap.set(logoRef.current, { opacity: 1 });
-      gsap.set(socialsRef.current, { y: 0 });
-      gsap.set(starmapWrapRef.current, { y: 0 });
-      gsap.set(screenOneRef.current, { autoAlpha: 1 });
-      gsap.set(screenTwoRef.current, {
-        autoAlpha: 0,
-        y: 24,
-      });
+      const buildIntro = () => {
+        attempts += 1;
+        const logoReady = prepareHeroLogoReveal(svg);
+        const socialsReady = prepareSocialsReveal(nav, false);
 
-      const socialsNav =
-        socialsRef.current?.querySelector<HTMLElement>("nav") ?? null;
+        if (!logoReady || !socialsReady) {
+          if (attempts < 120) {
+            gsap.delayedCall(0, buildIntro);
+          } else {
+            setBeginCelestialReveal(true);
+            setParallaxReady(true);
+          }
+          return;
+        }
 
-      const introTimeline = gsap.timeline();
+        gsap.set(svg, { opacity: 1 });
+        gsap.set(nav, { y: 0 });
 
-      addHeroLogoRevealToTimeline(
-        introTimeline,
-        logoRef.current,
-        TIMELINE_START,
-      );
-
-      if (socialsNav) {
+        const introTimeline = gsap.timeline();
+        addHeroLogoRevealToTimeline(introTimeline, svg, TIMELINE_START);
         addSocialsStaggerRevealToTimeline(
           introTimeline,
-          socialsNav,
+          nav,
           SOCIALS_STAGGER_REVEAL_OVERLAP,
           false,
         );
-      }
-      const timeline = gsap.timeline({
-        paused: true,
-        defaults: {
-          ease: "power2.inOut",
-        },
-      });
-      const revealTagLine = {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "power2.out",
-      } as const;
 
-      const socialsTargetTopPx = () => {
-        const shortViewport =
-          window.innerHeight <= 720 ||
-          window.innerWidth <= SECTION_LAYOUT_BREAKPOINT_PX_DEFAULT_ROOT;
-        return shortViewport ? 32 : 64;
+        introTimeline.eventCallback("onComplete", () => {
+          setBeginCelestialReveal(true);
+          setParallaxReady(true);
+        });
       };
 
-      const socialsScrollY = () => {
-        const socialsEl = socialsRef.current!;
-        const socialsRect = socialsEl.getBoundingClientRect();
-        const currentY = Number(gsap.getProperty(socialsEl, "y")) || 0;
-        // getBoundingClientRect() includes transforms; remove current translateY
-        // so we always compute from the element's base layout position.
-        const baseTop = socialsRect.top - currentY;
-        return socialsTargetTopPx() - baseTop;
-      };
-
-      timeline
-        .to(
-          logoRef.current,
-          {
-            opacity: 0,
-            duration: HERO_FADE_DURATION,
-          },
-          TIMELINE_START,
-        )
-        .to(
-          [socialsRef.current, starmapWrapRef.current],
-          {
-            y: socialsScrollY,
-            duration: 1,
-          },
-          TIMELINE_START,
-        )
-        .to(
-          screenOneRef.current,
-          {
-            autoAlpha: 0,
-            duration: HERO_FADE_DURATION,
-          },
-          0.22,
-        )
-        .to(
-          screenTwoRef.current,
-          {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.45,
-          },
-          0.48,
-        )
-        .to(lineOneRef.current, revealTagLine, 1)
-        .to(lineTwoRef.current, revealTagLine, 1.25);
-
-      phase2TimelineRef.current = timeline;
-
-      introTimeline.eventCallback("onComplete", () => {
-        setBeginCelestialReveal(true);
-      });
+      buildIntro();
     },
-    { scope: rootRef },
+    { scope: heroRef },
   );
 
   useEffect(() => {
-    if (!sliderApi) return;
+    const sentinel = starmapBottomSentinelRef.current;
+    if (!sentinel) return;
 
-    const interceptor: WheelInterceptor = (direction, _event) => {
-      const tl = phase2TimelineRef.current;
-      if (!tl) return false;
-
-      const progress = tl.progress();
-
-      if (direction === 1) {
-        if (progress < 1) {
-          tl.play();
-          return true;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry) return;
+        const bottomFullyVisible =
+          entry.isIntersecting && entry.intersectionRatio >= 1;
+        if (bottomFullyVisible) {
+          setTaglinesVisible(true);
+          if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            setLogoFadeOut(true);
+          }
+          obs.disconnect();
         }
-        return false;
-      }
+      },
+      { threshold: [0, 1] },
+    );
 
-      if (progress > 0) {
-        tl.reverse();
-        return true;
-      }
-      return false;
+    obs.observe(sentinel);
+    return () => obs.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!parallaxReady) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    const starmapEl = starmapLayerRef.current;
+    const brandEl = brandParallaxRef.current;
+    if (!starmapEl || !brandEl) return;
+
+    let ticking = false;
+
+    const applyScrollFx = () => {
+      const y = window.scrollY;
+      starmapEl.style.transform = `translate3d(0, ${y * PARALLAX_STARMAP_SPEED}px, 0)`;
+      brandEl.style.transform = `translate3d(0, ${y * PARALLAX_CONTENT_SPEED}px, 0)`;
+      ticking = false;
     };
 
-    sliderApi.setInterceptor(slideIndex, interceptor);
-    return () => sliderApi.setInterceptor(slideIndex, null);
-  }, [sliderApi, slideIndex]);
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(applyScrollFx);
+      }
+    };
+
+    applyScrollFx();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", applyScrollFx);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", applyScrollFx);
+    };
+  }, [parallaxReady]);
 
   return (
-    <section ref={rootRef} className={styles.hero}>
-      <div ref={stageRef} className={styles.stage}>
-        <div ref={starmapWrapRef} className={styles.starmapBackground}>
-          <Starmap
-            className={styles.starmapFill}
-            beginCelestialReveal={beginCelestialReveal}
-          />
-          <div className={styles.starmapFade} aria-hidden />
+    <header ref={heroRef} className={styles.hero}>
+      <Starmap
+        rootRef={starmapLayerRef}
+        className={styles.parallaxLayer}
+        beginCelestialReveal={beginCelestialReveal}
+      />
+      <div className={styles.content}>
+        <div
+          ref={brandParallaxRef}
+          className={clsx(styles.parallaxLayer, styles.titleContainer)}
+        >
+          <div className={styles.logoAndSocials}>
+            <HeroAnimatedLogo
+              ref={logoRef}
+              className={clsx(styles.logo, logoFadeOut && styles.logoFadeOut)}
+            />
+            <Socials ref={socialsRef} />
+          </div>
         </div>
-        <ScreenOne
-          screenOneRef={screenOneRef}
-          logoRef={logoRef}
-          socialsRef={socialsRef}
-        />
-        <ScreenTwo
-          screenTwoRef={screenTwoRef}
-          lineOneRef={lineOneRef}
-          lineTwoRef={lineTwoRef}
-        />
       </div>
-    </section>
+      <div
+        className={clsx(
+          styles.taglinesRail,
+          taglinesVisible && styles.taglinesRailVisible,
+        )}
+      >
+        <div className={styles.taglines}>
+          <p className={styles.tagTextTop}>
+            I build the parts of products people{" "}
+            <span className={styles.tagTextItalics}>actually</span>{" "}
+            <span className={styles.tagTextTheme}>touch–</span>
+          </p>
+          <p className={styles.tagTextBottom}>
+            motion, rhythm, and the details most never notice, but always{" "}
+            <span className={styles.tagTextThemeLight}>feel</span>
+          </p>
+        </div>
+      </div>
+      <div
+        ref={starmapBottomSentinelRef}
+        className={styles.starmapBottomSentinel}
+        aria-hidden
+      />
+    </header>
   );
 }

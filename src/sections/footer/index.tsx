@@ -8,22 +8,18 @@ import HeroAnimatedLogo, {
   addHeroLogoRevealToTimeline,
   heroLogoRevealDuration,
   prepareHeroLogoReveal,
-} from "@/sections/hero/HeroAnimatedLogo";
+} from "@/components/HeroAnimatedLogo";
 import Socials, {
   addSocialsStaggerRevealToTimeline,
   SOCIALS_COL_REVEAL_DURATION,
   SOCIALS_STAGGER_STEP,
-} from "@/sections/hero/Socials";
+} from "@/components/Socials";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import styles from "./index.module.css";
 import clsx from "clsx";
 
 /** Slower than hero taglines (`TAGLINE_REVEAL_DURATION` 0.8). */
 const FOOTER_REVEAL_DURATION = 0.8;
-
-type ExperienceFooterProps = {
-  active: boolean;
-  lineDelayMs: number;
-};
 
 function killFooterAnimations(
   line: SVGLineElement | null,
@@ -41,12 +37,11 @@ function killStarmapBackdrop(backdrop: HTMLDivElement | null) {
   if (backdrop) gsap.killTweensOf(backdrop);
 }
 
-export default function ExperienceFooter({
-  active,
-  lineDelayMs,
-}: ExperienceFooterProps) {
+export default function Footer() {
   const footerRef = useRef<HTMLElement | null>(null);
+  const isVisible = useIntersectionObserver(footerRef);
   const starmapBackdropRef = useRef<HTMLDivElement>(null);
+  const footerStarmapRootRef = useRef<HTMLDivElement | null>(null);
   const [footerStarmapPlaying, setFooterStarmapPlaying] = useState(false);
   const lineRef = useRef<SVGLineElement>(null);
   const logoRef = useRef<SVGSVGElement>(null);
@@ -69,7 +64,7 @@ export default function ExperienceFooter({
       const starmapBackdrop = starmapBackdropRef.current;
       killStarmapBackdrop(starmapBackdrop);
 
-      if (!active) {
+      if (!isVisible) {
         if (starmapBackdrop) gsap.set(starmapBackdrop, { autoAlpha: 0 });
         queueMicrotask(() => {
           setFooterStarmapPlaying(false);
@@ -104,7 +99,7 @@ export default function ExperienceFooter({
 
         if (runId !== choreographyRunIdRef.current) return;
 
-        const delaySec = lineDelayMs / 1000;
+        const delaySec = 0;
         const drawSec = 0.52;
         const logoStart = delaySec + drawSec;
 
@@ -134,7 +129,7 @@ export default function ExperienceFooter({
 
         const pathCount = svg.querySelectorAll("path").length;
         const logoRevealTotal = heroLogoRevealDuration(pathCount);
-        const socialsStart = logoStart + Math.max(0, logoRevealTotal - 0.42); // 0.42 is the overlap before the logo ends
+        const socialsStart = logoStart + Math.max(0, logoRevealTotal - 0.42);
 
         addSocialsStaggerRevealToTimeline(tl, socialsNav, socialsStart, true);
 
@@ -146,10 +141,7 @@ export default function ExperienceFooter({
             : 0;
         const tagStart = socialsStart + verticalSocialRevealDuration;
         const tagEndSec = tagStart + FOOTER_REVEAL_DURATION;
-        const starmapPlayingAt = Math.max(
-          0,
-          tagEndSec - 0.2, // 0.2 is the overlap before the tagline ends
-        );
+        const starmapPlayingAt = Math.max(0, tagEndSec - 0.2);
 
         tl.to(
           tagLine,
@@ -183,7 +175,7 @@ export default function ExperienceFooter({
     },
     {
       scope: footerRef,
-      dependencies: [active, lineDelayMs],
+      dependencies: [isVisible],
     },
   );
 
@@ -194,7 +186,10 @@ export default function ExperienceFooter({
         className={styles.starmapBackdrop}
         aria-hidden
       >
-        <Starmap playing={footerStarmapPlaying} />
+        <Starmap
+          rootRef={footerStarmapRootRef}
+          playing={footerStarmapPlaying}
+        />
       </div>
       <div className={styles.footerForeground}>
         <svg
