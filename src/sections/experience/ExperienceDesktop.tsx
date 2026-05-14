@@ -313,6 +313,7 @@ export default function ExperienceDesktop({
     showCell("edu", T1 + 940);
 
     return () => {
+      playingRef.current = false;
       timeouts.forEach(clearTimeout);
     };
   }, [isActive, wrap1Paths, wrap2Paths, wrap1Size, wrap2Size]);

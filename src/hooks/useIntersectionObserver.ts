@@ -51,6 +51,29 @@ export function useIntersectionObserver(
       { threshold },
     );
     obs.observe(el);
+
+    // Fallback when the section is already on screen (scroll restoration, deep links):
+    // some engines deliver the first IO callback late; without this, consumers can stay
+    // stuck in a pre-intersection state through layout-dependent follow-up work.
+    if (threshold === 0) {
+      requestAnimationFrame(() => {
+        if (done) return;
+        const r = el.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const vw = window.innerWidth;
+        const visible =
+          r.bottom > 0 &&
+          r.right > 0 &&
+          r.top < vh &&
+          r.left < vw;
+        if (visible) {
+          done = true;
+          setSatisfied(true);
+          obs.disconnect();
+        }
+      });
+    }
+
     return () => {
       done = true;
       obs.disconnect();
