@@ -38,7 +38,12 @@ export default function Blurb({
         <p>{description}</p>
         <p className="subtitle">{skills}</p>
         {linkProps && (
-          <Link className="subtitle" {...(linkProps as LinkProps)} />
+          <Link
+            className="subtitle"
+            target="_blank"
+            rel="noopener noreferrer"
+            {...(linkProps as LinkProps)}
+          />
         )}
       </div>
     </button>

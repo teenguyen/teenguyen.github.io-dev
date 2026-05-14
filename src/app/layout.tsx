@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
-import { DM_Serif_Display, Noto_Serif, Open_Sans } from "next/font/google";
+import {
+  DM_Serif_Display,
+  Noto_Serif,
+  Open_Sans,
+  Pacifico,
+} from "next/font/google";
 import clsx from "clsx";
 import { ScrollToTopUnlessHash } from "../components/ScrollToTopUnlessHash";
 import "./globals.css";
@@ -16,6 +21,11 @@ const notoSerif = Noto_Serif({
 });
 const openSans = Open_Sans({
   variable: "--font-open-sans",
+  subsets: ["latin"],
+  weight: ["400"],
+});
+const pacifico = Pacifico({
+  variable: "--font-pacifico",
   subsets: ["latin"],
   weight: ["400"],
 });
@@ -36,6 +46,7 @@ export default function RootLayout({
         dmSerifDisplay.variable,
         notoSerif.variable,
         openSans.variable,
+        pacifico.variable,
       )}
     >
       <body>

@@ -12,6 +12,7 @@ import Blurb from "./Blurb";
 import Slide from "./Slide";
 import Starmap from "@/demos/starmap/Starmap";
 import styles from "./index.module.css";
+import WebAnimations from "@/demos/web-animations";
 
 const BLURB_ACCENT_VERTICAL_OUTSET = 2;
 
@@ -170,23 +171,27 @@ export default function Creative() {
 }
 
 const BLURBS = [
-  // {
-  //   title: "GSAP motion",
-  //   description:
-  //     "Physics-based easing, staggered sequences, squash & stretch – exploring what the browser feels like as a stage. Each sketch started as a question about timing.",
-  //   skills: "GSAP · CANVAS · EASING · PHYSICS",
-  //   image: "/featured/lr-buttons.png",
-  // },
   {
     title: "custom SVGs & CSS animations",
     description:
-      "Pixel-faithful SVG recreation of the Animal Crossing Nookphone. Every button, hand drawn and animated in pure CSS. Built because it seemed fun, which is the best reason. (WIP)",
+      "Pixel-faithful SVG recreation of the Animal Crossing Nookphone. Every button, hand drawn and animated in pure CSS (WIP!).",
     skills: "SVG · CSS ANIMATION · ANIMAL CROSSING",
     linkProps: {
       children: "/nook-phone",
       href: "/nook-phone",
     },
     image: "/creative/creative-nook.mp4",
+  },
+  {
+    title: "interactive motion sketches",
+    description:
+      "A series of small animation experiments exploring timing, personality, and browser-native motion through GSAP, SVGs, and handcrafted CSS animation.",
+    skills: "GSAP · SVG · CSS ANIMATIONS",
+    image: WebAnimations,
+    linkProps: {
+      children: "codepen.io/teenguyen",
+      href: "https://codepen.io/teenguyen",
+    },
   },
   {
     title: "interactive celestial map",
