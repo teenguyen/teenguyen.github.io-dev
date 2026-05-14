@@ -1,6 +1,11 @@
 .header {
   display: flex;
   justify-content: space-between;
+  left: 0;
   padding: 2rem 4rem;
+  position: fixed;
+  right: 0;
+  top: 0;
   width: 100%;
+  z-index: 1;
 }

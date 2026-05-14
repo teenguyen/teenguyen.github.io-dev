@@ -36,6 +36,8 @@ export function paintSkyFrame(options: {
   labelFont: string;
   /** Orthographic explorer: clip + cull back hemisphere; sparser graticule */
   interactive?: boolean;
+  /** Interactive: multiply star glyph radii by projection.scale / baseScale (reference = default zoom). */
+  starSizeScale?: number;
 }): void {
   const {
     ctx,
@@ -52,6 +54,7 @@ export function paintSkyFrame(options: {
     showLabels,
     labelFont,
     interactive = false,
+    starSizeScale = 1,
   } = options;
 
   const [tx, ty] = projection.translate();
@@ -166,7 +169,7 @@ export function paintSkyFrame(options: {
     ctx.globalAlpha = starOpacity;
     ctx.fillStyle = themeColor;
     ctx.strokeStyle = themeColor;
-    ctx.lineWidth = 0.7;
+    ctx.lineWidth = Math.max(0.35, 0.7 * starSizeScale);
     for (const star of data.stars) {
       if (
         !onFrontHemisphere(star.coordinates[0], star.coordinates[1])
@@ -178,7 +181,7 @@ export function paintSkyFrame(options: {
       const [x, y] = projected;
       if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
 
-      const radius = magnitudeScale(star.mag);
+      const radius = magnitudeScale(star.mag) * starSizeScale;
       if (radius <= 1.6) {
         drawCrossGlyph(ctx, x, y, Math.max(1.4, radius * 1.8));
         continue;

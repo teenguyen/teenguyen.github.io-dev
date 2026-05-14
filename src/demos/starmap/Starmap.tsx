@@ -209,6 +209,9 @@ export default function Starmap({
           ),
         labelFont: resolveLabelFont(),
         interactive: interactiveRef.current,
+        starSizeScale: interactiveRef.current
+          ? projection.scale() / baseScale
+          : 1,
       });
     },
     [rootRef],
