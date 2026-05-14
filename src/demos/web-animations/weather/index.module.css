@@ -27,7 +27,8 @@
 }
 
 .row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 10rem auto;
   align-items: center;
   gap: 2rem;
 }
@@ -373,5 +374,15 @@
   75%,
   100% {
     opacity: 1;
+  }
+}
+
+@media (max-width: 59.5rem) {
+  .container {
+    gap: 0.5rem;
+  }
+
+  .row {
+    gap: 1rem;
   }
 }
