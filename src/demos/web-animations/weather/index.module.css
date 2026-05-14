@@ -1,4 +1,4 @@
-.container {
+.weatherAnimations {
   --white: #ffffff;
   --skyLight: #94c5f8;
   --skyDark: #012459;
@@ -17,9 +17,6 @@
 
   background: linear-gradient(var(--skyLight), var(--skyDark));
   overflow: scroll;
-}
-
-.weatherAnimations {
   display: grid;
   align-items: center;
   justify-content: center;
