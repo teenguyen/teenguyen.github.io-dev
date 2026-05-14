@@ -34,6 +34,8 @@ export function paintSkyFrame(options: {
   constellationsVisible: boolean;
   showLabels: boolean;
   labelFont: string;
+  /** Orthographic explorer: clip + cull back hemisphere; sparser graticule */
+  interactive?: boolean;
 }): void {
   const {
     ctx,
@@ -49,13 +51,46 @@ export function paintSkyFrame(options: {
     constellationsVisible,
     showLabels,
     labelFont,
+    interactive = false,
   } = options;
+
+  const [tx, ty] = projection.translate();
+  let centerGeo: [number, number] | null = null;
+  if (interactive && projection.invert) {
+    const inv = projection.invert([tx, ty]);
+    if (
+      inv &&
+      inv.length >= 2 &&
+      Number.isFinite(inv[0]) &&
+      Number.isFinite(inv[1])
+    ) {
+      centerGeo = [inv[0], inv[1]];
+    }
+  }
+
+  const onFrontHemisphere = (lon: number, lat: number) => {
+    if (!interactive) return true;
+    if (!centerGeo) return false;
+    return d3.geoDistance([lon, lat], centerGeo) <= Math.PI / 2 + 1e-9;
+  };
+
+  if (interactive) {
+    const r = projection.scale();
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(tx, ty, r, 0, 2 * Math.PI);
+    ctx.clip();
+  }
+
+  const graticuleFeature = interactive
+    ? d3.geoGraticule().stepMajor([45, 45]).stepMinor([90, 90])()
+    : d3.geoGraticule10();
 
   const graticulePath = d3.geoPath(projection, ctx);
   ctx.beginPath();
   ctx.lineWidth = 1;
   ctx.strokeStyle = "rgba(0, 0, 0, 0.05)";
-  graticulePath(d3.geoGraticule10());
+  graticulePath(graticuleFeature);
   ctx.stroke();
 
   if (constellationDrawDistance > 0 && constellationsVisible) {
@@ -74,6 +109,7 @@ export function paintSkyFrame(options: {
         for (const rawPoint of rawLine) {
           const linePoint = toLinePoint(rawPoint);
           if (!linePoint) continue;
+          if (!onFrontHemisphere(linePoint[0], linePoint[1])) continue;
           const projected = projection(linePoint);
           if (!projected) continue;
           const [x, y] = projected;
@@ -132,6 +168,11 @@ export function paintSkyFrame(options: {
     ctx.strokeStyle = themeColor;
     ctx.lineWidth = 0.7;
     for (const star of data.stars) {
+      if (
+        !onFrontHemisphere(star.coordinates[0], star.coordinates[1])
+      ) {
+        continue;
+      }
       const projected = projection(star.coordinates);
       if (!projected) continue;
       const [x, y] = projected;
@@ -176,6 +217,11 @@ export function paintSkyFrame(options: {
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     for (const item of data.constellationNames) {
+      if (
+        !onFrontHemisphere(item.coordinates[0], item.coordinates[1])
+      ) {
+        continue;
+      }
       const projected = projection(item.coordinates);
       if (!projected) continue;
       const [x, y] = projected;
@@ -183,6 +229,10 @@ export function paintSkyFrame(options: {
       if (x < -40 || y < -20 || x > width + 40 || y > height + 20) continue;
       ctx.fillText(item.label, x, y);
     }
+    ctx.restore();
+  }
+
+  if (interactive) {
     ctx.restore();
   }
 }

@@ -9,8 +9,8 @@ export const ZOOM_WHEEL_SENSITIVITY = 0.0012;
 export const ZOOM_CLOSEST_FACTOR = 1.22;
 export const FIT_MARGIN_PX = 24;
 export const DRAG_SPEED_REF_PX_PER_SEC = 1200;
-export const DRAG_LON_PER_PX = 0.08;
-export const DRAG_LAT_PER_PX = 0.06;
+export const DRAG_LON_PER_PX = 0.035;
+export const DRAG_LAT_PER_PX = 0.027;
 
 export type StarFeature = {
   geometry: { coordinates: [number, number] };

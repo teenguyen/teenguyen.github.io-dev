@@ -5,10 +5,11 @@ import {
   ZOOM_CLOSEST_FACTOR,
 } from "./types";
 
+/** Max zoom-out scale for interactive orthographic (visible hemisphere). */
 export function computeGlobeFitScale(width: number, height: number): number {
   const w = Math.max(width, FIT_MARGIN_PX * 2 + 2);
   const h = Math.max(height, FIT_MARGIN_PX * 2 + 2);
-  const projection = d3.geoMercator().angle(15);
+  const projection = d3.geoOrthographic().clipAngle(90);
   projection.fitExtent(
     [
       [FIT_MARGIN_PX, FIT_MARGIN_PX],
@@ -19,7 +20,7 @@ export function computeGlobeFitScale(width: number, height: number): number {
   return projection.scale();
 }
 
-export function buildMercatorProjection(options: {
+export function buildStarmapProjection(options: {
   width: number;
   height: number;
   perspectiveHeight: number;
@@ -53,11 +54,11 @@ export function buildMercatorProjection(options: {
     const lambdaTotal = options.userLambda + autoSpinLambda;
 
     return d3
-      .geoMercator()
+      .geoOrthographic()
       .translate([options.width / 2, options.height / 2])
       .scale(scale)
       .rotate([lambdaTotal, options.userPhi, 0])
-      .angle(15);
+      .clipAngle(90);
   }
 
   scale = baseScale;

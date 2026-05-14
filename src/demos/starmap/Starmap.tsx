@@ -19,7 +19,7 @@ import {
   type SkyData,
 } from "./types";
 import { fetchConstellationNames, fetchStarsAndLines } from "./loadSkyData";
-import { buildMercatorProjection, computeGlobeFitScale } from "./projection";
+import { buildStarmapProjection, computeGlobeFitScale } from "./projection";
 import { paintSkyFrame, resolveLabelFont } from "./paintSkyFrame";
 import styles from "./Starmap.module.css";
 
@@ -173,7 +173,7 @@ export default function Starmap({
         scaleMinFitRef.current = computeGlobeFitScale(width, height);
       }
 
-      const projection = buildMercatorProjection({
+      const projection = buildStarmapProjection({
         width,
         height,
         perspectiveHeight,
@@ -208,6 +208,7 @@ export default function Starmap({
             data.constellationNames && data.constellationNames.length > 0,
           ),
         labelFont: resolveLabelFont(),
+        interactive: interactiveRef.current,
       });
     },
     [rootRef],
