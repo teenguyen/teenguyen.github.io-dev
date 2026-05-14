@@ -16,7 +16,7 @@ export default function StarmapView() {
         </Link>
         <h6 className="subtitle">THERESA NGUYEN</h6>
       </header>
-      <Starmap rootRef={rootRef} playing />
+      <Starmap rootRef={rootRef} playing interactive />
     </>
   );
 }
