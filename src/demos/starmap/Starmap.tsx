@@ -475,7 +475,15 @@ export default function Starmap({
   const startAnimation = useCallback(() => {
     const shouldRunTick = playingRef.current || inViewRef.current;
     if (!shouldRunTick) return;
-    if (rafRef.current !== null) return;
+    /*
+     * requestDraw() may have queued a one-shot rAF with rafRef; that must not block
+     * the tick loop — otherwise we never schedule follow-up frames (e.g. data loads
+     * right after a resize/layout pass on client-side navigation).
+     */
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
     const tick = (timeMs: number) => {
       const container = rootRef.current;
       if (!container) {

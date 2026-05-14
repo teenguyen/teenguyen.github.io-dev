@@ -95,6 +95,10 @@ a {
   text-underline-offset: 0.25rem;
 }
 
+a:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 59.5rem) {
   h2 {
     font-size: 2.5rem;

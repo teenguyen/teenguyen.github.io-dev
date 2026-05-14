@@ -1,9 +1,14 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import clsx from "clsx";
 import Highlight from "../Highlights";
 import CaseStudyWrapper from "../CaseStudy";
 import shared from "../shared.module.css";
 import styles from "./page.module.css";
+
+export const metadata: Metadata = {
+  title: "Component Libraries & Design Systems — Theresa Nguyen",
+};
 
 const HIGHLIGHTS = [
   {

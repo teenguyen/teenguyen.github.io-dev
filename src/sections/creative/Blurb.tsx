@@ -1,7 +1,11 @@
 import type { Ref } from "react";
-import Link, { LinkProps } from "next/link";
+import Link, { type LinkProps } from "next/link";
 import clsx from "clsx";
 import styles from "./Blurb.module.css";
+
+function isExternalHref(href: string) {
+  return /^https?:\/\//i.test(href) || href.startsWith("//");
+}
 
 type BlurbProps = {
   index: number;
@@ -24,6 +28,21 @@ export default function Blurb({
   onClick,
   bodyRef,
 }: BlurbProps) {
+  const link =
+    typeof linkProps === "string"
+      ? {
+          props: { href: linkProps } as LinkProps,
+          external: isExternalHref(linkProps),
+        }
+      : linkProps
+        ? {
+            props: linkProps,
+            external:
+              typeof linkProps.href === "string" &&
+              isExternalHref(linkProps.href),
+          }
+        : null;
+
   return (
     <button
       className={clsx(styles.blurb, active && styles.blurbActive)}
@@ -37,14 +56,17 @@ export default function Blurb({
         <h3 className={styles.title}>{title}</h3>
         <p>{description}</p>
         <p className="subtitle">{skills}</p>
-        {linkProps && (
-          <Link
-            className="subtitle"
-            target="_blank"
-            rel="noopener noreferrer"
-            {...(linkProps as LinkProps)}
-          />
-        )}
+        <div>
+          {link && (
+            <Link
+              className="subtitle"
+              {...link.props}
+              {...(link.external
+                ? { target: "_blank" as const, rel: "noopener noreferrer" }
+                : {})}
+            />
+          )}
+        </div>
       </div>
     </button>
   );

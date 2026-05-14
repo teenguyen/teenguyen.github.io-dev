@@ -23,10 +23,6 @@
   width: 100%;
 }
 
-.name {
-  color: var(--text-color-60);
-}
-
 .heading {
   display: flex;
   flex-direction: column;

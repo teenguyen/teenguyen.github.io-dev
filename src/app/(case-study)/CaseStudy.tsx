@@ -13,7 +13,7 @@ export default function CaseStudyWrapper({ children }: CaseStudyWrapperProps) {
         <Link href="/#featured" className="subtitle">
           ← PORTFOLIO
         </Link>
-        <h6 className={clsx("subtitle", styles.name)}>THERESA NGUYEN</h6>
+        <h6 className="subtitle">THERESA NGUYEN</h6>
       </header>
       {children}
 

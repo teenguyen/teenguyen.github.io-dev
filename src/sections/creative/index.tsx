@@ -118,7 +118,7 @@ export default function Creative() {
 
   return (
     <section className={styles.section}>
-      <div className={styles.divider}>
+      <div id="creative" className={styles.divider}>
         <hr />
         <h6>CREATIVE</h6>
       </div>
@@ -199,6 +199,10 @@ const BLURBS = [
       "A celestial map that allows you to explore the stars and constellations in the night sky.",
     skills: "D3.JS · CANVAS · GEOMETRIC PROJECTIONS",
     image: Starmap,
+    linkProps: {
+      children: "/starmap",
+      href: "/starmap",
+    },
   },
   {
     title: "dark & light glassmorphism theming",
