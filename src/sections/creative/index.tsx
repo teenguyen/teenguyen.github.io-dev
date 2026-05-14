@@ -183,7 +183,7 @@ const BLURBS = [
     image: "/creative/creative-nook.mp4",
   },
   {
-    title: "interactive motion sketches",
+    title: "motion sketches",
     description:
       "A series of small animation experiments exploring timing, personality, and browser-native motion through GSAP, SVGs, and handcrafted CSS animation.",
     skills: "GSAP · SVG · CSS ANIMATIONS",
