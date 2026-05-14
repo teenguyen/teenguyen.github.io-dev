@@ -40,11 +40,15 @@
 }
 
 @media (max-width: 59.5rem) {
+  .section {
+    padding: 4rem;
+  }
+
   .divider {
     display: none;
   }
 
   .content {
-    padding: 4rem;
+    padding: 0;
   }
 }
